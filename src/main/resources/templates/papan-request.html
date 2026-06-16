@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="id" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusShare - Student Requests</title>
+    <title>CampusShare - Permintaan Mahasiswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -11,10 +11,10 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#3b82f6', // Biru yang lebih cerah sesuai gambar
-                        darkbg: '#18181b',  // Background utama dark mode
-                        cardbg: '#27272a',  // Background card & header dark mode
-                        darkborder: '#3f3f46' // Border dark mode
+                        primary: '#3b82f6', 
+                        darkbg: '#18181b',  
+                        cardbg: '#27272a',  
+                        darkborder: '#3f3f46' 
                     }
                 }
             }
@@ -27,11 +27,12 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
 
-    <!-- Header -->
+    <!-- HEADER / NAVBAR -->
     <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             
             <div class="flex items-center gap-4 flex-1">
+                <!-- LOGO -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,18 +42,20 @@
                     <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
                 </div>
 
+                <!-- PENCARIAN -->
                 <div class="hidden md:block w-full max-w-md relative ml-4">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Search items, books, equipment...">
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
                 </div>
             </div>
 
+            <!-- MENU NAVIGASI KANAN -->
             <div class="flex items-center gap-5">
                 <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
-                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Catalog</a>
-                    <a href="papan-request.html" class="text-primary bg-blue-50 dark:bg-blue-900/20 dark:text-primary px-4 py-2 rounded-xl font-semibold transition-all">Requests</a>
+                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
+                    <a href="papan-request.html" class="text-primary bg-blue-50 dark:bg-blue-900/20 dark:text-primary px-4 py-2 rounded-xl font-semibold transition-all">Request</a>
                     <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
                 </nav>
                 
@@ -72,23 +75,25 @@
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <main class="max-w-3xl mx-auto px-4 py-10">
         
+        <!-- JUDUL HALAMAN -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-[26px] font-bold text-gray-900 dark:text-white">Student Requests</h1>
-                <p class="text-gray-500 dark:text-gray-400 text-[15px] mt-1">Items students are actively looking to borrow or buy</p>
+                <h1 class="text-[26px] font-bold text-gray-900 dark:text-white">Permintaan Mahasiswa</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-[15px] mt-1">Barang yang sedang dicari mahasiswa untuk disewa atau dibeli</p>
             </div>
             <button class="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors text-[14.5px]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                Post a New Request
+                Buat Permintaan Baru
             </button>
         </div>
 
+        <!-- DAFTAR CARD REQUEST -->
         <div class="space-y-4">
             
-            <!-- Card 1 -->
+            <!-- Card 1: Kalkulator -->
             <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm transition-colors">
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center gap-3">
@@ -98,24 +103,24 @@
                             <span class="px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-primary text-[11px] font-semibold">2022</span>
                         </div>
                     </div>
-                    <span class="text-[13px] text-gray-400 dark:text-gray-500">2 hours ago</span>
+                    <span class="text-[13px] text-gray-400 dark:text-gray-500">2 jam yang lalu</span>
                 </div>
-                <h3 class="text-[17px] font-bold text-gray-900 dark:text-white mb-2">Casio FX-9750 Scientific Calculator</h3>
+                <h3 class="text-[17px] font-bold text-gray-900 dark:text-white mb-2">Kalkulator Ilmiah Casio FX-9750</h3>
                 <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-5 leading-relaxed">
-                    Needed for Statistics final exam next week. Willing to meet at the library or campus cafeteria for handover. Prefer rental but open to purchase.
+                    Dibutuhkan untuk ujian akhir Statistika minggu depan. Bersedia bertemu di perpustakaan atau kantin kampus untuk serah terima. Lebih suka menyewa tapi terbuka jika ingin dijual.
                 </p>
                 <div class="flex items-center justify-between mt-auto">
                     <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 dark:bg-[#064e3b]/30 text-green-600 dark:text-[#4ade80] text-[13px] font-semibold border border-green-200 dark:border-green-800/50">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                        Max budget: Rp 50.000
+                        Maks. Rp 50.000
                     </div>
                     <button class="px-5 py-2.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors text-[14px]">
-                        Offer My Item
+                        Tawarkan Barang Saya
                     </button>
                 </div>
             </div>
 
-            <!-- Card 2 -->
+            <!-- Card 2: Buku Kimia -->
             <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm transition-colors">
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center gap-3">
@@ -125,86 +130,108 @@
                             <span class="px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-primary text-[11px] font-semibold">2023</span>
                         </div>
                     </div>
-                    <span class="text-[13px] text-gray-400 dark:text-gray-500">5 hours ago</span>
+                    <span class="text-[13px] text-gray-400 dark:text-gray-500">5 jam yang lalu</span>
                 </div>
-                <h3 class="text-[17px] font-bold text-gray-900 dark:text-white mb-2">Organic Chemistry Clayden Textbook</h3>
+                <h3 class="text-[17px] font-bold text-gray-900 dark:text-white mb-2">Buku Teks Kimia Organik Clayden</h3>
                 <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-5 leading-relaxed">
-                    Looking for 2nd edition or later for my organic chemistry elective. Can do COD anywhere on campus. Good condition strongly preferred.
+                    Mencari edisi ke-2 atau terbaru untuk kelas kimia organik. Bisa COD di mana saja di kampus. Sangat diutamakan kondisi bagus.
                 </p>
                 <div class="flex items-center justify-between mt-auto">
                     <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 dark:bg-[#064e3b]/30 text-green-600 dark:text-[#4ade80] text-[13px] font-semibold border border-green-200 dark:border-green-800/50">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                        Max budget: Rp 100.000
+                        Maks. Rp 100.000
                     </div>
                     <button class="px-5 py-2.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors text-[14px]">
-                        Offer My Item
+                        Tawarkan Barang Saya
                     </button>
                 </div>
             </div>
 
-            <!-- Card 3 -->
-            <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm transition-colors">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 flex items-center justify-center text-[11px] font-bold">FM</div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-semibold text-[15px] text-gray-900 dark:text-gray-100">Farhan Maulana</span>
-                            <span class="px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-primary text-[11px] font-semibold">2021</span>
+            <!-- Card 3: Monitor Eksternal (TERPENUHI / CLOSED) -->
+            <div class="bg-white/70 dark:bg-cardbg/50 border border-gray-200 dark:border-darkborder rounded-2xl shadow-sm transition-colors overflow-hidden">
+                <div class="bg-green-50/50 dark:bg-green-950/20 border-b border-gray-100 dark:border-darkborder/50 px-6 py-2 flex items-center justify-between text-[11px] font-bold tracking-wider">
+                    <div class="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        REQUEST TERPENUHI
+                    </div>
+                    <div class="text-gray-400 dark:text-gray-500">CLOSED</div>
+                </div>
+                
+                <div class="p-6 opacity-60 dark:opacity-50">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400 flex items-center justify-center text-[11px] font-bold">FM</div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-[15px] text-gray-700 dark:text-gray-300">Farhan Maulana</span>
+                                <span class="px-2 py-0.5 rounded-full border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-500 text-[11px] font-semibold">2021</span>
+                            </div>
+                        </div>
+                        <span class="text-[13px] text-gray-400 dark:text-gray-500">1 hari yang lalu</span>
+                    </div>
+                    <h3 class="text-[17px] font-bold text-gray-500 dark:text-gray-400 line-through mb-2">Monitor Eksternal Portabel</h3>
+                    <p class="text-[14.5px] text-gray-400 dark:text-gray-500 mb-5 leading-relaxed">
+                        Butuh monitor portabel untuk presentasi skripsi Kamis depan. Sewa untuk 3–4 hari. Bersedia negosiasi harga untuk durasi lebih lama.
+                    </p>
+                    <div class="flex items-center justify-between mt-auto">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 dark:bg-zinc-800 text-gray-400 dark:text-zinc-400 text-[13px] font-semibold border border-gray-200 dark:border-zinc-700">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                            Maks. Rp 200.000
+                        </div>
+                        <div class="flex items-center gap-1.5 text-gray-400 dark:text-gray-400 text-[14px] font-medium px-2 py-1">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            Request Fulfilled
                         </div>
                     </div>
-                    <span class="text-[13px] text-gray-400 dark:text-gray-500">1 day ago</span>
-                </div>
-                <h3 class="text-[17px] font-bold text-gray-900 dark:text-white mb-2">Portable External Monitor</h3>
-                <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-5 leading-relaxed">
-                    Need a portable monitor for my thesis presentation next Thursday. Rental for 3-4 days. Happy to negotiate rate for longer durations.
-                </p>
-                <div class="flex items-center justify-between mt-auto">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 dark:bg-[#064e3b]/30 text-green-600 dark:text-[#4ade80] text-[13px] font-semibold border border-green-200 dark:border-green-800/50">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                        Max budget: Rp 200.000
-                    </div>
-                    <button class="px-5 py-2.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors text-[14px]">
-                        Offer My Item
-                    </button>
                 </div>
             </div>
 
-            <!-- Card 4 -->
-            <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm transition-colors">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 flex items-center justify-center text-[11px] font-bold">IK</div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-semibold text-[15px] text-gray-900 dark:text-gray-100">Intan Kurnia</span>
-                            <span class="px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-primary text-[11px] font-semibold">2022</span>
+            <!-- Card 4: Set Alat Gambar (TERPENUHI / CLOSED) -->
+            <div class="bg-white/70 dark:bg-cardbg/50 border border-gray-200 dark:border-darkborder rounded-2xl shadow-sm transition-colors overflow-hidden">
+                <div class="bg-green-50/50 dark:bg-green-950/20 border-b border-gray-100 dark:border-darkborder/50 px-6 py-2 flex items-center justify-between text-[11px] font-bold tracking-wider">
+                    <div class="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        REQUEST TERPENUHI
+                    </div>
+                    <div class="text-gray-400 dark:text-gray-500">CLOSED</div>
+                </div>
+                
+                <div class="p-6 opacity-60 dark:opacity-50">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400 flex items-center justify-center text-[11px] font-bold">IK</div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-[15px] text-gray-700 dark:text-gray-300">Intan Kurnia</span>
+                                <span class="px-2 py-0.5 rounded-full border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-500 text-[11px] font-semibold">2022</span>
+                            </div>
+                        </div>
+                        <span class="text-[13px] text-gray-400 dark:text-gray-500">2 hari yang lalu</span>
+                    </div>
+                    <h3 class="text-[17px] font-bold text-gray-500 dark:text-gray-400 line-through mb-2">Set Alat Gambar Teknik</h3>
+                    <p class="text-[14.5px] text-gray-400 dark:text-gray-500 mb-5 leading-relaxed">
+                        Butuh jangka, set penggaris, dan papan gambar untuk tugas Desain Teknik hari Jumat. Sewa untuk 1 minggu tidak masalah.
+                    </p>
+                    <div class="flex items-center justify-between mt-auto">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 dark:bg-zinc-800 text-gray-400 dark:text-zinc-400 text-[13px] font-semibold border border-gray-200 dark:border-zinc-700">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                            Maks. Rp 80.000
+                        </div>
+                        <div class="flex items-center gap-1.5 text-gray-400 dark:text-gray-400 text-[14px] font-medium px-2 py-1">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            Request Fulfilled
                         </div>
                     </div>
-                    <span class="text-[13px] text-gray-400 dark:text-gray-500">2 days ago</span>
-                </div>
-                <h3 class="text-[17px] font-bold text-gray-900 dark:text-white mb-2">Engineering Drawing Set</h3>
-                <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-5 leading-relaxed">
-                    Need compass, ruler set and drawing board for Engineering Design assignment due Friday. Rental for 1 week is fine.
-                </p>
-                <div class="flex items-center justify-between mt-auto">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 dark:bg-[#064e3b]/30 text-green-600 dark:text-[#4ade80] text-[13px] font-semibold border border-green-200 dark:border-green-800/50">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                        Max budget: Rp 80.000
-                    </div>
-                    <button class="px-5 py-2.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors text-[14px]">
-                        Offer My Item
-                    </button>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- Tombol Bantuan Mengambang (?) di Kanan Bawah seperti di Gambar -->
+    <!-- FLOATING BUTTON HELP (?) -->
     <div class="fixed bottom-6 right-6 w-9 h-9 rounded-full bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-md flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3f3f46] transition-colors">
         ?
     </div>
 
-    <!-- Dark Mode Script -->
+    <!-- SCRIPT DARK MODE -->
     <script>
         const themeToggleBtn = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('sun-icon');

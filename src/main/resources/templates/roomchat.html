@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="id" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusShare - Messages</title>
+    <title>CampusShare - Pesan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,10 +29,12 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 h-screen flex flex-col overflow-hidden transition-all duration-300 relative">
 
+    <!-- HEADER / NAVIGASI UTAMA -->
     <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors shrink-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             
             <div class="flex items-center gap-4 flex-1">
+                <!-- LOGO -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,58 +44,68 @@
                     <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
                 </div>
 
+                <!-- KOLOM PENCARIAN -->
                 <div class="hidden md:block w-full max-w-md relative ml-4">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-400 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Search items, books, equipment...">
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-400 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
                 </div>
             </div>
 
+            <!-- MENU KANAN -->
             <div class="flex items-center gap-5">
                 <nav class="hidden lg:flex items-center gap-1 text-[15px] font-medium">
-                    <a href="katalog.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Catalog</a>
-                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Requests</a>
+                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
+                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
                     <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
                 </nav>
                 
                 <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
+                    <!-- TOMBOL TEMA (DARK/LIGHT) -->
                     <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
                         <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
                         <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
+                    <!-- NOTIFIKASI -->
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </button>
+                    <!-- REFRESH -->
                     <button class="p-2 text-gray-400 hover:text-gray-500">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
                     </button>
+                    <!-- PROFIL USER -->
                     <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- KONTEN UTAMA -->
     <main class="flex flex-1 overflow-hidden max-w-[100rem] w-full mx-auto">
         
+        <!-- SIDEBAR: DAFTAR CHAT -->
         <section class="w-80 md:w-96 border-r border-gray-200 dark:border-darkborder/50 flex flex-col bg-white dark:bg-darkbg shrink-0">
             <div class="p-5 pb-3">
                 <div class="flex items-center justify-between mb-4">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Messages</h1>
-                    <span class="bg-blue-100 text-primary dark:bg-blue-950 dark:text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">2 new</span>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h1>
+                    <span class="bg-blue-100 text-primary dark:bg-blue-950 dark:text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">2 baru</span>
                 </div>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" class="block w-full pl-9 pr-3 py-2 text-sm border-none rounded-xl bg-gray-100 dark:bg-cardbg placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none" placeholder="Search messages...">
+                    <input type="text" class="block w-full pl-9 pr-3 py-2 text-sm border-none rounded-xl bg-gray-100 dark:bg-cardbg placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none" placeholder="Cari pesan...">
                 </div>
             </div>
 
+            <!-- LIST DAFTAR ORANG CHAT -->
             <div class="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-darkborder/30">
+                <!-- Chat 1 -->
                 <div class="p-4 flex gap-3 bg-blue-50/50 dark:bg-blue-950/20 cursor-pointer border-l-4 border-primary">
                     <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">DR</div>
                     <div class="flex-1 min-w-0">
@@ -101,45 +113,49 @@
                             <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">Dika Ramadan</h2>
                             <span class="text-xs text-gray-400 shrink-0">10:24</span>
                         </div>
-                        <p class="text-xs font-medium text-primary mb-1 truncate">Aluminum Laptop Stand</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Sure! We can meet at the lib...</p>
+                        <p class="text-xs font-medium text-primary mb-1 truncate">Stand Laptop Aluminium</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Tentu! Kita bisa bertemu di perp...</p>
                     </div>
                     <div class="w-2.5 h-2.5 bg-primary rounded-full align-self-center shrink-0 self-center"></div>
                 </div>
 
+                <!-- Chat 2 -->
                 <div class="p-4 flex gap-3 hover:bg-gray-50 dark:hover:bg-cardbg/40 cursor-pointer transition-colors">
                     <div class="w-11 h-11 rounded-full bg-blue-900 text-white flex items-center justify-center font-bold text-sm shrink-0">NS</div>
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between items-baseline mb-0.5">
                             <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">Nadhira Salsabila</h2>
-                            <span class="text-xs text-gray-400 shrink-0">Yesterday</span>
+                            <span class="text-xs text-gray-400 shrink-0">Kemarin</span>
                         </div>
-                        <p class="text-xs font-medium text-blue-500 mb-1 truncate">Calculus Textbook</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Is it still available this week?</p>
+                        <p class="text-xs font-medium text-blue-500 mb-1 truncate">Buku Teks Kalkulus</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Apakah masih tersedia minggu ini?</p>
                     </div>
                 </div>
 
+                <!-- Chat 3 -->
                 <div class="p-4 flex gap-3 hover:bg-gray-50 dark:hover:bg-cardbg/40 cursor-pointer transition-colors">
                     <div class="w-11 h-11 rounded-full bg-blue-800 text-white flex items-center justify-center font-bold text-sm shrink-0">MI</div>
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between items-baseline mb-0.5">
                             <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">Maya Indah</h2>
-                            <span class="text-xs text-gray-400 shrink-0">Monday</span>
+                            <span class="text-xs text-gray-400 shrink-0">Senin</span>
                         </div>
                         <p class="text-xs font-medium text-blue-500 mb-1 truncate">Casio FX-991EX</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Payment confirmed! See you...</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Pembayaran dikonfirmasi! Sampai jum...</p>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- RUANG CHAT UTAMA -->
         <section class="flex-1 flex flex-col bg-gray-50 dark:bg-[#111113]">
+            <!-- Top Bar Chat Aktif -->
             <div class="px-6 py-3 bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">DR</div>
                     <div>
                         <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Dika Ramadan</h2>
-                        <p class="text-xs text-gray-400">Re: Aluminum Laptop Stand</p>
+                        <p class="text-xs text-gray-400">Re: Stand Laptop Aluminium</p>
                     </div>
                 </div>
                 <button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
@@ -147,27 +163,31 @@
                 </button>
             </div>
 
+            <!-- Notifikasi Banner Privacy -->
             <div class="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-100 dark:border-amber-900/30 px-6 py-2.5 flex items-center gap-2 text-xs text-amber-700 dark:text-amber-400 shrink-0">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span>Messages disappear after 24 hours for your privacy.</span>
+                <span>Pesan menghilang setelah 24 jam untuk privasi Anda.</span>
             </div>
 
+            <!-- Isi Percakapan -->
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 
+                <!-- Bubble Chat Kiri -->
                 <div class="flex gap-3 max-w-lg">
                     <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0 self-start">D</div>
                     <div>
                         <div class="bg-white dark:bg-cardbg p-3.5 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
-                            Hi! I saw your post for the Laptop Stand, is it still available?
+                            Hai! Saya lihat postingan Stand Laptop kamu, apakah masih ada?
                         </div>
                         <span class="text-[10px] text-gray-400 ml-1 mt-1 block">10:00</span>
                     </div>
                 </div>
 
+                <!-- Bubble Chat Kanan -->
                 <div class="flex gap-3 max-w-lg ml-auto justify-end">
                     <div class="text-right">
                         <div class="bg-primary text-white p-3.5 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
-                            Yes, it's still available! You can rent it starting tomorrow.
+                            Ya, masih tersedia! Bisa disewa mulai besok.
                         </div>
                         <div class="flex items-center justify-end gap-1 mt-1">
                             <span class="text-[10px] text-gray-400">10:05</span>
@@ -176,20 +196,22 @@
                     </div>
                 </div>
 
+                <!-- Bubble Chat Kiri -->
                 <div class="flex gap-3 max-w-lg">
                     <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0 self-start">D</div>
                     <div>
                         <div class="bg-white dark:bg-cardbg p-3.5 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
-                            Great! How much is the deposit?
+                            Bagus! Berapa uang jaminannya?
                         </div>
                         <span class="text-[10px] text-gray-400 ml-1 mt-1 block">10:10</span>
                     </div>
                 </div>
 
+                <!-- Bubble Chat Kanan -->
                 <div class="flex gap-3 max-w-lg ml-auto justify-end">
                     <div class="text-right">
                         <div class="bg-primary text-white p-3.5 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
-                            No deposit needed, just the daily rental fee of Rp 15.000.
+                            Tidak perlu uang jaminan, cukup biaya sewa harian Rp 15.000.
                         </div>
                         <div class="flex items-center justify-end gap-1 mt-1">
                             <span class="text-[10px] text-gray-400">10:15</span>
@@ -198,27 +220,30 @@
                     </div>
                 </div>
 
+                <!-- Sistem Info Berhasil -->
                 <div class="flex justify-center my-4">
                     <div class="bg-gray-100 dark:bg-cardbg border border-gray-200 dark:border-darkborder/50 rounded-full px-4 py-1.5 text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5 shadow-sm">
                         <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                        <span class="font-semibold text-gray-800 dark:text-gray-200">System:</span> Your rental request has been approved. You can now arrange a meetup.
+                        <span class="font-semibold text-gray-800 dark:text-gray-200">Sistem:</span> Permintaan peminjaman Anda telah disetujui. Anda sekarang dapat mengatur COD.
                     </div>
                 </div>
 
+                <!-- Bubble Chat Kiri -->
                 <div class="flex gap-3 max-w-lg">
                     <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0 self-start">D</div>
                     <div>
                         <div class="bg-white dark:bg-cardbg p-3.5 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
-                            Perfect. Can we meet at the library around 2 PM?
+                            Sempurna. Bisakah kita bertemu di perpustakaan sekitar jam 2 siang?
                         </div>
                         <span class="text-[10px] text-gray-400 ml-1 mt-1 block">10:20</span>
                     </div>
                 </div>
 
+                <!-- Bubble Chat Kanan -->
                 <div class="flex gap-3 max-w-lg ml-auto justify-end">
                     <div class="text-right">
                         <div class="bg-primary text-white p-3.5 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
-                            Sure! We can meet at the library tomorrow at 2 PM.
+                            Tentu! Kita bisa bertemu di perpustakaan besok jam 2 siang.
                         </div>
                         <div class="flex items-center justify-end gap-1 mt-1">
                             <span class="text-[10px] text-gray-400">10:24</span>
@@ -227,18 +252,20 @@
                     </div>
                 </div>
 
+                <!-- Info tambahan di bawah chat -->
                 <div class="flex justify-center text-[11px] text-gray-400 items-center gap-1 pt-4">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>Messages are hidden after 24 hours</span>
+                    <span>Pesan disembunyikan setelah 24 jam</span>
                 </div>
 
             </div>
 
+            <!-- Bagian Input Ketik Pesan -->
             <div class="p-4 bg-white dark:bg-darkbg border-t border-gray-200 dark:border-darkborder/50 flex items-center gap-3 shrink-0">
                 <button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                 </button>
-                <input type="text" class="flex-1 px-4 py-2.5 text-sm bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none" placeholder="Type a message...">
+                <input type="text" class="flex-1 px-4 py-2.5 text-sm bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none" placeholder="Ketik pesan...">
                 <button class="p-2.5 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm">
                     <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                 </button>
@@ -246,10 +273,12 @@
         </section>
     </main>
 
+    <!-- Floating Button Bantuan -->
     <div class="fixed bottom-6 right-6 w-9 h-9 rounded-full bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-md flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3f3f46] transition-colors z-50">
         ?
     </div>
 
+    <!-- SCRIPT LOGIKA UTK TEMA (DARK MODE) -->
     <script>
         const themeToggleBtn = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('sun-icon');
