@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Barang Pinjam</title>
+
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <a href="#" class="back-btn">← Kembali ke Katalog</a>
+
+        <div class="detail-section">
+
+            <div class="image-section">
+                <img src="../static/images/camera.jpg" alt="Camera">
+            </div>
+
+            <div class="info-section">
+
+                <div class="badge-container">
+                    <span class="status">For Rent</span>
+                    <span class="category">Electronics</span>
+                </div>
+
+                <h1>Camera Canon EOS E50</h1>
+
+                <p class="description">
+                   Lightweight mirrorless camera perfect for photography projects,
+                    content creation, and campus events. Includes kit lens, battery,
+                    charger, and carrying bag. Well-maintained and ready to use.
+                </p>
+
+                <div class="owner-card">
+                    <h3>Owner Information</h3>
+                    <p>Name : Alex</p>
+                    <p>Cohort : 2023</p>
+                </div>
+
+                <div class="price-card">
+                    <h3>Rental Price</h3>
+                    <p>Rp 150.000 / Day</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="booking-card">
+
+            <h2>Borrowing Period</h2>
+
+            <div class="date-group">
+
+                <div>
+                    <label>Borrow Date</label>
+                    <input type="date" id="startDate">
+                </div>
+
+                <div>
+                    <label>Return Date</label>
+                    <input type="date" id="endDate">
+                </div>
+
+            </div>
+
+            <div class="meeting-box">
+                <h3>Tempat Ketemuan</h3>
+                <input type="text" placeholder="Example">
+            </div>
+        </div>
+
+            <button id="borrowBtn">
+                Request Rental
+            </button>
+
+        <div class="status-card">
+
+            <h2>Rental Status</h2>
+
+            <div class="status-item active">
+                <div class="status-icon">✓</div>
+                <div class="status-content">
+                    <h4>Approved</h4>
+                    <p>Your rental request has been approved by the owner.</p>
+                </div>
+            </div>
+
+            <div class="status-item active">
+                <div class="status-icon">📍</div>
+                <div class="status-content">
+                    <h4>Meet-up Scheduled</h4>
+                    <p>Meet at Central Library, Floor 2.</p>
+                </div>
+            </div>
+
+            <div class="status-item no-line">
+                <div class="status-icon">○</div>
+                <div class="status-content">
+                    <h4>Returned</h4>
+                    <p>The item will be inspected by the owner.</p>
+                </div>
+            </div>
+
+            <div class="owner-contact">
+
+                <img src="../static/images/owner.jpg" alt="Owner Photo">
+
+                <div class="owner-details">
+                    <h3>Alex Rivera</h3>
+                    <p>Informatics Engineering</p>
+                </div>
+
+                <button class="chat-btn">💬</button>
+
+            </div>
+    </div>
+
+    </div>
+
+    <script src="../static/js/script.js"></script>
+
+</body>
+</html>
