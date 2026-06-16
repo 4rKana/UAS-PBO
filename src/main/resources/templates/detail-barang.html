@@ -1,326 +1,312 @@
 <!DOCTYPE html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Detail Barang | CampShare</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusShare - Item Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6', 
+                        sale: '#ff6b00',    
+                        rent: '#00a843',    
+                        darkbg: '#18181b',  
+                        cardbg: '#27272a',  
+                        darkborder: '#3f3f46' 
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #010409;
-            color: #eef3ff;
-            font-family: 'Segoe UI', system-ui, Roboto, sans-serif;
-        }
-        /* Navbar */
-        .navbar-dark.bg-navy {
-            background: #071126 !important;
-            border-bottom: 1px solid #1e3462;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            letter-spacing: -0.3px;
-        }
-        .brand-icon {
-            background: #13233f;
-            padding: 6px 10px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            color: #7ba3f0;
-        }
-        
-        /* Card & Containers */
-        .card-barang {
-            background: #0d1429;
-            border: 1px solid #1e2d51;
-            border-radius: 16px;
-            transition: all 0.2s ease;
-            backdrop-filter: blur(2px);
-            overflow: hidden;
-        }
-        
-        /* Badges */
-        .badge-status {
-            background: #152842;
-            color: #9bb9ff;
-            border-radius: 40px;
-            padding: 0.4rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            display: inline-block;
-        }
-        .badge-status.accent {
-            background: #0f4c40;
-            color: #6ee7b7;
-        }
-
-        /* Forms */
-        .form-control-dark {
-            background-color: #071126;
-            border: 1px solid #1e2d51;
-            color: #eef3ff;
-            border-radius: 8px;
-        }
-        .form-control-dark:focus {
-            background-color: #0a1931;
-            border-color: #3e7adb;
-            color: #eef3ff;
-            box-shadow: 0 0 0 0.25rem rgba(62, 122, 219, 0.25);
-        }
-        .form-control-dark::placeholder {
-            color: #556b9b;
-        }
-
-        /* Buttons */
-        .btn-outline-light-custom {
-            border: 1px solid #2f4d86;
-            border-radius: 40px;
-            color: #d3e2ff;
-            padding: 0.3rem 1rem;
-            font-size: 0.8rem;
-            background: transparent;
-            transition: 0.15s;
-        }
-        .btn-outline-light-custom:hover {
-            background: #1f3c6e;
-            border-color: #5f8bdf;
-            color: white;
-        }
-        .btn-action {
-            background-color: #0a7a65;
-            color: white;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem;
-            transition: background 0.2s;
-        }
-        .btn-action:hover {
-            background-color: #086150;
-            color: white;
-        }
-
-        /* Typography */
-        h1.section-title {
-            font-size: 1.7rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #d6e6ff, #8fb0f0);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* Timeline Status */
-        .timeline {
-            padding-left: 0;
-            margin-left: 1rem;
-            list-style: none;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-left: 2rem; 
-            padding-bottom: 2rem;
-            border-left: 2px solid #1e2d51; 
-        }
-
-        .timeline-item:last-child {
-            border-left: 2px solid transparent; 
-            padding-bottom: 0;
-        }
-
-        .timeline-icon {
-            position: absolute;
-            left: -15px; 
-            top: 0;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: white;
-        }
-        .icon-success {
-            background-color: #0a7a65;
-        }
-        .icon-pending {
-            background-color: #1e2d51;
-            color: #9bb9ff;
-        }
-        
-        /* Footer/Owner Bottom Bar */
-        .owner-bottom-bar {
-            background: #071126;
-            border-top: 1px solid #1e3462;
-            padding: 1rem 0;
-        }
-        
-        a.back-link {
-            color: #7ba3f0;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        a.back-link:hover {
-            color: #d6e6ff;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
 
-<nav class="navbar navbar-dark bg-navy sticky-top">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/katalog}">
-            <i class="bi bi-box-seam-fill me-1" style="color:#3e7adb;"></i> CampShare
-        </a>
-        <div class="d-flex gap-2">
-            <span class="brand-icon"><i class="bi bi-person-circle me-1"></i> <span th:text="${#authentication.name} ?: 'Aulia'">User</span></span>
-            <a th:href="@{/logout}" class="btn btn-sm btn-outline-light-custom"><i class="bi bi-box-arrow-right"></i></a>
-        </div>
-    </div>
-</nav>
+    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
+                </div>
 
-<main class="container my-4 my-md-5 flex-grow-1">
-    
-    <div class="mb-4">
-        <a th:href="@{/katalog}" class="back-link">
-            <i class="bi bi-arrow-left me-1"></i> Kembali ke Katalog
-        </a>
-    </div>
+                <div class="hidden md:block w-full max-w-md relative ml-4">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Search items, books, equipment...">
+                </div>
+            </div>
 
-    <div class="row g-4 mb-5">
-        <div class="col-md-5 col-lg-4">
-            <div class="card-barang p-2 h-100 d-flex align-items-center justify-content-center" style="background: #0a1020;">
-                <img src="https://via.placeholder.com/400x300/1e2d51/9bb9ff?text=Canon+EOS+E50" alt="Camera Canon EOS E50" class="img-fluid rounded" style="object-fit: cover; width: 100%;">
+            <div class="flex items-center gap-5">
+                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Catalog</a>
+                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Requests</a>
+                    <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
+                </nav>
+                
+                <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
+                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
+                        <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+                        <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                    <button class="p-2 text-gray-400 hover:text-gray-500 relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                    </button>
+                    <button class="p-2 text-gray-400 hover:text-gray-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
+                </div>
             </div>
         </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
         
-        <div class="col-md-7 col-lg-8">
-            <div class="mb-3">
-                <span class="badge-status accent me-2">For Rent</span>
-                <span class="badge-status">Electronics</span>
-            </div>
-            <h1 class="section-title mb-3">Camera Canon EOS E50</h1>
-            <p style="color:#bfcef5; line-height: 1.6;">
-                Lightweight mirrorless camera perfect for photography projects, content creation, and campus events. Includes kit lens, battery, charger, and carrying bag. Well-maintained and ready to use.
-            </p>
+        <button class="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium mb-8 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Back to Catalog
+        </button>
 
-            <div class="row g-3 mt-3">
-                <div class="col-sm-6">
-                    <div class="card-barang p-3 h-100">
-                        <h6 class="fw-bold mb-2">Owner Information</h6>
-                        <div class="small" style="color:#9bb9ff;">
-                            <div>Name : <span class="text-light">Alex</span></div>
-                            <div>Cohort : <span class="text-light">2023</span></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            
+            <div class="space-y-4">
+                <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-sm relative">
+                    <div id="main-image-bg" class="w-full h-full bg-[#D4A373] transition-colors duration-500"></div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="w-1/3 aspect-video rounded-xl overflow-hidden border-2 border-primary bg-gray-100 cursor-pointer">
+                        <div id="thumb-1" class="w-full h-full bg-[#D4A373] transition-colors duration-500"></div>
+                    </div>
+                    <div class="w-1/3 aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-darkborder opacity-60 hover:opacity-100 cursor-pointer transition-opacity">
+                        <div id="thumb-2" class="w-full h-full bg-[#D4A373] transition-colors duration-500"></div>
+                    </div>
+                    <div class="w-1/3 aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-darkborder opacity-60 hover:opacity-100 cursor-pointer transition-opacity">
+                        <div id="thumb-3" class="w-full h-full bg-[#D4A373] transition-colors duration-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col">
+                
+                <div class="flex items-center gap-2 mb-3">
+                    <span id="badge-rent" class="px-2.5 py-1 rounded-full border border-green-200 dark:border-green-800/50 bg-green-50 dark:bg-[#064e3b]/30 text-green-600 dark:text-[#4ade80] text-[12px] font-semibold">For Rent</span>
+                    <span id="badge-sale" class="hidden px-2.5 py-1 rounded-full border border-orange-200 dark:border-orange-800/50 bg-orange-50 dark:bg-[#2c1f16] text-orange-600 dark:text-orange-400 text-[12px] font-semibold">For Sale</span>
+                    <span id="badge-category" class="px-2.5 py-1 rounded-full border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-cardbg text-gray-600 dark:text-gray-300 text-[12px] font-medium">Lab Equipment</span>
+                </div>
+
+                <h1 id="item-title" class="text-3xl font-bold text-gray-900 dark:text-white mb-3">Lab Coat Size M</h1>
+                <p id="item-desc" class="text-[15px] text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+                    White lab coat size M (fits 155-170cm). Clean and freshly pressed. Available for Chemistry, Biology, and Physics lab sessions.
+                </p>
+
+                <div class="flex items-center justify-between p-4 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg mb-6">
+                    <div class="flex items-center gap-4">
+                        <div id="owner-avatar" class="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-sm">AP</div>
+                        <div>
+                            <h4 id="owner-name" class="font-bold text-gray-900 dark:text-white text-[15px]">Ayu Permata</h4>
+                            <div class="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                <span id="owner-batch">Angkatan 2023</span>
+                                <span>·</span>
+                                <span class="flex items-center text-yellow-500">⭐ 4.9</span>
+                                <span>· 23 reviews</span>
+                            </div>
                         </div>
                     </div>
+                    <button class="px-4 py-1.5 border border-gray-200 dark:border-darkborder rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">
+                        Profile
+                    </button>
                 </div>
-                <div class="col-sm-6">
-                    <div class="card-barang p-3 h-100">
-                        <h6 class="fw-bold mb-2">Rental Price</h6>
-                        <div class="fw-bold fs-5" style="color:#6ee7b7;">Rp 150.000 <span class="fs-6 fw-normal text-secondary">/ Day</span></div>
+
+                <div class="flex items-start gap-3 p-4 rounded-xl border border-yellow-200 dark:border-yellow-900/30 bg-yellow-50 dark:bg-yellow-900/10 text-yellow-800 dark:text-yellow-600/90 mb-8">
+                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <p class="text-[14px] font-medium leading-snug">Requires COD / Meetup for handover. Arrange with owner via Chat.</p>
+                </div>
+
+                <div id="action-rent" class="mt-auto p-6 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg shadow-sm">
+                    <div class="flex items-end justify-between mb-6">
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-[28px] font-bold text-primary">Rp 10.000</span>
+                            <span class="text-[15px] font-medium text-gray-500 dark:text-gray-400">/day</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[11px] font-medium text-gray-400 dark:text-gray-500 mb-0.5">Max duration</p>
+                            <p class="text-[14px] font-bold text-gray-900 dark:text-white">7 days</p>
+                        </div>
                     </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-[12px] font-medium text-gray-500 dark:text-gray-400 mb-1.5">Start Date</label>
+                            <input type="date" id="start-date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 dark:text-white [color-scheme:light] dark:[color-scheme:dark] cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-gray-500 dark:text-gray-400 mb-1.5">Return Date</label>
+                            <input type="date" id="return-date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 dark:text-white [color-scheme:light] dark:[color-scheme:dark] cursor-pointer" disabled>
+                            </div>
+                    </div>
+
+                    <button class="w-full py-3.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold transition-colors">
+                        Request to Borrow
+                    </button>
                 </div>
+
+                <div id="action-sale" class="hidden mt-auto p-6 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg shadow-sm">
+                    <p class="text-[13px] font-medium text-gray-500 dark:text-gray-400 mb-1">Selling Price</p>
+                    <div class="text-[32px] font-bold text-primary mb-6">
+                        Rp 75.000
+                    </div>
+
+                    <button class="w-full py-3.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold transition-colors">
+                        Buy & Book Item
+                    </button>
+                </div>
+
             </div>
         </div>
+    </main>
+
+    <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
+        <button id="dev-toggle-data" class="px-4 py-2 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-xs shadow-lg hover:opacity-90 transition-opacity">
+            🔄 Ganti Tampilan (Rent/Sale)
+        </button>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const borrowDate = document.getElementById('borrowDate');
-        const returnDate = document.getElementById('returnDate');
+        // --- LOGIKA VALIDASI TANGGAL (START DATE & RETURN DATE) ---
+        const startDateInput = document.getElementById('start-date');
+        const returnDateInput = document.getElementById('return-date');
 
-        // Saat tanggal pinjam diubah
-        borrowDate.addEventListener('change', function() {
+        // Set minimal tanggal start-date adalah hari ini
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.setAttribute('min', today);
+
+        startDateInput.addEventListener('change', function() {
             if (this.value) {
-                // Set batas minimal kalender Return Date sama dengan Borrow Date
-                returnDate.min = this.value;
+                // Aktifkan input return date
+                returnDateInput.disabled = false;
                 
-                // Kalau user udah terlanjur ngisi Return Date yang lebih awal dari Borrow Date, otomatis samakan
-                if (returnDate.value && returnDate.value < this.value) {
-                    returnDate.value = this.value;
+                // Tambah 1 hari dari Start Date untuk minimal Return Date
+                const start = new Date(this.value);
+                start.setDate(start.getDate() + 1);
+                
+                const minReturnDate = start.toISOString().split('T')[0];
+                returnDateInput.setAttribute('min', minReturnDate);
+
+                // Jika Return Date saat ini lebih kecil/sebelum minReturnDate, reset nilainya
+                if (returnDateInput.value && returnDateInput.value < minReturnDate) {
+                    returnDateInput.value = minReturnDate;
                 }
+            } else {
+                // Nonaktifkan jika start-date dikosongkan
+                returnDateInput.disabled = true;
+                returnDateInput.value = '';
             }
         });
-    });
-</script>
 
-    <div class="card-barang p-4 mb-5">
-        <h4 class="fw-bold mb-4">Borrowing Period</h4>
-        <form action="#" th:action="@{/request/create}" method="post">
-            <div class="row g-4 mb-4">
-                <div class="col-md-6">
-                    <label class="form-label small fw-semibold" style="color:#bfcef5;">Borrow Date</label>
-                    <input type="date" id="borrowDate" class="form-control form-control-dark" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-semibold" style="color:#bfcef5;">Return Date</label>
-                    <input type="date" id="returnDate" class="form-control form-control-dark" required>
-                </div>
-                <div class="col-12">
-                    <label class="form-label small fw-semibold" style="color:#bfcef5;">Tempat Ketemuan</label>
-                    <input type="text" class="form-control form-control-dark" placeholder="Contoh: Gedung Rektorat Lt. 1" required>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-action w-100">Request Rental</button>
-        </form>
-    </div>
 
-    <div class="card-barang p-4 mb-5">
-        <h4 class="fw-bold mb-4">Rental Status</h4>
-        <ul class="timeline m-0">
-            <li class="timeline-item">
-                <div class="timeline-icon icon-success">
-                    <i class="bi bi-check-lg"></i>
-                </div>
-                <h6 class="fw-bold mb-1">Approved</h6>
-                <p class="small mb-0" style="color:#9bb9ff;">Your rental request has been approved by the owner.</p>
-            </li>
-            <li class="timeline-item">
-                <div class="timeline-icon icon-success">
-                    <i class="bi bi-geo-alt-fill"></i>
-                </div>
-                <h6 class="fw-bold mb-1">Meet-up Scheduled</h6>
-                <p class="small mb-0" style="color:#9bb9ff;">Meet at Central Library, Floor 2.</p>
-            </li>
-            <li class="timeline-item">
-                <div class="timeline-icon icon-pending">
-                    <i class="bi bi-arrow-return-left"></i>
-                </div>
-                <h6 class="fw-bold mb-1 text-secondary">Returned</h6>
-                <p class="small mb-0 text-secondary">The item will be inspected by the owner.</p>
-            </li>
-        </ul>
-    </div>
+        // --- LOGIKA DEV TOGGLE RENT / SALE ---
+        let isRentMode = true;
+        const btnToggleData = document.getElementById('dev-toggle-data');
+        
+        const title = document.getElementById('item-title');
+        const desc = document.getElementById('item-desc');
+        const category = document.getElementById('badge-category');
+        const ownerAvatar = document.getElementById('owner-avatar');
+        const ownerName = document.getElementById('owner-name');
+        const ownerBatch = document.getElementById('owner-batch');
+        
+        const badgeRent = document.getElementById('badge-rent');
+        const badgeSale = document.getElementById('badge-sale');
+        const actionRent = document.getElementById('action-rent');
+        const actionSale = document.getElementById('action-sale');
 
-</main>
+        const mainImageBg = document.getElementById('main-image-bg');
+        const thumb1 = document.getElementById('thumb-1');
+        const thumb2 = document.getElementById('thumb-2');
+        const thumb3 = document.getElementById('thumb-3');
 
-<div class="owner-bottom-bar mt-auto">
-    <div class="container d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-3">
-            <div style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: #1e2d51;">
-                <img src="https://via.placeholder.com/50/1e2d51/9bb9ff?text=A" alt="Alex Rivera" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-            <div>
-                <h6 class="mb-0 fw-bold">Alex Rivera</h6>
-                <small style="color:#9bb9ff;">Informatics Engineering</small>
-            </div>
-        </div>
-        <button class="btn btn-action" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
-            <i class="bi bi-chat-fill"></i>
-        </button>
-    </div>
-</div>
+        btnToggleData.addEventListener('click', () => {
+            isRentMode = !isRentMode;
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+            if(isRentMode) {
+                title.innerText = "Lab Coat Size M";
+                desc.innerText = "White lab coat size M (fits 155-170cm). Clean and freshly pressed. Available for Chemistry, Biology, and Physics lab sessions.";
+                category.innerText = "Lab Equipment";
+                ownerAvatar.innerText = "AP";
+                ownerName.innerText = "Ayu Permata";
+                ownerBatch.innerText = "Angkatan 2023";
+                
+                mainImageBg.style.backgroundColor = "#D4A373";
+                thumb1.style.backgroundColor = "#D4A373";
+                thumb2.style.backgroundColor = "#D4A373";
+                thumb3.style.backgroundColor = "#D4A373";
+
+                badgeRent.classList.remove('hidden');
+                badgeSale.classList.add('hidden');
+                actionRent.classList.remove('hidden');
+                actionSale.classList.add('hidden');
+            } else {
+                title.innerText = "7-Port USB Hub Anker";
+                desc.innerText = "Anker 7-Port USB 3.0 hub with individual on/off switches and power adapter. All ports tested and working at full 5Gbps speed.";
+                category.innerText = "Electronics";
+                ownerAvatar.innerText = "SD";
+                ownerName.innerText = "Sari Dewi";
+                ownerBatch.innerText = "Angkatan 2022";
+                
+                mainImageBg.style.backgroundColor = "#FFD166";
+                thumb1.style.backgroundColor = "#FFD166";
+                thumb2.style.backgroundColor = "#FFD166";
+                thumb3.style.backgroundColor = "#FFD166";
+
+                badgeRent.classList.add('hidden');
+                badgeSale.classList.remove('hidden');
+                actionRent.classList.add('hidden');
+                actionSale.classList.remove('hidden');
+            }
+        });
+
+        // --- LOGIKA DARK MODE ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        function updateIcons() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        updateIcons();
+
+        if(themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+                updateIcons();
+            });
+        }
+    </script>
 </body>
 </html>
