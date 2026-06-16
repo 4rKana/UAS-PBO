@@ -1,137 +1,391 @@
 <!DOCTYPE html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<html lang="id" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Login - CampShare</title>
-    <!-- Bootstrap 5 CDN + Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body {
-            background: #0a0f1c;
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-        .login-card {
-            background: #0d1425;
-            border-radius: 32px;
-            border: 1px solid #1e2a4a;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.6);
-            backdrop-filter: blur(2px);
-            padding: 2rem 1.8rem;
-            max-width: 450px;
-            width: 100%;
-            transition: 0.2s;
-        }
-        .login-card h2 {
-            color: #f0f3ff;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            margin-bottom: 0.25rem;
-        }
-        .login-card .sub {
-            color: #8a99c4;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-            border-left: 3px solid #2c4b9e;
-            padding-left: 0.75rem;
-        }
-        .form-control, .form-control:focus {
-            background: #111a2b;
-            border: 1px solid #253b60;
-            color: #eef2ff;
-            border-radius: 18px;
-            padding: 0.7rem 1rem;
-            font-size: 0.95rem;
-        }
-        .form-control:focus {
-            border-color: #2d6bcb;
-            box-shadow: 0 0 0 3px rgba(45, 107, 203, 0.25);
-            background: #0f172f;
-        }
-        .form-label {
-            font-weight: 500;
-            margin-left: 0.5rem;
-            margin-bottom: 0.4rem;
-            color: #b9c7f0;
-            font-size: 0.85rem;
-        }
-        .btn-login {
-            background: #0b2b5e;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 40px;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(95deg, #0f2b4f, #0a1c3a);
-            border: 1px solid #2b4880;
-            transition: 0.2s;
-        }
-        .btn-login:hover {
-            background: linear-gradient(95deg, #1c3e6e, #0f2850);
-            border-color: #3b68b0;
-            transform: scale(1.01);
-        }
-        .register-link {
-            color: #7f9fdf;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .register-link:hover {
-            color: #b6d0ff;
-            text-decoration: underline;
-        }
-        .brand-icon {
-            font-size: 2.8rem;
-            color: #2c6bcb;
-            background: #0b1424;
-            width: 65px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 28px;
-            margin-bottom: 1rem;
-            border: 1px solid #243961;
-        }
-        @media (max-width: 480px) {
-            .login-card { padding: 1.5rem; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CampusShare – Masuk</title>
+  <style>
+    :root {
+      --bg: #f0f2f8;
+      --card-bg: #ffffff;
+      --text: #1a1a2e;
+      --subtext: #6b7280;
+      --input-bg: #f3f4f8;
+      --input-border: #e5e7ef;
+      --input-focus: #3b5bdb;
+      --label: #374151;
+      --hint: #6b7280;
+      --tab-bg: #e8eaf2;
+      --tab-active-bg: #ffffff;
+      --tab-active-text: #1a1a2e;
+      --tab-inactive-text: #6b7280;
+      --shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --icon-btn-bg: #ffffff;
+      --icon-btn-border: #e5e7ef;
+      --btn-primary: #3b5bdb;
+      --btn-hover: #3251c4;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f1117;
+      --card-bg: #1c1f2e;
+      --text: #f0f2ff;
+      --subtext: #9ca3c8;
+      --input-bg: #262b3e;
+      --input-border: #353a52;
+      --input-focus: #5c7cfa;
+      --label: #c9cfe8;
+      --hint: #7b82a8;
+      --tab-bg: #1a1d2b;
+      --tab-active-bg: #262b3e;
+      --tab-active-text: #f0f2ff;
+      --tab-inactive-text: #7b82a8;
+      --shadow: 0 4px 32px rgba(0,0,0,0.35);
+      --icon-btn-bg: #1c1f2e;
+      --icon-btn-border: #353a52;
+      --btn-primary: #5c7cfa;
+      --btn-hover: #4a6ae0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background .25s, color .25s;
+      padding: 24px;
+    }
+
+    .dark-toggle {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1.5px solid var(--icon-btn-border);
+      background: var(--icon-btn-bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .25s, border-color .25s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+
+    .dark-toggle svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--subtext);
+      fill: none;
+      transition: stroke .25s;
+    }
+
+    .help-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #2a2a2a;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .logo-icon {
+      width: 72px;
+      height: 72px;
+      background: #3b5bdb;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(59,91,219,0.35);
+    }
+
+    .logo-icon svg {
+      width: 38px;
+      height: 38px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    .logo-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      transition: color .25s;
+    }
+
+    .logo-sub {
+      font-size: 15px;
+      color: var(--subtext);
+      margin-top: 4px;
+      transition: color .25s;
+    }
+
+    .tab-switcher {
+      display: flex;
+      background: var(--tab-bg);
+      border-radius: 999px;
+      padding: 5px;
+      gap: 0;
+      width: 340px;
+      margin-bottom: 20px;
+      transition: background .25s;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      border-radius: 999px;
+      padding: 11px 0;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--tab-inactive-text);
+      transition: background .2s, color .2s, box-shadow .2s;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+    }
+
+    .tab-btn.active {
+      background: var(--tab-active-bg);
+      color: var(--tab-active-text);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--tab-active-text);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 32px 36px 36px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      transition: background .25s, box-shadow .25s;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 8px;
+      transition: color .25s;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s, background .25s, color .25s;
+    }
+
+    .field input::placeholder { color: var(--hint); }
+    .field input:focus { border-color: var(--input-focus); }
+
+    .field-hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 7px;
+      font-size: 13px;
+      color: var(--hint);
+      transition: color .25s;
+    }
+
+    .field-hint svg {
+      width: 15px;
+      height: 15px;
+      stroke: var(--hint);
+      fill: none;
+      flex-shrink: 0;
+      transition: stroke .25s;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--btn-primary);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background .15s, transform .1s;
+      letter-spacing: .3px;
+    }
+
+    .btn-submit:hover { background: var(--btn-hover); }
+    .btn-submit:active { transform: scale(.98); }
+
+    .footer-link {
+      margin-top: 28px;
+      font-size: 14.5px;
+      color: var(--subtext);
+      transition: color .25s;
+    }
+
+    .footer-link a {
+      color: var(--btn-primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .footer-link a:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) {
+      .card { padding: 24px 20px; }
+      .tab-switcher { width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="login-card">
-    <div class="brand-icon mx-auto">
-        <i class="bi bi-box-seam"></i>
-    </div>
-    <h2 class="text-center">Masuk</h2>
-    <p class="sub text-center">CampShare — platform berbagi & sewa barang</p>
+  <!-- Dark mode toggle -->
+  <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">
+    <svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
 
-    <form th:action="@{/login}" method="post">
-        <div class="mb-3">
-            <label class="form-label"><i class="bi bi-person-circle me-1"></i> Username</label>
-            <input type="text" name="username" class="form-control" placeholder="contoh: aldi_campshare" required autofocus>
-        </div>
-        <div class="mb-4">
-            <label class="form-label"><i class="bi bi-lock-fill me-1"></i> Password</label>
-            <input type="password" name="password" class="form-control" placeholder="********" required>
-        </div>
-        <button type="submit" class="btn btn-login w-100">Login <i class="bi bi-arrow-right-circle-fill ms-1"></i></button>
-    </form>
+  <!-- Help button -->
+  <button class="help-btn">?</button>
 
-    <div class="text-center mt-4">
-        <span class="text-light-emphasis" style="color:#99a9d4;">Belum punya akun? </span>
-        <a th:href="@{/register}" class="register-link">Daftar sekarang</a>
+  <div class="container">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+          <line x1="12" y1="22.08" x2="12" y2="12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-title">CampusShare</div>
+        <div class="logo-sub">Marketplace untuk mahasiswa</div>
+      </div>
     </div>
-    <hr class="my-4" style="background-color: #1f2b46;">
-    <div class="text-center small" style="color:#4a608b;">&copy; CampShare — sharing economy</div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Tab Switcher -->
+    <div class="tab-switcher">
+      <a href="register.html" class="tab-btn">Daftar</a>
+      <a href="login.html" class="tab-btn active">Masuk</a>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+
+      <div id="formMasuk">
+        <div class="field">
+          <label class="field-label">Email Kampus</label>
+          <input type="email" id="emailInput" placeholder="nim@student.uinsgd.ac.id" />
+          <div class="field-hint">
+            <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Gunakan email kampus resmi kamu
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:24px;">
+          <label class="field-label">Password</label>
+          <input type="password" id="passInput" placeholder="••••••••" value="••••••••" />
+        </div>
+
+        <button class="btn-submit" onclick="handleLogin()">Masuk</button>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <p class="footer-link">
+      Belum punya akun? <a href="register.html">Daftar di sini</a>
+    </p>
+
+  </div>
+
+  <script>
+    // ── Dark mode ──
+    const html = document.documentElement;
+    const btn  = document.getElementById('darkToggle');
+    const moon = `<svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+    const sun  = `<svg id="sunIcon"  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+    function setTheme(theme) {
+      html.setAttribute('data-theme', theme);
+      btn.innerHTML = theme === 'dark' ? sun : moon;
+    }
+
+    const saved = localStorage.getItem('campshare-theme');
+    if (saved) {
+      setTheme(saved);
+    } else {
+      setTheme('light');
+    }
+
+    btn.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+      localStorage.setItem('campshare-theme', next);
+    });
+
+    // ── Login redirect ──
+    function handleLogin() {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+
 </body>
 </html>
