@@ -1,37 +1,49 @@
 package com.PBO2.CampShare.entity;
 
+import com.PBO2.CampShare.entity.enumeration.Role;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users") // Nama tabel yang akan muncul di phpMyAdmin
+@Table(name = "users")
 public class User {
 
-    @Id // Menandakan ini adalah Primary Key
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Agar ID nambah otomatis (1, 2, 3, dst)
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID) // Menggenerate otomatis ID berupa String unik
+    private String idUser;
 
-    @Column(nullable = false) // Kolom nama, tidak boleh kosong
-    private String nama;
+    @Column(nullable = false, unique = true)
+    private String nim;
 
-    @Column(nullable = false, unique = true) // Email tidak boleh kosong dan tidak boleh ada yang kembar
+    @Column(nullable = false)
+    private String angkatan;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false) // Password tidak boleh kosong
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "no_hp") // Kolom untuk nomor HP
-    private String noHp;
+    @Enumerated(EnumType.STRING)
+    private Role role; // Menghubungkan ke file Role.java tadi
 
-    // --- WAJIB ADA: Constructor Kosong ---
-    public User() {
-    }
+    // Constructor Kosong
+    public User() {}
 
-    // --- GETTER DAN SETTER ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // Getter dan Setter (Sesuai dengan blueprint getEmail, dll)
+    public String getIdUser() { return idUser; }
+    public void setIdUser(String idUser) { this.idUser = idUser; }
 
-    public String getNama() { return nama; }
-    public void setNama(String nama) { this.nama = nama; }
+    public String getNim() { return nim; }
+    public void setNim(String nim) { this.nim = nim; }
+
+    public String getAngkatan() { return angkatan; }
+    public void setAngkatan(String angkatan) { this.angkatan = angkatan; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -39,6 +51,6 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getNoHp() { return noHp; }
-    public void setNoHp(String noHp) { this.noHp = noHp; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }
