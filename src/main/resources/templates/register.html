@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Daftar - CampShare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: #070c18;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+            font-family: 'Inter', system-ui, 'Segoe UI', sans-serif;
+        }
+        .register-card {
+            background: #0f172f;
+            border-radius: 38px;
+            border: 1px solid #1e3458;
+            padding: 2rem 1.8rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
+        }
+        .register-card h2 {
+            color: #ecf3ff;
+            font-weight: 700;
+        }
+        .form-control {
+            background: #0a1122;
+            border: 1px solid #253e68;
+            color: #eef3ff;
+            border-radius: 24px;
+            padding: 0.7rem 1rem;
+        }
+        .form-control:focus {
+            background: #0c142c;
+            border-color: #3c79e0;
+            box-shadow: 0 0 0 3px rgba(60, 121, 224, 0.3);
+        }
+        .btn-register {
+            background: linear-gradient(100deg, #0a2348, #051b3a);
+            border: 1px solid #2e4c88;
+            border-radius: 40px;
+            padding: 0.75rem;
+            font-weight: 600;
+            color: white;
+            transition: 0.2s;
+        }
+        .btn-register:hover {
+            background: linear-gradient(100deg, #14325c, #092349);
+            border-color: #4a76c2;
+            letter-spacing: 0.3px;
+        }
+        .login-link {
+            color: #87abf0;
+            text-decoration: none;
+        }
+        .login-link:hover {
+            color: #c2dcff;
+        }
+        .label-icon {
+            margin-left: 0.5rem;
+            color: #a2b7e6;
+        }
+        hr {
+            background-color: #263a60;
+        }
+        .brand-icon-small {
+            background: #0f1a32;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            border: 1px solid #2a4680;
+            font-size: 1.8rem;
+            color: #3d7ad9;
+        }
+    </style>
+</head>
+<body>
+<div class="register-card">
+    <div class="brand-icon-small mx-auto">
+        <i class="bi bi-pencil-square"></i>
+    </div>
+    <h2 class="text-center">Bergabung</h2>
+    <p class="text-center mb-4" style="color:#98aadb;">Mulai berbagi barang dengan mudah</p>
+
+    <form th:action="@{/register}" method="post">
+        <div class="mb-3">
+            <label class="form-label" style="color:#ffffff;" ><i class="bi bi-person-badge me-1"></i> Nama lengkap</label>
+            <input type="text" name="nama" class="form-control" placeholder="Nama sesuai KTP" required>
+        </div>
+        <div class="mb-3"> 
+            <label class="form-label" style="color:#ffffff;" ><i class="bi bi-envelope-fill"></i> Email</label>
+            <input type="email" name="email" class="form-control" placeholder="email@example.com" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" style="color:#ffffff;" ><i class="bi bi-person-circle"></i> Username</label>
+            <input type="text" name="username" class="form-control" placeholder="username unik" required>
+        </div>
+        <div class="mb-4">
+            <label class="form-label" style="color:#ffffff;" ><i class="bi bi-shield-lock-fill"></i> Password</label>
+            <input type="password" name="password" class="form-control" placeholder="min. 6 karakter" required>
+        </div>
+        <button type="submit" class="btn btn-register w-100"><i class="bi bi-check-circle me-1"></i> Daftar Sekarang</button>
+    </form>
+
+    <div class="text-center mt-4">
+        <span style="color:#ffffff;">Sudah punya akun? </span>
+        <a th:href="@{/login}" class="login-link">Masuk ke dashboard</a>
+    </div>
+    <hr class="my-3">
+    <div class="text-center small" style="color:#3b5485;">Dengan mendaftar, kamu setuju aturan CampShare</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
