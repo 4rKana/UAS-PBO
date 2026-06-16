@@ -1,273 +1,246 @@
 <!DOCTYPE html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Upload Barang | CampShare</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusShare - List an Item</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6', // Biru yang lebih cerah
+                        sale: '#ff6b00',    // Oranye For Sale
+                        rent: '#00a843',    // Hijau For Rent
+                        darkbg: '#18181b',  // Background utama dark mode
+                        cardbg: '#27272a',  // Background elemen/card dark mode
+                        darkborder: '#3f3f46' // Border dark mode
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #010409;
-            color: #eef3ff;
-            font-family: 'Segoe UI', system-ui, Roboto, sans-serif;
-        }
-        
-        /* Navbar */
-        .navbar-dark.bg-navy {
-            background: #071126 !important;
-            border-bottom: 1px solid #1e3462;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            letter-spacing: -0.3px;
-        }
-        .brand-icon {
-            background: #13233f;
-            padding: 6px 10px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            color: #7ba3f0;
-        }
-        
-        /* Card Container */
-        .card-barang {
-            background: #0d1429;
-            border: 1px solid #1e2d51;
-            border-radius: 16px;
-            backdrop-filter: blur(2px);
-            overflow: hidden;
-        }
-        
-        /* Typography & Colors */
-        h1.section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-        .text-muted-custom {
-            color: #9bb9ff;
-        }
-        .text-body-custom {
-            color: #bfcef5;
-        }
-
-        /* Forms */
-        .form-control-dark, .form-select-dark {
-            background-color: #071126;
-            border: 1px solid #1e2d51;
-            color: #eef3ff;
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-        }
-        .form-control-dark:focus, .form-select-dark:focus {
-            background-color: #0a1931;
-            border-color: #3e7adb;
-            color: #eef3ff;
-            box-shadow: 0 0 0 0.25rem rgba(62, 122, 219, 0.25);
-        }
-        .form-control-dark::placeholder {
-            color: #556b9b;
-        }
-        
-        /* Custom Select Icon (Panah Dropdown) */
-        .form-select-dark {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239bb9ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-        }
-
-        /* Drag & Drop Area */
-        .upload-area {
-            border: 2px dashed #2f4d86;
-            border-radius: 12px;
-            background-color: #0a1020;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .upload-area:hover {
-            background-color: #0d162b;
-            border-color: #3e7adb;
-        }
-
-        /* Radio Buttons */
-        .form-check-input:checked {
-            background-color: #3e7adb;
-            border-color: #3e7adb;
-        }
-
-        /* Progress Line */
-        .progress-line-container {
-            height: 4px;
-            background: #1e2d51;
-            border-radius: 2px;
-            width: 100%;
-            overflow: hidden;
-        }
-        .progress-line-bar {
-            height: 100%;
-            background: #eef3ff; /* Garis menyala */
-            width: 100%; /* Karena cuma 1 step, kita isi full */
-        }
-
-        /* Buttons */
-        .btn-outline-light-custom {
-            border: 1px solid #2f4d86;
-            border-radius: 40px;
-            color: #d3e2ff;
-            padding: 0.4rem 1.2rem;
-            font-size: 0.9rem;
-            background: transparent;
-            transition: 0.15s;
-        }
-        .btn-outline-light-custom:hover {
-            background: #1f3c6e;
-            border-color: #5f8bdf;
-            color: white;
-        }
-        .btn-action {
-            background-color: #3e7adb; 
-            color: white;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            padding: 0.6rem 1.5rem;
-            transition: background 0.2s;
-        }
-        .btn-action:hover {
-            background-color: #2b5ca8;
-            color: white;
-        }
-        
-        a.back-link {
-            color: #eef3ff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-        a.back-link:hover {
-            color: #9bb9ff;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
 
-<nav class="navbar navbar-dark bg-navy sticky-top">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/katalog}">
-            <i class="bi bi-box-seam-fill me-1" style="color:#3e7adb;"></i> CampShare
-        </a>
-        <div class="d-flex gap-2">
-            <span class="brand-icon"><i class="bi bi-person-circle me-1"></i> <span th:text="${#authentication.name} ?: 'Aulia'">User</span></span>
-            <a th:href="@{/logout}" class="btn btn-sm btn-outline-light-custom"><i class="bi bi-box-arrow-right"></i></a>
-        </div>
-    </div>
-</nav>
-
-<main class="container my-4 my-md-5 flex-grow-1" style="max-width: 800px;">
-    
-    <div class="mb-4">
-        <a th:href="@{/katalog}" class="back-link">
-            <i class="bi bi-arrow-left me-2"></i> Back to catalog
-        </a>
-    </div>
-
-    <div class="mb-4">
-        <h1 class="section-title mb-1">List Your Item</h1>
-        <p class="text-body-custom mb-4">Share your items with the community</p>
-        
-        <div class="d-flex justify-content-between text-muted-custom small mb-2 fw-semibold">
-            <span>Step 1 of 1</span>
-            <span>Item Details</span>
-        </div>
-        <div class="progress-line-container mb-4">
-            <div class="progress-line-bar"></div>
-        </div>
-    </div>
-
-    <div class="card-barang p-4 p-md-5">
-        <form action="#" th:action="@{/barang/create}" method="post" enctype="multipart/form-data">
+    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             
-            <div class="mb-4">
-                <label class="form-label small fw-semibold text-body-custom">Item Photos</label>
-                <div class="upload-area text-center py-5 px-3">
-                    <i class="bi bi-upload fs-1 text-muted-custom mb-3 d-block"></i>
-                    <p class="mb-1 text-white fw-medium">Drag and drop your photos here, or click to browse</p>
-                    <p class="small text-muted-custom mb-4">PNG, JPG up to 10MB each</p>
-                    <button type="button" class="btn btn-outline-light-custom bg-transparent">Choose Files</button>
-                    <input type="file" id="fileUpload" class="d-none" accept="image/png, image/jpeg" multiple>
+            <div class="flex items-center gap-4 flex-1">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
+                </div>
+
+                <div class="hidden md:block w-full max-w-md relative ml-4">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Search items, books, equipment...">
                 </div>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label small fw-semibold text-body-custom">Item Name</label>
-                <input type="text" class="form-control form-control-dark" placeholder="e.g., Calculus Textbook 9th Edition" required>
+            <div class="flex items-center gap-5">
+                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Catalog</a>
+                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Requests</a>
+                    <a href="form-barang.html" class="text-primary bg-blue-50 dark:bg-blue-900/20 dark:text-primary px-4 py-2 rounded-xl font-semibold transition-all">Upload</a>
+                </nav>
+                
+                <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
+                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
+                        <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+                        <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                    <button class="p-2 text-gray-400 hover:text-gray-500 relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                    </button>
+                    <button class="p-2 text-gray-400 hover:text-gray-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-10">
+        
+        <div class="mb-10">
+            <h1 class="text-[28px] font-bold text-gray-900 dark:text-white">List an item</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-[15px] mt-1">Share or sell your items to fellow students</p>
+        </div>
+
+        <div class="mb-12 relative px-4">
+            <div class="flex items-center justify-between">
+                <div class="absolute left-10 right-10 top-3.5 h-0.5 bg-gray-200 dark:bg-darkborder -z-10"></div>
+                <div id="step-line" class="absolute left-10 top-3.5 h-0.5 bg-primary -z-10 transition-all duration-500" style="width: 66%;"></div>
+                
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
+                    <span class="text-xs font-semibold text-gray-900 dark:text-gray-300">Photos</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
+                    <span class="text-xs font-semibold text-gray-900 dark:text-gray-300">Details</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-7 h-7 rounded-full border-2 border-primary bg-white dark:bg-darkbg text-primary flex items-center justify-center text-[13px] font-bold">3</div>
+                    <span class="text-xs font-semibold text-gray-900 dark:text-gray-300">Pricing</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-7 h-7 rounded-full border-2 border-gray-300 dark:border-darkborder bg-white dark:bg-darkbg text-gray-400 flex items-center justify-center text-[13px] font-bold">4</div>
+                    <span class="text-xs font-semibold text-gray-400 dark:text-gray-500">Publish</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-7">
+            
+            <div class="border-2 border-dashed border-gray-200 dark:border-darkborder rounded-2xl p-10 text-center bg-white dark:bg-cardbg hover:border-primary/50 transition-all">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 dark:bg-darkbg mb-4 border border-transparent dark:border-darkborder/50">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <h3 class="text-[15px] font-semibold text-gray-900 dark:text-white mb-1">Drag & drop photos here</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-5">PNG, JPG up to 10MB · Max 5 photos</p>
+                <button class="px-5 py-2 border border-gray-300 dark:border-darkborder rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">
+                    Choose Files
+                </button>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label small fw-semibold text-body-custom">Category</label>
-                <select class="form-select form-select-dark" required>
-                    <option value="" selected disabled>Select a category</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="books">Books & Textbooks</option>
-                    <option value="stationery">Stationery</option>
-                    <option value="services">Tools & Equipment</option>
-                    <option value="other">Other</option>
+            <div>
+                <label class="block text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-2">Item Name</label>
+                <input type="text" placeholder="e.g. Casio FX-991EX Scientific Calculator" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-[15px] focus:ring-2 focus:ring-primary/30 outline-none dark:text-white transition-all">
+            </div>
+
+            <div>
+                <label class="block text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                <textarea rows="4" placeholder="Describe the item's condition, included accessories, pickup location..." 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-[15px] focus:ring-2 focus:ring-primary/30 outline-none dark:text-white resize-none transition-all"></textarea>
+            </div>
+
+            <div class="relative">
+                <label class="block text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                <select class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-[15px] focus:ring-2 focus:ring-primary/30 outline-none dark:text-white cursor-pointer transition-all">
+                    <option>Electronics</option>
+                    <option>Books & Textbooks</option>
+                    <option>Stationery</option>
+                    <option>Dorm Furniture</option>
+                    <option>Clothing</option>
                 </select>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label small fw-semibold text-body-custom">Description</label>
-                <textarea class="form-control form-control-dark" rows="4" placeholder="Describe your item's condition, features, and any other relevant details..." required></textarea>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label small fw-semibold text-body-custom d-block mb-2">Listing Type</label>
-                <div class="form-check form-check-inline me-4">
-                    <input class="form-check-input custom-radio" type="radio" name="listingType" id="typeSell" value="sell" checked>
-                    <label class="form-check-label text-white" for="typeSell">Sell</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input custom-radio" type="radio" name="listingType" id="typeRent" value="rent">
-                    <label class="form-check-label text-white" for="typeRent">Rent</label>
+                <div class="pointer-events-none absolute right-4 bottom-4 text-gray-400 dark:text-gray-500">
+                    <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+                    </svg>
                 </div>
             </div>
 
-            <div class="mb-5">
-                <label class="form-label small fw-semibold text-body-custom">Price (IDR)</label>
-                <input type="number" class="form-control form-control-dark" placeholder="150000" required>
+            <div>
+                <label class="block text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-2">Listing Type</label>
+                <div class="flex p-1 bg-gray-100 dark:bg-darkbg rounded-xl border border-gray-200 dark:border-darkborder">
+                    <button type="button" id="btn-sale" class="flex-1 py-2.5 rounded-lg text-[14px] font-bold transition-all bg-sale text-white shadow-md">
+                        For Sale
+                    </button>
+                    <button type="button" id="btn-rent" class="flex-1 py-2.5 rounded-lg text-[14px] font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                        For Rent
+                    </button>
+                </div>
             </div>
 
-            <div class="d-flex justify-content-end gap-3 mt-2 border-top border-secondary-subtle pt-4" style="border-color: #1e3462 !important;">
-                <button type="button" class="btn btn-outline-light-custom text-white" style="border-color: #4a5a75;">Cancel</button>
-                <button type="submit" class="btn btn-action">Publish Listing</button>
+            <div id="section-sale" class="bg-orange-50/50 dark:bg-[#2c1f16] border border-orange-100 dark:border-orange-900/30 rounded-2xl p-6 transition-all">
+                <label class="block text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-2">Selling Price (Rp)</label>
+                <input type="number" placeholder="e.g. 120000" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-darkborder bg-white dark:bg-darkbg text-[15px] focus:ring-2 focus:ring-sale/30 outline-none dark:text-white transition-all">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-3 flex items-center gap-1.5"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg> Set a fair price. Check similar listings for reference.</p>
             </div>
 
-        </form>
+            <div id="section-rent" class="hidden bg-green-50/50 dark:bg-[#14291f] border border-green-100 dark:border-green-900/30 rounded-2xl p-6 transition-all">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-2">Tariff per Day (Rp)</label>
+                        <input type="number" placeholder="e.g. 15000" 
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-darkborder bg-white dark:bg-darkbg text-[15px] focus:ring-2 focus:ring-rent/30 outline-none dark:text-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-2">Max Duration (days)</label>
+                        <input type="number" placeholder="e.g. 14" 
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-darkborder bg-white dark:bg-darkbg text-[15px] focus:ring-2 focus:ring-rent/30 outline-none dark:text-white transition-all">
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-3 flex items-center gap-1.5"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg> Longer max durations attract more borrowers.</p>
+            </div>
+
+            <button class="w-full py-4 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-primary/20 transition-all text-base mt-4">
+                Publish to Catalog
+            </button>
+
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 right-6 w-9 h-9 rounded-full bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-md flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3f3f46] transition-colors">
+        ?
     </div>
 
-</main>
+    <script>
+        // --- LOGIKA FOR SALE / FOR RENT TOGGLE ---
+        const btnSale = document.getElementById('btn-sale');
+        const btnRent = document.getElementById('btn-rent');
+        const sectionSale = document.getElementById('section-sale');
+        const sectionRent = document.getElementById('section-rent');
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const uploadArea = document.querySelector('.upload-area');
-        const fileInput = document.getElementById('fileUpload');
-        const chooseBtn = uploadArea.querySelector('button');
-
-        // Kalau kotak atau tombol diklik, buka file explorer
-        uploadArea.addEventListener('click', () => fileInput.click());
-        chooseBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Mencegah trigger double
-            fileInput.click();
+        btnSale.addEventListener('click', () => {
+            btnSale.className = "flex-1 py-2.5 rounded-lg text-[14px] font-bold transition-all bg-sale text-white shadow-md";
+            btnRent.className = "flex-1 py-2.5 rounded-lg text-[14px] font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
+            sectionSale.classList.remove('hidden');
+            sectionRent.classList.add('hidden');
         });
-    });
-</script>
+
+        btnRent.addEventListener('click', () => {
+            btnRent.className = "flex-1 py-2.5 rounded-lg text-[14px] font-bold transition-all bg-rent text-white shadow-md";
+            btnSale.className = "flex-1 py-2.5 rounded-lg text-[14px] font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
+            sectionRent.classList.remove('hidden');
+            sectionSale.classList.add('hidden');
+        });
+
+        // --- LOGIKA DARK MODE ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        function updateIcons() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        updateIcons();
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+            updateIcons();
+        });
+    </script>
 </body>
 </html>
