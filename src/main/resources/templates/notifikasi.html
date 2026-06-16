@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusShare - Notifikasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6', 
+                        sale: '#ff6b00',    
+                        rent: '#00a843',    
+                        darkbg: '#18181b',  
+                        cardbg: '#27272a',  
+                        darkborder: '#3f3f46' 
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen flex flex-col transition-all duration-300 relative">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <div class="flex items-center gap-4 flex-1">
+                <!-- LOGO -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
+                </div>
+
+                <!-- KOLOM PENCARIAN -->
+                <div class="hidden md:block w-full max-w-md relative ml-4">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-400 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
+                </div>
+            </div>
+
+            <!-- MENU NAVIGASI UTAMA -->
+            <div class="flex items-center gap-5">
+                <nav class="hidden lg:flex items-center gap-1 text-[15px] font-medium">
+                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
+                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
+                    <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
+                </nav>
+                
+                <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
+                    <!-- TOMBOL DARK MODE -->
+                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
+                        <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+                        <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                    <!-- NOTIFIKASI AKTIF -->
+                    <button class="p-2 text-primary bg-blue-50 dark:bg-blue-900/20 rounded-full relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                    </button>
+                    <!-- REFRESH -->
+                    <button class="p-2 text-gray-400 hover:text-gray-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN KONTEN: DAFTAR NOTIFIKASI -->
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-1">
+        
+        <div class="mb-8">
+            <h1 class="text-[28px] font-bold text-gray-900 dark:text-white tracking-tight">Notifikasi Terbaru</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Pantau aktivitas permintaan, peminjaman, dan pembelian barangmu di sini.</p>
+        </div>
+
+        <div class="space-y-4">
+            
+            <!-- NOTIFIKASI 1: Meminta Meminjam (BARU / ADA TITIK MERAH) -->
+            <div class="bg-blue-50/40 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-6 transition-all shadow-sm relative">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex gap-4">
+                        <!-- Foto Profil Ringkas -->
+                        <div class="w-11 h-11 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-[15px] shrink-0">
+                            FM
+                        </div>
+                        <div>
+                            <!-- Nama Di-bold -->
+                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Farhan Maulana</h2>
+                            <!-- Jurusan & Angkatan -->
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Teknik Informatika · Angkatan 2023</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Kumpulan Info Kanan (Waktu & Titik Merah Baru) -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-blue-600 dark:text-primary">Baru saja</span>
+                        <!-- Titik Merah Indikator Baru -->
+                        <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                    </div>
+                </div>
+                <!-- Pesan Aksi Permintaan Pinjam -->
+                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed ml-15 pl-15">
+                    mengirimkan pesan dan <span class="font-semibold text-gray-900 dark:text-white">meminta izin untuk meminjam barang Anda</span> (Stand Laptop Aluminium).
+                </p>
+            </div>
+
+            <!-- NOTIFIKASI 2: Meminta Membeli (BARU / ADA TITIK MERAH) -->
+            <div class="bg-blue-50/40 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-6 transition-all shadow-sm relative">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex gap-4">
+                        <div class="w-11 h-11 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center font-bold text-[15px] shrink-0">
+                            RP
+                        </div>
+                        <div>
+                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Rizky Pratama</h2>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Sistem Informasi · Angkatan 2022</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-blue-600 dark:text-primary">2 jam yang lalu</span>
+                        <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                    </div>
+                </div>
+                <!-- Pesan Aksi Permintaan Beli -->
+                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
+                    tertarik dengan postingan Anda dan <span class="font-semibold text-gray-900 dark:text-white">meminta izin untuk membeli barang Anda</span> (Kalkulator Ilmiah Casio).
+                </p>
+            </div>
+
+            <!-- NOTIFIKASI 3: Request Diterima (LAMA / TIDAK ADA TITIK MERAH) -->
+            <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 transition-all shadow-sm">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex gap-4">
+                        <div class="w-11 h-11 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 flex items-center justify-center font-bold text-[15px] shrink-0">
+                            NS
+                        </div>
+                        <div>
+                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Nadhira Salsabila</h2>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Kimia · Angkatan 2023</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Kemarin</span>
+                </div>
+                <!-- Pesan Status Diterima -->
+                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
+                    Kabar baik! <span class="font-semibold text-green-600 dark:text-green-400">Request diterima</span>. Permintaan Anda untuk meminjam Buku Teks Kimia Organik telah disetujui pemiliknya. Silakan atur lokasi COD via chat.
+                </p>
+            </div>
+
+            <!-- NOTIFIKASI 4: Request Ditolak (LAMA / TIDAK ADA TITIK MERAH) -->
+            <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 transition-all shadow-sm">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex gap-4">
+                        <div class="w-11 h-11 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 flex items-center justify-center font-bold text-[15px] shrink-0">
+                            MI
+                        </div>
+                        <div>
+                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Maya Indah</h2>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Manajemen · Angkatan 2022</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">3 hari yang lalu</span>
+                </div>
+                <!-- Pesan Status Ditolak -->
+                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
+                    Mohon maaf, <span class="font-semibold text-red-500 dark:text-red-400">request ditolak</span>. Permintaan penawaran Anda untuk barang Casio FX-991EX tidak dapat diproses karena barang sudah dipesan mahasiswa lain.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FLOATING BUTTON (?) -->
+    <div class="fixed bottom-6 right-6 w-9 h-9 rounded-full bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-md flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3f3f46] transition-colors z-50">
+        ?
+    </div>
+
+    <!-- SCRIPT FOR DARK MODE -->
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        function updateIcons() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        updateIcons();
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+            updateIcons();
+        });
+    </script>
+</body>
+</html>
