@@ -1,14 +1,14 @@
 package com.PBO2.CampShare.entity;
 
-    import com.PBO2.CampShare.entity.enumeration.StatusRequest;
+import com.PBO2.CampShare.entity.enumeration.StatusRequest;
 
-    import jakarta.persistence.Entity;
-    import jakarta.persistence.EnumType;
-    import jakarta.persistence.Enumerated;
-    import jakarta.persistence.GeneratedValue;
-    import jakarta.persistence.GenerationType;
-    import jakarta.persistence.Id;
-    import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "request_barang")
@@ -20,7 +20,7 @@ public class RequestBarang {
 
     private String namaBarang;
     private String deskripsi;
-
+    
     @Enumerated(EnumType.STRING)
     private StatusRequest statusRequest;
 
