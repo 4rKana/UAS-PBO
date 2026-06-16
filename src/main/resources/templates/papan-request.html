@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Papan Request | CampShare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #010409;
+            color: #eef3ff;
+            font-family: 'Segoe UI', system-ui, Roboto, sans-serif;
+        }
+        
+        /* Navbar */
+        .navbar-dark.bg-navy {
+            background: #071126 !important;
+            border-bottom: 1px solid #1e3462;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.3px;
+        }
+        .brand-icon {
+            background: #13233f;
+            padding: 6px 10px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #7ba3f0;
+        }
+        
+        /* Card Barang (Request Box) */
+        .card-barang {
+            background: #0d1429;
+            border: 1px solid #1e2d51;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(2px);
+            overflow: hidden;
+        }
+        .card-barang:hover {
+            border-color: #3060b0;
+            background: #101a33;
+        }
+        
+        /* Badges */
+        .badge-status {
+            background: #152842;
+            color: #9bb9ff;
+            border-radius: 40px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            border: 1px solid #1e3462;
+        }
+
+        /* Buttons */
+        .btn-outline-light-custom {
+            border: 1px solid #2f4d86;
+            border-radius: 40px;
+            color: #d3e2ff;
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+            background: transparent;
+            transition: 0.15s;
+        }
+        .btn-outline-light-custom:hover {
+            background: #1f3c6e;
+            border-color: #5f8bdf;
+            color: white;
+        }
+        
+        .btn-action {
+            background-color: #3e7adb; /* Biru sesuai referensi tombol Post/Offer */
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            transition: background 0.2s;
+        }
+        .btn-action:hover {
+            background-color: #2b5ca8;
+            color: white;
+        }
+
+        .btn-offer {
+            background-color: transparent;
+            color: #6b94f0;
+            font-weight: 600;
+            border: 1px solid #3e7adb;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .btn-offer:hover {
+            background-color: #3e7adb;
+            color: white;
+        }
+
+        /* Typography */
+        h1.section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .text-muted-custom {
+            color: #9bb9ff;
+        }
+        .text-body-custom {
+            color: #bfcef5;
+        }
+        .text-accent {
+            color: #6ee7b7; /* Hijau terang untuk harga */
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-dark bg-navy sticky-top">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/katalog}">
+            <i class="bi bi-box-seam-fill me-1" style="color:#3e7adb;"></i> CampShare
+        </a>
+        <div class="d-flex gap-2">
+            <span class="brand-icon"><i class="bi bi-person-circle me-1"></i> <span th:text="${#authentication.name} ?: 'Aulia'">User</span></span>
+            <a th:href="@{/logout}" class="btn btn-sm btn-outline-light-custom"><i class="bi bi-box-arrow-right"></i></a>
+        </div>
+    </div>
+</nav>
+
+<main class="container my-4 my-md-5 flex-grow-1" style="max-width: 900px;">
+    
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
+        <div>
+            <h1 class="section-title mb-2">What do you need?</h1>
+            <p class="text-body-custom mb-0">Browse student requests or post your own</p>
+        </div>
+        <a href="#" class="btn btn-action shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Post a New Request
+        </a>
+    </div>
+
+    <div class="d-flex flex-column gap-4">
+        
+        <div class="card-barang p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                <div class="w-100">
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                        <h4 class="fw-bold mb-0 text-white">Linear Algebra Textbook</h4>
+                        <span class="badge-status">Cohort 2025</span>
+                    </div>
+                    <div class="small text-muted-custom mb-3">
+                        Posted by Andi Pratama &bull; Jun 7, 2026
+                    </div>
+                    <p class="text-body-custom mb-4" style="line-height: 1.6;">
+                        Looking for Howard Anton's Elementary Linear Algebra, 11th or 12th edition. Preferably with solutions manual.
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <span class="small text-muted-custom me-2">Budget Range:</span>
+                        <span class="fw-bold text-accent">Rp 100.000 - Rp 200.000</span>
+                    </div>
+                </div>
+                <button class="btn btn-offer text-nowrap mt-2 mt-md-0">
+                    Offer My Item
+                </button>
+            </div>
+        </div>
+
+        <div class="card-barang p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                <div class="w-100">
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                        <h4 class="fw-bold mb-0 text-white">Graphics Tablet (Wacom or similar)</h4>
+                        <span class="badge-status">Cohort 2024</span>
+                    </div>
+                    <div class="small text-muted-custom mb-3">
+                        Posted by Lisa Andriani &bull; Jun 6, 2026
+                    </div>
+                    <p class="text-body-custom mb-4" style="line-height: 1.6;">
+                        Need to rent a graphics tablet for a semester-long design project. Medium size preferred.
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <span class="small text-muted-custom me-2">Budget Range:</span>
+                        <span class="fw-bold text-accent">Rp 50.000 - Rp 100.000</span>
+                    </div>
+                </div>
+                <button class="btn btn-offer text-nowrap mt-2 mt-md-0">
+                    Offer My Item
+                </button>
+            </div>
+        </div>
+
+        <div class="card-barang p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                <div class="w-100">
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                        <h4 class="fw-bold mb-0 text-white">Multimeter (Digital)</h4>
+                        <span class="badge-status">Cohort 2023</span>
+                    </div>
+                    <div class="small text-muted-custom mb-3">
+                        Posted by Rudi Hermawan &bull; Jun 5, 2026
+                    </div>
+                    <p class="text-body-custom mb-4" style="line-height: 1.6;">
+                        Need a quality multimeter for electronics project. Auto-ranging preferred. Can rent or buy.
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <span class="small text-muted-custom me-2">Budget Range:</span>
+                        <span class="fw-bold text-accent">Rp 150.000 - Rp 500.000</span>
+                    </div>
+                </div>
+                <button class="btn btn-offer text-nowrap mt-2 mt-md-0">
+                    Offer My Item
+                </button>
+            </div>
+        </div>
+
+        <div class="card-barang p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                <div class="w-100">
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                        <h4 class="fw-bold mb-0 text-white">Statistical Analysis Software License</h4>
+                        <span class="badge-status">Cohort 2025</span>
+                    </div>
+                    <div class="small text-muted-custom mb-3">
+                        Posted by Nina Safitri &bull; Jun 4, 2026
+                    </div>
+                    <p class="text-body-custom mb-4" style="line-height: 1.6;">
+                        Looking for SPSS or Minitab license/access for one semester. For thesis data analysis.
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <span class="small text-muted-custom me-2">Budget Range:</span>
+                        <span class="fw-bold text-accent">Rp 200.000 - Rp 500.000</span>
+                    </div>
+                </div>
+                <button class="btn btn-offer text-nowrap mt-2 mt-md-0">
+                    Offer My Item
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div th:if="${listRequest != null and listRequest.empty}" class="alert alert-dark text-center mt-4" style="background:#111c31; border-color:#2e4570; color: #9bb9ff;">
+        <i class="bi bi-inbox fs-4 d-block mb-2"></i> Belum ada request dari mahasiswa lain.
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
