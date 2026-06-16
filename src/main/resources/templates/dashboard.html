@@ -1,213 +1,809 @@
 <!DOCTYPE html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<html lang="id" class="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Dashboard | CampShare</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusShare – Jelajah Katalog</title>
+
+    <!-- Tailwind + konfigurasi -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        sale: '#ff6b00',
+                        rent: '#00a843',
+                        darkbg: '#18181b',
+                        cardbg: '#27272a',
+                        darkborder: '#3f3f46'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
     <style>
-        * {
+        /* ── reset & dasar ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
+
         body {
-            background: #010409;
-            color: #eef3ff;
-            font-family: 'Segoe UI', system-ui, Roboto, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #f5f6f8;
+            color: #1a1a2e;
+            transition: background 0.25s ease, color 0.25s ease;
         }
-        /* navbar gelap biru dongker */
-        .navbar-dark.bg-navy {
-            background: #071126 !important;
-            border-bottom: 1px solid #1e3462;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+        /* ── MAIN (konten lama) ── */
+        main {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 36px 32px 60px;
         }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            letter-spacing: -0.3px;
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 24px;
         }
-        .brand-icon {
-            background: #13233f;
-            padding: 6px 10px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            color: #7ba3f0;
+
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1a1a2e;
+            line-height: 1.2;
+            transition: color 0.2s;
         }
-        .card-barang {
-            background: #0d1429;
-            border: 1px solid #1e2d51;
-            border-radius: 28px;
-            transition: all 0.2s ease;
-            backdrop-filter: blur(2px);
+
+        .page-header p {
+            font-size: 14px;
+            color: #888;
+            margin-top: 3px;
+            transition: color 0.2s;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-filter {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            border: 1.5px solid #dde1ef;
+            background: #fff;
+            border-radius: 10px;
+            padding: 7px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: border-color .12s, background .2s, color .2s;
+        }
+
+        .btn-filter:hover {
+            border-color: #3b5bdb;
+        }
+
+        .btn-filter svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .sort-select {
+            border: 1.5px solid #dde1ef;
+            border-radius: 10px;
+            padding: 7px 30px 7px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            appearance: none;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+            cursor: pointer;
+            outline: none;
+            transition: background .2s, border-color .2s, color .2s;
+        }
+
+        /* ── TABS ── */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .tab {
+            padding: 7px 16px;
+            border-radius: 999px;
+            border: 1.5px solid #dde1ef;
+            background: #fff;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+            transition: all .13s;
+        }
+
+        .tab:hover {
+            border-color: #3b5bdb;
+            color: #3b5bdb;
+        }
+
+        .tab.active {
+            background: #3b5bdb;
+            border-color: #3b5bdb;
+            color: #fff;
+        }
+
+        /* ── GRID ── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+            transition: transform .18s, box-shadow .18s, background .25s, border-color .25s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .10);
+        }
+
+        .card-img {
+            position: relative;
+            width: 100%;
+            height: 200px;
             overflow: hidden;
         }
-        .card-barang:hover {
-            transform: translateY(-4px);
-            border-color: #3060b0;
-            background: #101a33;
-            box-shadow: 0 15px 30px -12px #00000066;
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
-        .badge-status {
-            background: #152842;
-            color: #9bb9ff;
-            border-radius: 40px;
-            padding: 0.3rem 0.9rem;
-            font-size: 0.7rem;
-            font-weight: 500;
+
+        .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .3px;
         }
-        .btn-outline-light-custom {
-            border: 1px solid #2f4d86;
-            border-radius: 40px;
-            color: #d3e2ff;
-            padding: 0.3rem 1rem;
-            font-size: 0.8rem;
-            background: transparent;
-            transition: 0.15s;
+
+        .badge-jual {
+            background: #fa5252;
+            color: #fff;
         }
-        .btn-outline-light-custom:hover {
-            background: #1f3c6e;
-            border-color: #5f8bdf;
-            color: white;
+        .badge-sewa {
+            background: #12b886;
+            color: #fff;
         }
-        .footer-dashboard {
-            background: #03070f;
-            color: #556b9b;
-            border-top: 1px solid #152540;
+
+        .card-body {
+            padding: 16px 18px 18px;
         }
-        h1.section-title {
-            font-size: 1.7rem;
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            transition: color 0.2s;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .tag-year {
+            display: inline-block;
+            background: #eef0fb;
+            color: #3b5bdb;
+            font-size: 12px;
             font-weight: 600;
-            background: linear-gradient(135deg, #d6e6ff, #8fb0f0);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            padding: 3px 10px;
+            border-radius: 999px;
+            transition: background 0.2s, color 0.2s;
         }
-        @media (max-width: 576px) {
-            .card-barang {
-                margin-bottom: 0.75rem;
+
+        .tag-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .tag-status.available {
+            background: #e6fcf5;
+            color: #12b886;
+            border: 1.5px solid #12b886;
+        }
+
+        .tag-status.unavailable {
+            background: #fff5f5;
+            color: #fa5252;
+            border: 1.5px solid #fa5252;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .price {
+            font-size: 17px;
+            font-weight: 800;
+            color: #3b5bdb;
+            transition: color 0.2s;
+        }
+
+        .seller {
+            font-size: 13px;
+            color: #888;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── DARK MODE ── */
+        html.dark body {
+            background: #18181b;
+            color: #e5e5e5;
+        }
+
+        html.dark .page-header h1 {
+            color: #fff;
+        }
+
+        html.dark .page-header p {
+            color: #9ca3af;
+        }
+
+        html.dark .btn-filter {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #ddd;
+        }
+
+        html.dark .btn-filter:hover {
+            border-color: #60a5fa;
+        }
+
+        html.dark .sort-select {
+            background: #27272a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+            border-color: #3f3f46;
+            color: #ddd;
+        }
+
+        html.dark .tab {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #aaa;
+        }
+
+        html.dark .tab:hover {
+            border-color: #60a5fa;
+            color: #93c5fd;
+        }
+
+        html.dark .tab.active {
+            background: #3b5bdb;
+            border-color: #3b5bdb;
+            color: #fff;
+        }
+
+        html.dark .card {
+            background: #27272a;
+            border-color: #3f3f46;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .4);
+        }
+
+        html.dark .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
+        }
+
+        html.dark .card-title {
+            color: #fff;
+        }
+
+        html.dark .tag-year {
+            background: #3f3f46;
+            color: #93c5fd;
+        }
+
+        html.dark .tag-status.available {
+            background: #1a3a2a;
+            color: #4ade80;
+            border-color: #4ade80;
+        }
+
+        html.dark .tag-status.unavailable {
+            background: #3a1a1a;
+            color: #f87171;
+            border-color: #f87171;
+        }
+
+        html.dark .price {
+            color: #60a5fa;
+        }
+
+        html.dark .seller {
+            color: #9ca3af;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-            .section-title {
-                font-size: 1.4rem;
+        }
+
+        @media (max-width: 580px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            main {
+                padding: 24px 16px;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .header-controls {
+                width: 100%;
+                flex-wrap: wrap;
             }
         }
     </style>
 </head>
-<body>
 
-<!-- NAVBAR DARK -->
-<nav class="navbar navbar-dark bg-navy sticky-top">
-    <div class="container">
-        <a class="navbar-brand" href="#">
-            <i class="bi bi-box-seam-fill me-1" style="color:#3e7adb;"></i> CampShare
-        </a>
-        <div class="d-flex gap-2">
-            <span class="brand-icon"><i class="bi bi-person-circle me-1"></i> <span th:text="${#authentication.name} ?: 'Aldi'">User</span></span>
-            <a th:href="@{/logout}" class="btn btn-sm btn-outline-light-custom"><i class="bi bi-box-arrow-right"></i></a>
-        </div>
-    </div>
-</nav>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 transition-colors">
 
-<!-- MAIN DASHBOARD -->
-<main class="container my-4 my-md-5">
-    <div class="d-flex justify-content-between flex-wrap align-items-center mb-4">
-        <div>
-            <h1 class="section-title"><i class="bi bi-grid-3x3-gap-fill me-2"></i> Katalog Barang</h1>
-            <p class="text-secondary-emphasis" style="color:#94a4d0;">Temukan barang jual & pinjam dari sekitar kamu</p>
-        </div>
-        <a href="#" class="btn btn-outline-light-custom mt-2 mt-sm-0"><i class="bi bi-plus-lg"></i> Tambah Barang</a>
-    </div>
+    <!-- ─── HEADER (seperti form-barang.html) ─── -->
+    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
-    <!-- daftar barang / grid responsif (2 kolom di hp, 3-4 di desktop) -->
-    <div class="row g-4">
-        <!-- contoh statis agar terlihat menarik, nanti diganti th:each -->
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="card-barang p-3 h-100 d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start">
-                    <i class="bi bi-camera fs-3" style="color:#4678d6;"></i>
-                    <span class="badge-status">Tersedia</span>
+            <!-- kiri: logo + search -->
+            <div class="flex items-center gap-4 flex-1">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                            <rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                            <rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                            <rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
                 </div>
-                <h5 class="mt-2 fw-bold">Tripod Kamera Profesional</h5>
-                <p class="small" style="color:#bfcef5;">Kategori: Elektronik</p>
-                <div class="mt-auto d-flex justify-content-between align-items-center">
-                    <span class="fw-semibold"><i class="bi bi-tag"></i> Rp 35.000/hari</span>
-                    <a href="#" class="btn btn-sm btn-outline-light-custom">Detail</a>
+
+                <div class="hidden md:block w-full max-w-md relative ml-4">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text" placeholder="Cari barang, buku, peralatan…"
+                    class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors">
                 </div>
             </div>
-        </div>
 
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="card-barang p-3 h-100 d-flex flex-column">
-                <div class="d-flex justify-content-between">
-                    <i class="bi bi-backpack fs-3" style="color:#618ae2;"></i>
-                    <span class="badge-status">Bisa Pinjam</span>
+            <!-- kanan: nav + actions -->
+            <div class="flex items-center gap-5">
+                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
+                    <a href="dashboard.html" class="text-primary bg-blue-50 dark:bg-blue-900/20 dark:text-primary px-4 py-2 rounded-xl font-semibold transition-all">Katalog</a>
+                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
+                    <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
+                </nav>
+
+                <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
+                    <!-- Dark mode toggle -->
+                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
+                        <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
+                        </svg>
+                        <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                        </svg>
+                    </button>
+
+                    <!-- Notifikasi -->
+                    <button class="p-2 text-gray-400 hover:text-gray-500 relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                    </button>
+
+                    <!-- Refresh -->
+                    <button class="p-2 text-gray-400 hover:text-gray-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
+
+                    <!-- Avatar -->
+                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">
+                        AK
+                    </div>
                 </div>
-                <h5 class="mt-2 fw-bold">Carrier Gunung 60L</h5>
-                <p class="small" style="color:#bfcef5;">Outdoor & camping</p>
-                <div><span class="fw-semibold">Rp 50.000 / hari</span></div>
-                <div class="mt-2"><a href="#" class="btn-sm btn-outline-light-custom">Ajukan Pinjam</a></div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ─── MAIN (konten asli dashboard) ─── -->
+    <main>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>Jelajah Katalog</h1>
+                <p>8 barang tersedia</p>
+            </div>
+            <div class="header-controls">
+                <button class="btn-filter">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    Filter
+                </button>
+                <select class="sort-select">
+                    <option>Terbaru</option>
+                    <option>Termurah</option>
+                    <option>Termahal</option>
+                </select>
             </div>
         </div>
 
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="card-barang p-3 h-100">
-                <i class="bi bi-laptop fs-3" style="color:#6b94f0;"></i>
-                <span class="badge-status ms-2">Jual</span>
-                <h5 class="mt-2">MacBook Air M1</h5>
-                <p class="small text-secondary">Bekas - 98% mulus</p>
-                <div class="fw-bold text-info">Rp 8.500.000</div>
-                <a href="#" class="btn btn-outline-light-custom w-100 mt-3">Detail & Beli</a>
-            </div>
+        <!-- Category Tabs -->
+        <div class="tabs">
+            <button class="tab active">Semua</button>
+            <button class="tab">Elektronik</button>
+            <button class="tab">Buku &amp; Catatan</button>
+            <button class="tab">Peralatan Lab</button>
+            <button class="tab">Alat Tulis</button>
+            <button class="tab">Olahraga</button>
+            <button class="tab">Lainnya</button>
+            <button class="tab">Disewakan</button>
+            <button class="tab">Dijual</button>
         </div>
 
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="card-barang p-3 h-100">
-                <i class="bi bi-controller fs-3"></i>
-                <span class="badge-status">Pinjam</span>
-                <h5 class="mt-2">Nintendo Switch + Game</h5>
-                <p>Hiburan</p>
-                <div><strong>25k/hari</strong></div>
-                <a href="#" class="btn btn-outline-light-custom mt-2">Request</a>
+        <!-- Grid -->
+        <div class="grid">
+
+            <!-- Card 1 – USB Hub -->
+            <div class="card">
+                <div class="card-img">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
+                        <defs>
+                            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#e8b800"/>
+                                <stop offset="100%" stop-color="#f5d000"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="480" height="200" fill="url(#g1)"/>
+                        <ellipse cx="240" cy="130" rx="55" ry="50" fill="rgba(255,255,255,0.18)"/>
+                        <ellipse cx="215" cy="80" rx="22" ry="36" fill="rgba(255,255,255,0.18)" transform="rotate(-10,215,80)"/>
+                        <ellipse cx="265" cy="80" rx="22" ry="36" fill="rgba(255,255,255,0.18)" transform="rotate(10,265,80)"/>
+                        <ellipse cx="240" cy="125" rx="38" ry="40" fill="rgba(255,255,255,0.22)"/>
+                        <rect x="30" y="20" width="160" height="110" rx="8" fill="rgba(0,0,0,0.18)"/>
+                        <path d="M390 160 Q430 140 440 100" stroke="rgba(0,0,0,0.3)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        <circle cx="440" cy="95" r="7" fill="rgba(0,0,0,0.25)"/>
+                        <rect x="390" y="120" width="30" height="40" rx="5" fill="#4ade80" opacity=".6"/>
+                    </svg>
+                    <span class="badge badge-jual">Jual</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">USB Hub 7-Port Anker</div>
+                    <div class="card-meta">
+                        <span class="tag-year">2022</span>
+                        <span class="tag-status available">Tersedia</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">Rp 75.000</span>
+                        <span class="seller">Sari Dewi</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Baris kedua agar contoh lebih real (nanti dari backend) -->
-    <div class="row g-4 mt-1">
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="card-barang p-3">
-                <i class="bi bi-droplet fs-3"></i>
-                <span class="badge-status">Jual</span>
-                <h5>Tenda Dome 4 orang</h5>
-                <p>Rp 450.000 (jual)</p>
-                <a href="#" class="btn btn-outline-light-custom w-100">Lihat</a>
+            <!-- Card 2 – Clean Code -->
+            <div class="card">
+                <div class="card-img">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
+                        <defs>
+                            <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#1a0a00"/>
+                                <stop offset="100%" stop-color="#3d1f00"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="480" height="200" fill="url(#g2)"/>
+                        <rect x="0" y="60" width="480" height="6" fill="rgba(255,200,100,.15)"/>
+                        <rect x="0" y="110" width="480" height="6" fill="rgba(255,200,100,.12)"/>
+                        <rect x="0" y="155" width="480" height="6" fill="rgba(255,200,100,.10)"/>
+                        <rect x="10" y="25" width="14" height="35" rx="2" fill="#8b4513" opacity=".8"/>
+                        <rect x="26" y="30" width="10" height="30" rx="2" fill="#a0522d" opacity=".7"/>
+                        <rect x="38" y="20" width="16" height="40" rx="2" fill="#6b3410" opacity=".9"/>
+                        <rect x="56" y="28" width="12" height="32" rx="2" fill="#c47a3a" opacity=".6"/>
+                        <g transform="translate(200,30)">
+                            <path d="M40 10 Q10 5 0 15 L0 110 Q10 100 40 105 Z" fill="rgba(255,255,255,0.88)"/>
+                            <path d="M40 10 Q70 5 80 15 L80 110 Q70 100 40 105 Z" fill="rgba(245,245,240,0.85)"/>
+                            <line x1="40" y1="10" x2="40" y2="105" stroke="#ccc" stroke-width="1"/>
+                            <line x1="8" y1="30" x2="36" y2="30" stroke="#ddd" stroke-width="1.5"/>
+                            <line x1="8" y1="40" x2="36" y2="40" stroke="#ddd" stroke-width="1.5"/>
+                            <line x1="8" y1="50" x2="30" y2="50" stroke="#ddd" stroke-width="1.5"/>
+                            <line x1="8" y1="60" x2="34" y2="60" stroke="#ddd" stroke-width="1.5"/>
+                            <line x1="44" y1="30" x2="72" y2="30" stroke="#ddd" stroke-width="1.5"/>
+                            <line x1="44" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1.5"/>
+                            <line x1="44" y1="50" x2="65" y2="50" stroke="#ddd" stroke-width="1.5"/>
+                        </g>
+                        <rect x="370" y="22" width="14" height="38" rx="2" fill="#7b3f00" opacity=".8"/>
+                        <rect x="386" y="28" width="18" height="32" rx="2" fill="#9c4b00" opacity=".7"/>
+                        <rect x="406" y="18" width="12" height="42" rx="2" fill="#6b2f00" opacity=".9"/>
+                        <rect x="420" y="25" width="16" height="35" rx="2" fill="#b55d00" opacity=".6"/>
+                        <rect x="438" y="30" width="14" height="30" rx="2" fill="#8a4200" opacity=".8"/>
+                        <radialGradient id="warmLight" cx="50%" cy="30%" r="50%">
+                            <stop offset="0%" stop-color="rgba(255,180,60,0.25)"/>
+                            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+                        </radialGradient>
+                        <rect width="480" height="200" fill="url(#warmLight)"/>
+                    </svg>
+                    <span class="badge badge-jual">Jual</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Clean Code oleh R. Martin</div>
+                    <div class="card-meta">
+                        <span class="tag-year">2020</span>
+                        <span class="tag-status available">Tersedia</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">Rp 150.000</span>
+                        <span class="seller">Budi Santoso</span>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="card-barang p-3">
-                <i class="bi bi-cup-straw"></i>
-                <span class="badge-status">Pinjam</span>
-                <h5>Waterproof Jacket L</h5>
-                <p>30k/hari</p>
-                <a href="#" class="btn btn-outline-light-custom">Pinjam</a>
+
+            <!-- Card 3 – Jas Lab -->
+            <div class="card">
+                <div class="card-img">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
+                        <defs>
+                            <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#c9a0a0"/>
+                                <stop offset="100%" stop-color="#d4b0b0"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="480" height="200" fill="url(#g3)"/>
+                        <ellipse cx="280" cy="100" rx="120" ry="90" fill="rgba(180,100,100,.35)"/>
+                        <ellipse cx="260" cy="90" rx="80" ry="65" fill="rgba(200,130,130,.40)"/>
+                        <path d="M200 70 Q230 50 260 70 Q290 90 320 70" stroke="rgba(140,60,60,.5)" stroke-width="3" fill="none"/>
+                        <path d="M190 95 Q230 75 270 95 Q310 115 340 95" stroke="rgba(140,60,60,.45)" stroke-width="3" fill="none"/>
+                        <path d="M200 120 Q240 100 280 120 Q310 135 330 120" stroke="rgba(140,60,60,.4)" stroke-width="3" fill="none"/>
+                        <ellipse cx="310" cy="115" rx="55" ry="45" fill="rgba(240,220,190,.5)"/>
+                        <ellipse cx="320" cy="120" rx="38" ry="30" fill="rgba(230,210,180,.55)"/>
+                    </svg>
+                    <span class="badge badge-sewa">Sewa</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Jas Lab Ukuran M</div>
+                    <div class="card-meta">
+                        <span class="tag-year">2023</span>
+                        <span class="tag-status available">Tersedia</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">Rp 10.000/hari</span>
+                        <span class="seller">Ayu Permata</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- pesan jika belum ada data (dinamis nanti) -->
-    <div th:if="${listBarang != null and listBarang.empty}" class="alert alert-dark text-center mt-4" style="background:#111c31; border-color:#2e4570;">
-        <i class="bi bi-inbox"></i> Belum ada barang yang dipajang. Jadi yang pertama!
-    </div>
+            <!-- Card 4 – Tablet/Drawing Pad (Sewa) -->
+            <div class="card">
+                <div class="card-img">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
+                        <defs>
+                            <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#e8e8e8"/>
+                                <stop offset="100%" stop-color="#f5f5f5"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="480" height="200" fill="url(#g4)"/>
+                        <rect x="80" y="30" width="200" height="140" rx="10" fill="#fff" stroke="#ccc" stroke-width="2"/>
+                        <rect x="95" y="45" width="170" height="110" rx="4" fill="#f0f0f0"/>
+                        <line x1="130" y1="130" x2="230" y2="130" stroke="#555" stroke-width="2"/>
+                        <line x1="130" y1="130" x2="180" y2="60" stroke="#555" stroke-width="2"/>
+                        <line x1="180" y1="60" x2="230" y2="130" stroke="#555" stroke-width="2"/>
+                        <rect x="295" y="20" width="10" height="110" rx="4" fill="#555" transform="rotate(8,295,20)"/>
+                        <polygon points="295,130 305,130 300,148" fill="#333" transform="rotate(8,300,130)"/>
+                        <rect x="310" y="40" width="120" height="150" rx="6" fill="#e85d04" opacity=".85"/>
+                        <rect x="318" y="55" width="104" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+                        <rect x="318" y="65" width="90" height="4" rx="2" fill="rgba(255,255,255,0.25)"/>
+                        <rect x="318" y="75" width="100" height="4" rx="2" fill="rgba(255,255,255,0.25)"/>
+                    </svg>
+                    <span class="badge badge-sewa">Sewa</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Drawing Tablet Wacom S</div>
+                    <div class="card-meta">
+                        <span class="tag-year">2022</span>
+                        <span class="tag-status available">Tersedia</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">Rp 20.000/hari</span>
+                        <span class="seller">Rizky Aditya</span>
+                    </div>
+                </div>
+            </div>
 
-</main>
+            <!-- Card 5 – Kalkulator (Jual) -->
+            <div class="card">
+                <div class="card-img">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
+                        <defs>
+                            <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#3a3a3a"/>
+                                <stop offset="100%" stop-color="#555"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="480" height="200" fill="url(#g5)"/>
+                        <rect x="150" y="20" width="180" height="165" rx="14" fill="#222"/>
+                        <rect x="165" y="35" width="150" height="48" rx="6" fill="#b5cc8e"/>
+                        <text x="305" y="67" font-size="20" font-family="monospace" fill="#2a3a1a" text-anchor="end">123.45</text>
+                        <g fill="#444">
+                            <rect x="165" y="95" width="28" height="20" rx="4"/>
+                            <rect x="200" y="95" width="28" height="20" rx="4"/>
+                            <rect x="235" y="95" width="28" height="20" rx="4"/>
+                            <rect x="270" y="95" width="28" height="20" rx="4" fill="#e85d04"/>
+                            <rect x="165" y="122" width="28" height="20" rx="4"/>
+                            <rect x="200" y="122" width="28" height="20" rx="4"/>
+                            <rect x="235" y="122" width="28" height="20" rx="4"/>
+                            <rect x="270" y="122" width="28" height="20" rx="4" fill="#e85d04"/>
+                            <rect x="165" y="149" width="28" height="20" rx="4"/>
+                            <rect x="200" y="149" width="28" height="20" rx="4"/>
+                            <rect x="235" y="149" width="28" height="20" rx="4"/>
+                            <rect x="270" y="149" width="63" height="20" rx="4" fill="#3b5bdb"/>
+                        </g>
+                    </svg>
+                    <span class="badge badge-jual">Jual</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Kalkulator Casio FX-991</div>
+                    <div class="card-meta">
+                        <span class="tag-year">2021</span>
+                        <span class="tag-status available">Tersedia</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">Rp 120.000</span>
+                        <span class="seller">Dewi Larasati</span>
+                    </div>
+                </div>
+            </div>
 
-<footer class="footer-dashboard text-center py-3 mt-5 small">
-    <div class="container">
-        <i class="bi bi-chat-dots-fill me-1"></i> CampShare — sistem berbagi barang & transaksi aman
-    </div>
-</footer>
+            <!-- Card 6 – Bor Listrik (Sewa) -->
+            <div class="card">
+                <div class="card-img">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
+                        <defs>
+                            <linearGradient id="g6" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#444"/>
+                                <stop offset="100%" stop-color="#666"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="480" height="200" fill="url(#g6)"/>
+                        <ellipse cx="340" cy="60" rx="35" ry="40" fill="rgba(200,160,120,.6)"/>
+                        <rect x="305" y="95" width="70" height="80" rx="8" fill="rgba(80,80,80,.7)"/>
+                        <rect x="100" y="75" width="180" height="55" rx="10" fill="#222"/>
+                        <rect x="100" y="75" width="80" height="55" rx="8" fill="#3b5bdb" opacity=".7"/>
+                        <rect x="150" y="130" width="35" height="50" rx="8" fill="#333"/>
+                        <rect x="278" y="95" width="80" height="14" rx="3" fill="#aaa"/>
+                        <polygon points="358,96 380,102 358,108" fill="#888"/>
+                        <rect x="268" y="88" width="18" height="28" rx="4" fill="#555"/>
+                        <line x1="200" y1="85" x2="200" y2="120" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
+                        <line x1="215" y1="85" x2="215" y2="120" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
+                        <line x1="230" y1="85" x2="230" y2="120" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
+                        <ellipse cx="330" cy="55" rx="16" ry="8" fill="none" stroke="rgba(255,220,100,.5)" stroke-width="2"/>
+                        <ellipse cx="355" cy="55" rx="16" ry="8" fill="none" stroke="rgba(255,220,100,.5)" stroke-width="2"/>
+                        <line x1="346" y1="55" x2="339" y2="55" stroke="rgba(255,220,100,.5)" stroke-width="2"/>
+                    </svg>
+                    <span class="badge badge-sewa">Sewa</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Bor Listrik Bosch 500W</div>
+                    <div class="card-meta">
+                        <span class="tag-year">2021</span>
+                        <span class="tag-status available">Tersedia</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">Rp 15.000/hari</span>
+                        <span class="seller">Fajar Nugroho</span>
+                    </div>
+                </div>
+            </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        </div><!-- /grid -->
+    </main>
+
+    <!-- ─── JAVASCRIPT ─── -->
+    <script>
+        // ── Tab switching ──
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // ── Dark Mode ──
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        function updateIcons() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        // restore preferensi dari localStorage
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        updateIcons();
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+            updateIcons();
+        });
+    </script>
+
 </body>
 </html>
