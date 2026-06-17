@@ -348,7 +348,7 @@
     <!-- Card -->
     <div class="card">
 
-      <form method="post" action="/register" th:action="@{/register}">
+      <form id="registerForm">
         <!-- Email Kampus -->
         <div class="field">
           <label class="field-label">Email Kampus</label>
@@ -431,6 +431,36 @@
       setTheme(next);
       localStorage.setItem('campshare-theme', next);
     });
+
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const formData = {
+            nim: document.querySelector('input[name="nim"]').value,
+            angkatan: document.querySelector('select[name="angkatan"]').value,
+            username: document.querySelector('input[name="username"]').value,
+            email: document.querySelector('input[name="email"]').value,
+            password: document.querySelector('input[name="password"]').value
+        };
+
+        fetch("http://localhost:8080/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.text())
+        .then(result => {
+            alert(result); // Munculkan pesan sukses/gagal dari backend
+            if (result.startsWith("Sukses")) {
+                window.location.href = "login.html";
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Gagal terhubung ke server!");
+        });
+    });
+  </script>
   </script>
 </body>
 </html>
