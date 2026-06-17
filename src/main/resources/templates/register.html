@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
@@ -19,7 +20,7 @@
       --tab-active-bg: #ffffff;
       --tab-active-text: #1a1a2e;
       --tab-inactive-text: #6b7280;
-      --shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
       --icon-btn-bg: #ffffff;
       --icon-btn-border: #e5e7ef;
       --btn-primary: #3b5bdb;
@@ -40,14 +41,20 @@
       --tab-active-bg: #262b3e;
       --tab-active-text: #f0f2ff;
       --tab-inactive-text: #7b82a8;
-      --shadow: 0 4px 32px rgba(0,0,0,0.35);
+      --shadow: 0 4px 32px rgba(0, 0, 0, 0.35);
       --icon-btn-bg: #1c1f2e;
       --icon-btn-border: #353a52;
       --btn-primary: #5c7cfa;
       --btn-hover: #4a6ae0;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -75,7 +82,7 @@
       align-items: center;
       justify-content: center;
       transition: background .25s, border-color .25s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       z-index: 100;
     }
 
@@ -103,7 +110,7 @@
       color: #fff;
       font-size: 16px;
       font-weight: 700;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .container {
@@ -131,7 +138,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 20px rgba(59,91,219,0.35);
+      box-shadow: 0 6px 20px rgba(59, 91, 219, 0.35);
     }
 
     .logo-icon svg {
@@ -186,7 +193,7 @@
     .tab-btn.active {
       background: var(--tab-active-bg);
       color: var(--tab-active-text);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
     }
 
     .tab-btn:hover:not(.active) {
@@ -217,7 +224,8 @@
       transition: color .25s;
     }
 
-    .field input, .field select {
+    .field input,
+    .field select {
       width: 100%;
       background: var(--input-bg);
       border: 1.5px solid var(--input-border);
@@ -230,8 +238,14 @@
       font-family: inherit;
     }
 
-    .field input::placeholder { color: var(--hint); }
-    .field input:focus, .field select:focus { border-color: var(--input-focus); }
+    .field input::placeholder {
+      color: var(--hint);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--input-focus);
+    }
 
     .field select {
       appearance: none;
@@ -279,8 +293,13 @@
       letter-spacing: .3px;
     }
 
-    .btn-submit:hover { background: var(--btn-hover); }
-    .btn-submit:active { transform: scale(.98); }
+    .btn-submit:hover {
+      background: var(--btn-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(.98);
+    }
 
     .footer-link {
       margin-top: 28px;
@@ -295,7 +314,9 @@
       text-decoration: none;
     }
 
-    .footer-link a:hover { text-decoration: underline; }
+    .footer-link a:hover {
+      text-decoration: underline;
+    }
 
     .small-note {
       font-size: 0.75rem;
@@ -305,17 +326,23 @@
     }
 
     @media (max-width: 480px) {
-      .card { padding: 24px 20px; }
-      .tab-switcher { width: 100%; }
+      .card {
+        padding: 24px 20px;
+      }
+
+      .tab-switcher {
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Dark mode toggle -->
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">
     <svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   </button>
 
@@ -328,9 +355,9 @@
     <div class="logo-wrap">
       <div class="logo-icon">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-          <line x1="12" y1="22.08" x2="12" y2="12"/>
+          <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z" />
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          <line x1="12" y1="22.08" x2="12" y2="12" />
         </svg>
       </div>
       <div>
@@ -354,7 +381,11 @@
           <label class="field-label">Email Kampus</label>
           <input type="email" name="email" placeholder="nim@student.uinsgd.ac.id" required autofocus />
           <div class="field-hint">
-            <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
             Gunakan email kampus resmi kamu
           </div>
         </div>
@@ -407,9 +438,9 @@
   <script>
     // ── Dark mode (sama seperti login.html) ──
     const html = document.documentElement;
-    const btn  = document.getElementById('darkToggle');
+    const btn = document.getElementById('darkToggle');
     const moon = `<svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-    const sun  = `<svg id="sunIcon"  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+    const sun = `<svg id="sunIcon"  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 
     function setTheme(theme) {
       html.setAttribute('data-theme', theme);
@@ -432,35 +463,36 @@
       localStorage.setItem('campshare-theme', next);
     });
 
-    document.getElementById("registerForm").addEventListener("submit", function(event) {
-        event.preventDefault();
+    document.getElementById("registerForm").addEventListener("submit", function (event) {
+      event.preventDefault();
 
-        const formData = {
-            nim: document.querySelector('input[name="nim"]').value,
-            angkatan: document.querySelector('select[name="angkatan"]').value,
-            username: document.querySelector('input[name="username"]').value,
-            email: document.querySelector('input[name="email"]').value,
-            password: document.querySelector('input[name="password"]').value
-        };
+      const formData = {
+        nim: document.querySelector('input[name="nim"]').value,
+        angkatan: document.querySelector('select[name="angkatan"]').value,
+        username: document.querySelector('input[name="username"]').value,
+        email: document.querySelector('input[name="email"]').value,
+        password: document.querySelector('input[name="password"]').value
+      };
 
-        fetch("http://localhost:8080/api/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        })
+      fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      })
         .then(response => response.text())
         .then(result => {
-            alert(result); // Munculkan pesan sukses/gagal dari backend
-            if (result.startsWith("Sukses")) {
-                window.location.href = "login.html";
-            }
+          alert(result); // Munculkan pesan sukses/gagal dari backend
+          if (result.startsWith("Sukses")) {
+            window.location.href = "login.html";
+          }
         })
         .catch(error => {
-            console.error("Error:", error);
-            alert("Gagal terhubung ke server!");
+          console.error("Error:", error);
+          alert("Gagal terhubung ke server!");
         });
     });
   </script>
   </script>
 </body>
+
 </html>

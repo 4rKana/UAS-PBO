@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CampusShare – Masuk</title>
   <style>
     :root {
@@ -19,7 +20,7 @@
       --tab-active-bg: #ffffff;
       --tab-active-text: #1a1a2e;
       --tab-inactive-text: #6b7280;
-      --shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
       --icon-btn-bg: #ffffff;
       --icon-btn-border: #e5e7ef;
       --btn-primary: #3b5bdb;
@@ -40,14 +41,20 @@
       --tab-active-bg: #262b3e;
       --tab-active-text: #f0f2ff;
       --tab-inactive-text: #7b82a8;
-      --shadow: 0 4px 32px rgba(0,0,0,0.35);
+      --shadow: 0 4px 32px rgba(0, 0, 0, 0.35);
       --icon-btn-bg: #1c1f2e;
       --icon-btn-border: #353a52;
       --btn-primary: #5c7cfa;
       --btn-hover: #4a6ae0;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -75,7 +82,7 @@
       align-items: center;
       justify-content: center;
       transition: background .25s, border-color .25s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       z-index: 100;
     }
 
@@ -103,7 +110,7 @@
       color: #fff;
       font-size: 16px;
       font-weight: 700;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .container {
@@ -131,7 +138,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 20px rgba(59,91,219,0.35);
+      box-shadow: 0 6px 20px rgba(59, 91, 219, 0.35);
     }
 
     .logo-icon svg {
@@ -186,7 +193,7 @@
     .tab-btn.active {
       background: var(--tab-active-bg);
       color: var(--tab-active-text);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
     }
 
     .tab-btn:hover:not(.active) {
@@ -229,8 +236,13 @@
       transition: border-color .15s, background .25s, color .25s;
     }
 
-    .field input::placeholder { color: var(--hint); }
-    .field input:focus { border-color: var(--input-focus); }
+    .field input::placeholder {
+      color: var(--hint);
+    }
+
+    .field input:focus {
+      border-color: var(--input-focus);
+    }
 
     .field-hint {
       display: flex;
@@ -266,8 +278,13 @@
       letter-spacing: .3px;
     }
 
-    .btn-submit:hover { background: var(--btn-hover); }
-    .btn-submit:active { transform: scale(.98); }
+    .btn-submit:hover {
+      background: var(--btn-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(.98);
+    }
 
     .footer-link {
       margin-top: 28px;
@@ -282,20 +299,28 @@
       text-decoration: none;
     }
 
-    .footer-link a:hover { text-decoration: underline; }
+    .footer-link a:hover {
+      text-decoration: underline;
+    }
 
     @media (max-width: 480px) {
-      .card { padding: 24px 20px; }
-      .tab-switcher { width: 100%; }
+      .card {
+        padding: 24px 20px;
+      }
+
+      .tab-switcher {
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Dark mode toggle -->
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">
     <svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   </button>
 
@@ -308,9 +333,9 @@
     <div class="logo-wrap">
       <div class="logo-icon">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-          <line x1="12" y1="22.08" x2="12" y2="12"/>
+          <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z" />
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          <line x1="12" y1="22.08" x2="12" y2="12" />
         </svg>
       </div>
       <div>
@@ -329,19 +354,19 @@
     <div class="card">
 
       <div id="formMasuk">
-            <form id="loginForm">
-      <div class="field">
-        <label class="field-label">Email Kampus</label>
-        <input type="email" id="email" name="email" placeholder="nim@student.uinsgd.ac.id" required />
-      </div>
+        <form id="loginForm">
+          <div class="field">
+            <label class="field-label">Email Kampus</label>
+            <input type="email" id="email" name="email" placeholder="nim@student.uinsgd.ac.id" required />
+          </div>
 
-      <div class="field" style="margin-bottom:24px;">
-        <label class="field-label">Password</label>
-        <input type="password" id="password" name="password" placeholder="••••••••" required />
-      </div>
+          <div class="field" style="margin-bottom:24px;">
+            <label class="field-label">Password</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required />
+          </div>
 
-      <button type="submit" class="btn-submit">Masuk</button>
-    </form>
+          <button type="submit" class="btn-submit">Masuk</button>
+        </form>
       </div>
 
     </div>
@@ -356,9 +381,9 @@
   <script>
     // ── Dark mode ──
     const html = document.documentElement;
-    const btn  = document.getElementById('darkToggle');
+    const btn = document.getElementById('darkToggle');
     const moon = `<svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-    const sun  = `<svg id="sunIcon"  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+    const sun = `<svg id="sunIcon"  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 
     function setTheme(theme) {
       html.setAttribute('data-theme', theme);
@@ -383,45 +408,46 @@
     function handleLogin() {
       window.location.href = 'dashboard.html';
     }
-    document.getElementById("loginForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
+      event.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-    const data = {
+      const data = {
         email: email,
         password: password
-    };
+      };
 
-    fetch("http://localhost:8080/api/auth/login", {
+      fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
-    })
-    .then(response => {
-        // Karena di backend kita set status 401 kalau password salah
-        if (!response.ok) {
+      })
+        .then(response => {
+          // Karena di backend kita set status 401 kalau password salah
+          if (!response.ok) {
             throw new Error("Email atau password salah!");
-        }
-        return response.text();
-    })
-    .then(result => {
-        alert(result); // Menampilkan pesan: "Sukses: Selamat Datang..."
-        
-        // Simpan penanda bahwa user sudah login (opsional tapi penting nantinya)
-        localStorage.setItem("userEmail", email); 
-        
-        // Pindah ke halaman utama (dashboard)
-        window.location.href = "dashboard.html"; 
-    })
-    .catch(error => {
-        alert(error.message);
+          }
+          return response.text();
+        })
+        .then(result => {
+          alert(result); // Menampilkan pesan: "Sukses: Selamat Datang..."
+
+          // Simpan penanda bahwa user sudah login (opsional tapi penting nantinya)
+          localStorage.setItem("userEmail", email);
+
+          // Pindah ke halaman utama (dashboard)
+          window.location.href = "dashboard.html";
+        })
+        .catch(error => {
+          alert(error.message);
+        });
     });
-});
   </script>
 
 </body>
+
 </html>
