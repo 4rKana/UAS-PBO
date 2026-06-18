@@ -25,6 +25,6 @@ public class BarangJual extends Barang {
     private StatusBarang status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "idUser") // Menghubungkan ke idUser bertipe String di entity User
     private User pemilik;
 }
