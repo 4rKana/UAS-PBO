@@ -1,6 +1,6 @@
-package com.PBO2.CampShare.entity.enumeration;
+// package com.PBO2.CampShare.entity.enumeration;
 
-public enum StatusRequest {
-    MENCARI,
-    TERPENUHI
-}
+// public enum StatusRequest {
+//     MENCARI,
+//     TERPENUHI
+// }

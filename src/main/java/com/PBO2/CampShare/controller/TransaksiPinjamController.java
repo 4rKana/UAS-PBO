@@ -9,6 +9,7 @@ import com.PBO2.CampShare.service.TransaksiPinjamService;
 
 @RestController
 @RequestMapping("/api/pinjam")
+@CrossOrigin(origins = "*")
 public class TransaksiPinjamController {
 
     private final TransaksiPinjamService service;

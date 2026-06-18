@@ -4,6 +4,7 @@ import com.PBO2.CampShare.entity.enumeration.StatusBarang;
 import com.PBO2.CampShare.entity.enumeration.StatusTransaksiBeli;
 import jakarta.persistence.*;
 import lombok.Data;
+import com.PBO2.CampShare.service.DeletableContext;
 
 @Entity
 @Data
@@ -24,17 +25,19 @@ public class TransaksiBeli implements DeletableContext {
     @Enumerated(EnumType.STRING)
     private StatusTransaksiBeli status;
 
-    public void prosesBooking() {
+   public void prosesBooking() {
         this.status = StatusTransaksiBeli.DISETUJUI;
         if(this.barang != null) {
-            this.barang.ubahStatus(StatusBarang.booked);
+            // Ganti ubahStatus menjadi setStatus
+            this.barang.setStatus(StatusBarang.booked);
         }
     }
 
     public void konfirmasiSelesai() {
         this.status = StatusTransaksiBeli.SELESAI;
         if(this.barang != null) {
-            this.barang.ubahStatus(StatusBarang.sold);
+            // Ganti ubahStatus menjadi setStatus
+            this.barang.setStatus(StatusBarang.sold);
         }
     }
 

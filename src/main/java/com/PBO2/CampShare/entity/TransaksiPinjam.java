@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 public class TransaksiPinjam {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID) // 👈 TAMBAHKAN BARIS INI
     private String idTransaksi;
 
     @ManyToOne

@@ -45,4 +45,9 @@ public class TransaksiBeliService {
     public List<TransaksiBeli> getAllTransaksi() {
         return repository.findAll();
     }
+
+    
+    public List<TransaksiBeli> getRiwayatPembelian(User pembeli) {
+        return repository.findByPembeli(pembeli);
+    }
 }
