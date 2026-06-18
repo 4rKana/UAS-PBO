@@ -6,5 +6,6 @@ import com.PBO2.CampShare.entity.TransaksiPinjam;
 
 public interface TransaksiPinjamRepository
         extends JpaRepository<TransaksiPinjam, String> {
+                
 
 }

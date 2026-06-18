@@ -376,7 +376,7 @@
 
   </div>
 
-  <script>
+<script>
     // ── Dark mode ──
     const html = document.documentElement;
     const btn = document.getElementById('darkToggle');
@@ -403,9 +403,6 @@
     });
 
     // ── Login redirect ──
-    function handleLogin() {
-      window.location.href = 'dashboard.html';
-    }
     document.getElementById("loginForm").addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -424,18 +421,23 @@
         },
         body: JSON.stringify(data)
       })
-        .then(response => {
-          // Karena di backend kita set status 401 kalau password salah
+        .then(async response => {
+          // Tangkap response sebagai JSON (sesuai update Spring Boot tadi)
+          const result = await response.json(); 
+          
           if (!response.ok) {
-            throw new Error("Email atau password salah!");
+            // Tangkap pesan error kalau gagal login
+            throw new Error(result.message || "Email atau password salah!");
           }
-          return response.text();
+          return result; // result = data akun (idUser, username, email)
         })
-        .then(result => {
-          alert(result); // Menampilkan pesan: "Sukses: Selamat Datang..."
+        .then(userData => {
+          alert("Login Berhasil! Selamat datang " + userData.username);
 
-          // Simpan penanda bahwa user sudah login (opsional tapi penting nantinya)
-          localStorage.setItem("userEmail", email);
+          // ⚠️ SIMPAN DATA USER KE LOCALSTORAGE ⚠️
+          localStorage.setItem("idUser", userData.idUser); 
+          localStorage.setItem("username", userData.username);
+          localStorage.setItem("userEmail", userData.email);
 
           // Pindah ke halaman utama (dashboard)
           window.location.href = "dashboard.html";
@@ -445,7 +447,6 @@
         });
     });
   </script>
-
 </body>
 
 </html>
