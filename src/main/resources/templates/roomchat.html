@@ -25,11 +25,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* Menyembunyikan scrollbar agar rapi */
+        .invisible-scrollbar::-webkit-scrollbar { display: none; }
+        .invisible-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 flex flex-col">
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 h-screen overflow-hidden transition-all duration-300 flex flex-col">
 
-    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors shrink-0">
+    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 z-50 transition-colors shrink-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-4 flex-1">
                  <div class="flex items-center gap-4 flex-1">
@@ -68,10 +75,11 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </a>
-                    <a href="roomchat.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                    <a href="roomchat.html" class="p-2 text-primary bg-blue-50 dark:bg-blue-900/20 relative flex items-center justify-center rounded-full transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-darkbg"></span>
                     </a>
                     
                     <a href="profil.html" class="inline-block">
@@ -126,8 +134,8 @@
             </div>
         </section>
 
-        <section id="ruang-chat" class="hidden md:flex flex-1 flex-col bg-gray-50 dark:bg-[#111113] h-full">
-            <div class="px-4 md:px-6 py-3 bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 flex items-center justify-between shrink-0">
+        
+   <section id="ruang-chat" class="hidden md:flex flex-1 flex-col bg-gray-50 dark:bg-[#111113] h-full overflow-hidden">         <div class="px-4 md:px-6 py-3 bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
                     <button onclick="kembaliKeDaftar()" class="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white rounded-full transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -139,9 +147,27 @@
                         <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Dika Ramadan</h2>
                     </div>
                 </div>
-                <button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
-                </button>
+            <div class="relative">
+                    <button id="btn-chat-options" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+                    </button>
+
+                    <div id="dropdown-chat-options" class="hidden absolute right-0 top-full mt-1 w-48 bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl shadow-xl py-2 z-50 animate-fade-in">
+                        <button class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Lihat Profil
+                        </button>
+                        <button class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            Bersihkan Obrolan
+                        </button>
+                        <div class="h-px bg-gray-200 dark:bg-darkborder my-1"></div>
+                        <button class="w-full px-4 py-2.5 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                            Blokir Pengguna
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-100 dark:border-amber-900/30 px-6 py-2.5 flex items-center gap-2 text-xs text-amber-700 dark:text-amber-400 shrink-0">
@@ -255,15 +281,26 @@
         const btnAttach = document.getElementById('btn-attach');
         const popoverAttach = document.getElementById('popover-attach');
 
+        const btnChatOptions = document.getElementById('btn-chat-options');
+        const dropdownChatOptions = document.getElementById('dropdown-chat-options');
+
+        btnChatOptions.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownChatOptions.classList.toggle('hidden');
+            popoverAttach.classList.add('hidden'); // Tutup menu attachment kalau lagi kebuka
+        });
+
         // Logika untuk menampilkan menu Upload (Kamera/Galeri)
         btnAttach.addEventListener('click', (e) => {
             e.stopPropagation();
             popoverAttach.classList.toggle('hidden');
+            dropdownChatOptions.classList.add('hidden');
         });
 
         // Menutup popover jika mengklik area luar menu
         document.addEventListener('click', () => {
             popoverAttach.classList.add('hidden');
+            dropdownChatOptions.classList.add('hidden');
         });
 
         // Fungsi saat list chat diklik (khusus tampilan HP)
