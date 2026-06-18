@@ -27,9 +27,9 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 flex flex-col">
 
-    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
+    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors shrink-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-4 flex-1">
                  <div class="flex items-center gap-4 flex-1">
@@ -64,7 +64,6 @@
                         <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
                         <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <!-- NOTIFIKASI -->
                     <a href="notifikasi.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
@@ -85,10 +84,10 @@
         </div>
     </header>
 
-    <main class="flex flex-1 overflow-hidden max-w-[100rem] w-full mx-auto relative">
+    <main class="flex flex-1 overflow-hidden max-w-[100rem] w-full mx-auto relative h-[calc(100vh-4rem)]">
         
-        <section id="sidebar-chat" class="w-full md:w-80 lg:w-96 border-r border-gray-200 dark:border-darkborder/50 flex flex-col bg-white dark:bg-darkbg shrink-0 transition-all">
-            <div class="p-5 pb-3">
+        <section id="sidebar-chat" class="w-full md:w-80 lg:w-96 border-r border-gray-200 dark:border-darkborder/50 flex flex-col bg-white dark:bg-darkbg shrink-0 h-full transition-all">
+            <div class="p-5 pb-3 shrink-0">
                 <div class="flex items-center justify-between mb-4">
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h1>
                     <span class="bg-blue-100 text-primary dark:bg-blue-950 dark:text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">2 baru</span>
@@ -111,7 +110,7 @@
                         </div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Tentu! Kita bisa bertemu di perp...</p>
                     </div>
-                    <div class="w-2.5 h-2.5 bg-primary rounded-full align-self-center shrink-0 self-center"></div>
+                    <div class="w-2.5 h-2.5 bg-primary rounded-full shrink-0 self-center"></div>
                 </div>
 
                 <div class="p-4 flex gap-3 hover:bg-gray-50 dark:hover:bg-cardbg/40 cursor-pointer transition-colors">
@@ -124,30 +123,17 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Apakah masih tersedia minggu ini?</p>
                     </div>
                 </div>
-
-                <div class="p-4 flex gap-3 hover:bg-gray-50 dark:hover:bg-cardbg/40 cursor-pointer transition-colors">
-                    <div class="w-11 h-11 rounded-full bg-blue-800 text-white flex items-center justify-center font-bold text-sm shrink-0">MI</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-baseline mb-0.5">
-                            <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">Maya Indah</h2>
-                            <span class="text-xs text-gray-400 shrink-0">Senin</span>
-                        </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Pembayaran dikonfirmasi! Sampai jum...</p>
-                    </div>
-                </div>
             </div>
         </section>
 
-        <section id="ruang-chat" class="hidden md:flex flex-1 flex-col bg-gray-50 dark:bg-[#111113]">
+        <section id="ruang-chat" class="hidden md:flex flex-1 flex-col bg-gray-50 dark:bg-[#111113] h-full">
             <div class="px-4 md:px-6 py-3 bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
-                    
                     <button onclick="kembaliKeDaftar()" class="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white rounded-full transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
                     </button>
-
                     <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">DR</div>
                     <div>
                         <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Dika Ramadan</h2>
@@ -163,7 +149,7 @@
                 <span>Pesan menghilang setelah 24 jam untuk privasi Anda.</span>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div class="flex-1 overflow-y-auto p-6 space-y-6 invisible-scrollbar">
                 <div class="flex gap-3 max-w-lg">
                     <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0 self-start">D</div>
                     <div>
@@ -236,12 +222,27 @@
                 </div>
             </div>
 
-            <div class="p-4 bg-white dark:bg-darkbg border-t border-gray-200 dark:border-darkborder/50 flex items-center gap-3 shrink-0">
-                <button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                </button>
+            <div class="p-4 bg-white dark:bg-darkbg border-t border-gray-200 dark:border-darkborder/50 flex items-center gap-3 shrink-0 relative">
+                
+                <div class="relative">
+                    <button id="btn-attach" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-cardbg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                    </button>
+                    
+                    <div id="popover-attach" class="hidden absolute bottom-14 left-0 bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl shadow-xl py-2 w-40 z-50 animate-fade-in">
+                        <button class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
+                            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Kamera
+                        </button>
+                        <button class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Galeri Foto
+                        </button>
+                    </div>
+                </div>
+
                 <input type="text" class="flex-1 px-4 py-2.5 text-sm bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none" placeholder="Ketik pesan...">
-                <button class="p-2.5 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm">
+                <button class="p-2.5 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm shrink-0">
                     <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                 </button>
             </div>
@@ -251,10 +252,23 @@
     <script>
         const sidebarChat = document.getElementById('sidebar-chat');
         const ruangChat = document.getElementById('ruang-chat');
+        const btnAttach = document.getElementById('btn-attach');
+        const popoverAttach = document.getElementById('popover-attach');
+
+        // Logika untuk menampilkan menu Upload (Kamera/Galeri)
+        btnAttach.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popoverAttach.classList.toggle('hidden');
+        });
+
+        // Menutup popover jika mengklik area luar menu
+        document.addEventListener('click', () => {
+            popoverAttach.classList.add('hidden');
+        });
 
         // Fungsi saat list chat diklik (khusus tampilan HP)
         function bukaChat() {
-            if (window.innerWidth < 768) { // Jika ukuran layar di bawah kelas 'md' (HP)
+            if (window.innerWidth < 768) {
                 sidebarChat.classList.add('hidden');
                 ruangChat.classList.remove('hidden');
                 ruangChat.classList.add('flex');
@@ -275,7 +289,6 @@
                 ruangChat.classList.remove('hidden');
                 ruangChat.classList.add('flex');
             } else {
-                // Default kembali ke list chat jika di HP
                 sidebarChat.classList.remove('hidden');
                 ruangChat.classList.add('hidden');
                 ruangChat.classList.remove('flex');
