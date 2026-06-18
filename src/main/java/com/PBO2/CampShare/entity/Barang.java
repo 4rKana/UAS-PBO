@@ -1,5 +1,7 @@
 package com.PBO2.CampShare.entity;
 
+import com.PBO2.CampShare.entity.enumeration.KategoriBarang;
+import com.PBO2.CampShare.entity.enumeration.StatusBarang;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@MappedSuperclass // WAJIB ADA: Memberitahu Spring Boot bahwa ini adalah Class Induk
+@Entity // 1. UBAH DARI @MappedSuperclass MENJADI @Entity
+@Inheritance(strategy = InheritanceType.JOINED) // 2. TAMBAHKAN INI (Agar class induk-anak terhubung secara polimorfisme di DB)
 public abstract class Barang {
 
     @Id
@@ -23,6 +26,10 @@ public abstract class Barang {
 
     private String fotoUrl; // Link gambar barang
 
-    // Nanti Orang ke-6 tinggal melanjutkan relasi ke User (Pemilik Barang)
-    // dan menambahkan enum KategoriBarang di class anaknya.
+    // 👇 3. PINDAHKAN/TAMBAHKAN KEDUA VARIABEL INI KE KELAS INDUK 👇
+    @Enumerated(EnumType.STRING)
+    private KategoriBarang kategori;
+
+    @Enumerated(EnumType.STRING)
+    private StatusBarang status;
 }

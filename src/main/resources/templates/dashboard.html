@@ -745,7 +745,7 @@
         </div>
 
         <!-- Grid -->
-        <div class="grid">
+        <div class="grid" id="barang-grid">
 
             <!-- Card 1 – USB Hub -->
             <a href="detail-barang.html" class="card-link" style="text-decoration: none; color: inherit; display: block;">
@@ -1098,6 +1098,80 @@
                 tab.classList.add('active');
             });
         });
+        // --- FUNGSI MENGAMBIL DATA BARANG DARI BACKEND ---
+async function fetchDanTampilkanBarang() {
+    const gridContainer = document.getElementById('barang-grid');
+    gridContainer.innerHTML = '<p class="text-center col-span-3">Memuat data barang...</p>';
+
+    try {
+        // Tembak API Backend kamu
+        const response = await fetch("http://localhost:8080/api/barang");
+        
+        if (!response.ok) {
+            throw new Error("Gagal mengambil data dari server");
+        }
+
+        const dataBarang = await response.json();
+        
+        // Kosongkan loading text
+        gridContainer.innerHTML = '';
+
+        // Looping setiap barang dari database
+        dataBarang.forEach(barang => {
+            // Tentukan apakah ini barang Jual atau Sewa
+            // Asumsi: jika ada tarifPinjam berarti disewa, jika ada harga berarti dijual
+            const isSewa = barang.tarifPinjam != null;
+            const labelTipe = isSewa ? 'Sewa' : 'Jual';
+            const classBadge = isSewa ? 'badge-sewa' : 'badge-jual';
+            
+            // Format Harga ke Rupiah
+            const hargaTampil = isSewa ? barang.tarifPinjam : barang.harga;
+            const hargaRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(hargaTampil);
+            const hargaAkhir = isSewa ? `${hargaRupiah}/hari` : hargaRupiah;
+
+            // Warna status (hijau jika available, merah jika tidak)
+            const isAvailable = barang.status === 'available';
+            const statusClass = isAvailable ? 'available' : 'unavailable';
+            const statusText = isAvailable ? 'Tersedia' : 'Tidak Tersedia';
+
+            // Nama pemilik (mencegah error jika null)
+            const namaPemilik = barang.pemilik && barang.pemilik.username ? barang.pemilik.username : 'Anonim';
+
+            // Template Card HTML
+            const cardHTML = `
+            <a href="detail-barang.html?id=${barang.id}" class="card-link" style="text-decoration: none; color: inherit; display: block;">
+                <div class="card">
+                    <div class="card-img">
+                        <img src="${barang.fotoUrl || 'https://via.placeholder.com/480x200?text=No+Image'}" alt="${barang.namaBarang}" />
+                        <span class="badge ${classBadge}">${labelTipe}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">${barang.namaBarang}</div>
+                        <div class="card-meta">
+                            <span class="tag-year">${barang.kategori}</span>
+                            <span class="tag-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">${hargaAkhir}</span>
+                            <span class="seller">${namaPemilik}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            `;
+
+            // Masukkan card ke dalam grid HTML
+            gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+        });
+
+    } catch (error) {
+        console.error("Error:", error);
+        gridContainer.innerHTML = `<p class="text-center col-span-3 text-red-500">Gagal memuat barang. Pastikan Backend berjalan.</p>`;
+    }
+}
+
+// Panggil fungsinya saat halaman selesai dimuat
+document.addEventListener('DOMContentLoaded', fetchDanTampilkanBarang);
     </script>
 
 </body>
