@@ -1,1 +1,485 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusShare - Transaksi Saya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        sale: '#ff6b00',
+                        rent: '#00a843',
+                        darkbg: '#18181b',
+                        cardbg: '#27272a',
+                        darkborder: '#3f3f46'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .status-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-step .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid #d1d5db;
+            background: #fff;
+            transition: all 0.2s;
+        }
+        .status-step .dot.active {
+            border-color: #3b82f6;
+            background: #3b82f6;
+        }
+        .status-step .dot.completed {
+            border-color: #22c55e;
+            background: #22c55e;
+        }
+        .status-step .line {
+            width: 24px;
+            height: 2px;
+            background: #d1d5db;
+            flex-shrink: 0;
+        }
+        .status-step .line.completed {
+            background: #22c55e;
+        }
+        html.dark .status-step .dot {
+            border-color: #4b5563;
+            background: #1f2937;
+        }
+        html.dark .status-step .dot.active {
+            border-color: #60a5fa;
+            background: #60a5fa;
+        }
+        html.dark .status-step .dot.completed {
+            border-color: #4ade80;
+            background: #4ade80;
+        }
+        html.dark .status-step .line {
+            background: #4b5563;
+        }
+        html.dark .status-step .line.completed {
+            background: #4ade80;
+        }
+        /* Thumbnail produk */
+        .product-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            background: #eef0fb;
+            color: #3b5bdb;
+            transition: background 0.2s;
+        }
+        html.dark .product-thumb {
+            background: #3f3f46;
+            color: #93c5fd;
+        }
+        @media (max-width: 480px) {
+            .product-thumb {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300">
 
+    <!-- HEADER (sama dengan detail-barang.html) -->
+    <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="flex items-center gap-3">
+                    <a href="dashboard.html" class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                                <rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                                <rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                                <rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
+                    </a>
+                </div>
+
+                <div class="hidden md:block w-full max-w-md relative ml-4">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-5">
+                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
+                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
+                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
+                    <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
+                </nav>
+
+                <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
+                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
+                        <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
+                        </svg>
+                        <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                        </svg>
+                    </button>
+
+                    <a href="notifikasi.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                    </a>
+
+                    <a href="roomchat.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </a>
+
+                    <a href="profil.html" class="inline-block">
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Transaksi Saya</h1>
+
+        <!-- Tab Switcher -->
+        <div class="flex gap-1 bg-gray-100 dark:bg-cardbg rounded-xl p-1 w-fit mb-8">
+            <button id="tab-buy" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all bg-primary text-white shadow-sm">Membeli / Meminjam</button>
+            <button id="tab-sell" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">Menjual / Menyewakan</button>
+        </div>
+
+        <!-- Daftar Transaksi -->
+        <div id="transaction-list" class="space-y-6">
+
+            <!-- Transaksi 1 - Sewa (Proyektor) dengan thumbnail -->
+            <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm transition-colors">
+                <div class="flex items-start gap-4">
+                    <!-- Thumbnail produk (grid kecil) -->
+                    <div class="product-thumb">📽️</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Proyektor Portabel Epson</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Dari: Farhan Maulana</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">12-14 Jun 2026</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-primary">Rp 150.000</span>
+                                <span class="block text-sm font-semibold text-rent bg-green-50 dark:bg-green-900/20 px-3 py-0.5 rounded-full mt-1">Sewa</span>
+                            </div>
+                        </div>
+
+                        <!-- Status Steps -->
+                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Status Saat Ini: <span class="text-primary">COD Dijadwalkan — Konfirmasi Serah Terima</span></p>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <div class="status-step">
+                                    <span class="dot completed"></span>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Diminta</span>
+                                </div>
+                                <span class="line completed"></span>
+                                <div class="status-step">
+                                    <span class="dot completed"></span>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Disetujui</span>
+                                </div>
+                                <span class="line completed"></span>
+                                <div class="status-step">
+                                    <span class="dot active"></span>
+                                    <span class="text-xs font-medium text-primary">COD / Serah Terima</span>
+                                </div>
+                                <span class="line"></span>
+                                <div class="status-step">
+                                    <span class="dot"></span>
+                                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="roomchat.html" class="px-5 py-2 border border-gray-300 dark:border-darkborder rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">Buka Obrolan</a>
+                            <button class="px-5 py-2 bg-primary hover:bg-blue-600 text-white rounded-xl text-sm font-bold transition-colors">Konfirmasi Serah Terima</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaksi 2 - Beli (Kalkulator) dengan thumbnail -->
+            <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm transition-colors">
+                <div class="flex items-start gap-4">
+                    <div class="product-thumb">🧮</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Kalkulator Casio FX-991EX</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Dari: Maya Indah</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">10 Jun 2026</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-primary">Rp 120.000</span>
+                                <span class="block text-sm font-semibold text-sale bg-orange-50 dark:bg-orange-900/20 px-3 py-0.5 rounded-full mt-1">Beli</span>
+                            </div>
+                        </div>
+
+                        <!-- Status Steps -->
+                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Status Saat Ini: <span class="text-green-600 dark:text-green-400">Transaksi Selesai</span></p>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <div class="status-step">
+                                    <span class="dot completed"></span>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Diminta</span>
+                                </div>
+                                <span class="line completed"></span>
+                                <div class="status-step">
+                                    <span class="dot completed"></span>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Disetujui</span>
+                                </div>
+                                <span class="line completed"></span>
+                                <div class="status-step">
+                                    <span class="dot completed"></span>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">COD / Serah Terima</span>
+                                </div>
+                                <span class="line completed"></span>
+                                <div class="status-step">
+                                    <span class="dot completed"></span>
+                                    <span class="text-xs font-medium text-green-600 dark:text-green-400">Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="roomchat.html" class="px-5 py-2 border border-gray-300 dark:border-darkborder rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">Buka Obrolan</a>
+                            <button class="px-5 py-2 border border-primary text-primary hover:bg-primary/10 rounded-xl text-sm font-bold transition-colors">Beri Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaksi 3 - Sewa (Tablet) dengan thumbnail -->
+            <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm transition-colors">
+                <div class="flex items-start gap-4">
+                    <div class="product-thumb">✏️</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Tablet Gambar Wacom</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Dari: Rizky Aditya</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">5-10 Jun 2026</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-primary">Rp 100.000</span>
+                                <span class="block text-sm font-semibold text-rent bg-green-50 dark:bg-green-900/20 px-3 py-0.5 rounded-full mt-1">Sewa</span>
+                            </div>
+                        </div>
+
+                        <!-- Status Steps -->
+                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Status Saat Ini: <span class="text-yellow-600 dark:text-yellow-400">Menunggu Konfirmasi</span></p>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <div class="status-step">
+                                    <span class="dot active"></span>
+                                    <span class="text-xs font-medium text-primary">Diminta</span>
+                                </div>
+                                <span class="line"></span>
+                                <div class="status-step">
+                                    <span class="dot"></span>
+                                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Disetujui</span>
+                                </div>
+                                <span class="line"></span>
+                                <div class="status-step">
+                                    <span class="dot"></span>
+                                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">COD / Serah Terima</span>
+                                </div>
+                                <span class="line"></span>
+                                <div class="status-step">
+                                    <span class="dot"></span>
+                                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="roomchat.html" class="px-5 py-2 border border-gray-300 dark:border-darkborder rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">Buka Obrolan</a>
+                            <button class="px-5 py-2 bg-gray-300 dark:bg-darkborder text-gray-600 dark:text-gray-400 rounded-xl text-sm font-bold cursor-not-allowed" disabled>Menunggu Konfirmasi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Pesan jika belum ada transaksi (disembunyikan) -->
+        <div id="empty-state" class="hidden text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <p class="text-gray-500 dark:text-gray-400 mt-4">Belum ada transaksi di tab ini.</p>
+        </div>
+
+    </main>
+
+    <script>
+        // ── Dark Mode ──
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        function updateIcons() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        updateIcons();
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+            updateIcons();
+        });
+
+        // ── Tab Switcher (Membeli/Meminjam vs Menjual/Menyewakan) ──
+        const tabBuy = document.getElementById('tab-buy');
+        const tabSell = document.getElementById('tab-sell');
+        const transactionList = document.getElementById('transaction-list');
+
+        // Simulasi data transaksi untuk tab "Menjual / Menyewakan" dengan thumbnail
+        const sellTransactions = `
+            <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm transition-colors">
+                <div class="flex items-start gap-4">
+                    <div class="product-thumb">💻</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Stand Laptop Aluminium</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Kepada: Sari Dewi</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">15-17 Jun 2026</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-primary">Rp 45.000</span>
+                                <span class="block text-sm font-semibold text-rent bg-green-50 dark:bg-green-900/20 px-3 py-0.5 rounded-full mt-1">Disewakan</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Status Saat Ini: <span class="text-primary">COD Dijadwalkan</span></p>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <div class="status-step"><span class="dot completed"></span><span class="text-xs font-medium text-gray-500 dark:text-gray-400">Diminta</span></div>
+                                <span class="line completed"></span>
+                                <div class="status-step"><span class="dot completed"></span><span class="text-xs font-medium text-gray-500 dark:text-gray-400">Disetujui</span></div>
+                                <span class="line completed"></span>
+                                <div class="status-step"><span class="dot active"></span><span class="text-xs font-medium text-primary">COD / Serah Terima</span></div>
+                                <span class="line"></span>
+                                <div class="status-step"><span class="dot"></span><span class="text-xs font-medium text-gray-400 dark:text-gray-500">Selesai</span></div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="roomchat.html" class="px-5 py-2 border border-gray-300 dark:border-darkborder rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">Buka Obrolan</a>
+                            <button class="px-5 py-2 bg-primary hover:bg-blue-600 text-white rounded-xl text-sm font-bold transition-colors">Konfirmasi Serah Terima</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm transition-colors">
+                <div class="flex items-start gap-4">
+                    <div class="product-thumb">📘</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Clean Code oleh R. Martin</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Kepada: Budi Santoso</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">10 Jun 2026</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-primary">Rp 150.000</span>
+                                <span class="block text-sm font-semibold text-sale bg-orange-50 dark:bg-orange-900/20 px-3 py-0.5 rounded-full mt-1">Dijual</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Status Saat Ini: <span class="text-green-600 dark:text-green-400">Transaksi Selesai</span></p>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <div class="status-step"><span class="dot completed"></span><span class="text-xs font-medium text-gray-500 dark:text-gray-400">Diminta</span></div>
+                                <span class="line completed"></span>
+                                <div class="status-step"><span class="dot completed"></span><span class="text-xs font-medium text-gray-500 dark:text-gray-400">Disetujui</span></div>
+                                <span class="line completed"></span>
+                                <div class="status-step"><span class="dot completed"></span><span class="text-xs font-medium text-gray-500 dark:text-gray-400">COD / Serah Terima</span></div>
+                                <span class="line completed"></span>
+                                <div class="status-step"><span class="dot completed"></span><span class="text-xs font-medium text-green-600 dark:text-green-400">Selesai</span></div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="roomchat.html" class="px-5 py-2 border border-gray-300 dark:border-darkborder rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">Buka Obrolan</a>
+                            <button class="px-5 py-2 border border-primary text-primary hover:bg-primary/10 rounded-xl text-sm font-bold transition-colors">Beri Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Simpan konten asli (Membeli/Meminjam)
+        const buyContent = transactionList.innerHTML;
+
+        tabBuy.addEventListener('click', () => {
+            tabBuy.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all bg-primary text-white shadow-sm";
+            tabSell.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
+            transactionList.innerHTML = buyContent;
+        });
+
+        tabSell.addEventListener('click', () => {
+            tabSell.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all bg-primary text-white shadow-sm";
+            tabBuy.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
+            transactionList.innerHTML = sellTransactions;
+        });
+
+        // ── Tombol Konfirmasi / Ulasan (simulasi) ──
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('bg-primary') && e.target.textContent.includes('Konfirmasi')) {
+                alert('Serah terima telah dikonfirmasi! Status transaksi akan diperbarui.');
+            }
+            if (e.target.textContent.includes('Beri Ulasan')) {
+                alert('Halaman ulasan akan terbuka. Silakan beri rating dan komentar.');
+            }
+        });
+    </script>
+
+</body>
+</html>
