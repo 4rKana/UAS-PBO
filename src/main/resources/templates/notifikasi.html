@@ -2,8 +2,8 @@
 <html lang="id" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusShare - Detail Barang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>CampusShare - Notifikasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,28 +22,131 @@
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; padding-bottom: 72px; }
+
+        /* === CSS SIDEBAR MOBILE (Sesuai Transaksi) === */
+        .mobile-nav-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 999;
+            opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .mobile-nav-overlay.open { opacity: 1; visibility: visible; }
+
+        .mobile-nav {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+            background: #fff; z-index: 1000; padding: 24px 20px;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1); overflow-y: auto;
+            display: flex; flex-direction: column;
+        }
+        html.dark .mobile-nav { background: #1c1f2e; }
+        .mobile-nav.open { left: 0; }
+
+        .mobile-nav .close-btn {
+            align-self: flex-end; background: none; border: none; font-size: 24px;
+            color: #6b7280; cursor: pointer; padding: 4px 8px; margin-bottom: 16px;
+        }
+        html.dark .mobile-nav .close-btn { color: #9ca3af; }
+
+        .mobile-nav .nav-logo-mobile { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+        .mobile-nav .nav-logo-mobile .logo-icon {
+            width: 40px; height: 40px; background: #3b5bdb; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .mobile-nav .nav-logo-mobile .logo-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; }
+        .mobile-nav .nav-logo-mobile span { font-size: 20px; font-weight: 800; color: #1a1a2e; }
+        html.dark .mobile-nav .nav-logo-mobile span { color: #fff; }
+
+        .mobile-nav .nav-links-mobile { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .mobile-nav .nav-links-mobile a {
+            padding: 12px 16px; border-radius: 12px; font-size: 15px; font-weight: 600;
+            color: #6b7280; text-decoration: none; transition: background 0.15s, color 0.15s;
+        }
+        .mobile-nav .nav-links-mobile a:hover { background: #f3f4f6; }
+        .mobile-nav .nav-links-mobile a.active { background: #eef2ff; color: #3b5bdb; }
+        html.dark .mobile-nav .nav-links-mobile a { color: #9ca3af; }
+        html.dark .mobile-nav .nav-links-mobile a:hover { background: #2d3040; }
+        html.dark .mobile-nav .nav-links-mobile a.active { background: #1e2a4a; color: #60a5fa; }
+
+        .mobile-nav .nav-divider { border-top: 1px solid #e5e7ef; margin: 12px 0; }
+        html.dark .mobile-nav .nav-divider { border-top-color: #3f3f46; }
+
+        /* === CSS BOTTOM NAVIGATION (Sesuai Transaksi) === */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 64px;
+            background: #fff; border-top: 1px solid #e5e7ef;
+            display: flex; align-items: center; justify-content: space-around;
+            z-index: 100; transition: background 0.25s, border-color 0.25s; padding: 0 8px;
+        }
+        html.dark .bottom-nav { background: #1c1f2e; border-top-color: #3f3f46; }
+        .bottom-nav a {
+            display: flex; flex-direction: column; align-items: center; gap: 1px;
+            text-decoration: none; font-size: 10px; font-weight: 600; color: #9ca3af;
+            padding: 4px 12px; border-radius: 8px; transition: color 0.15s, background 0.15s; min-width: 56px;
+        }
+        .bottom-nav a svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bottom-nav a.active { color: #3b5bdb; }
+        .bottom-nav a.active svg { stroke: #3b5bdb; }
+        html.dark .bottom-nav a.active { color: #60a5fa; }
+        html.dark .bottom-nav a.active svg { stroke: #60a5fa; }
+
+        /* Media Queries - Tampilan PC */
+        @media (min-width: 768px) {
+            .mobile-nav-overlay, .mobile-nav, .bottom-nav { display: none; }
+            body { padding-bottom: 0; }
+        }
+        @media (max-width: 767px) {
+            .desktop-nav, .desktop-search { display: none !important; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
 
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+    <div class="mobile-nav" id="mobileNav">
+        <button class="close-btn" onclick="closeMobileNav()">✕</button>
+        <div class="nav-logo-mobile">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+            </div>
+            <span>CampusShare</span>
+        </div>
+        <div class="nav-links-mobile">
+            <a href="dashboard.html">Katalog</a>
+            <a href="papan-request.html">Request</a>
+            <a href="form-barang.html">Upload</a>
+            <a href="transaksi.html">Transaksi</a>
+            <a href="profil.html">Profil</a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 p-2">
+            <button id="theme-toggle-mobile" class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-darkbg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span id="theme-label-mobile">Mode Gelap</span>
+            </button>
+        </div>
+    </div>
+
     <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-             <div class="flex items-center gap-4 flex-1">
-                    <div class="flex items-center gap-3">
-                        <a href="dashboard.html" class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
+            <div class="flex items-center gap-3 flex-1">
+                <button id="menu-toggle" class="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onclick="toggleMobileNav()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <div class="flex items-center gap-3">
+                    <a href="dashboard.html" class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                             </svg>
-                        </a>
-                  </div>
-                    <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
-            </div>
-
-                <div class="hidden md:block w-full max-w-md relative ml-4">
+                        </div>
+                        <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white hidden sm:block">CampusShare</span>
+                    </a>
+                </div>
+                <div class="hidden md:block w-full max-w-md relative ml-4 desktop-search">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
@@ -52,39 +155,31 @@
             </div>
 
             <div class="flex items-center gap-5">
-                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
+                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium desktop-nav">
                     <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
                     <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
                     <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
                 </nav>
-                
                 <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
-                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
+                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors hidden md:block">
                         <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
                         <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <!-- NOTIFIKASI AKTIF -->
                     <button class="p-2 text-primary bg-blue-50 dark:bg-blue-900/20 rounded-full relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </button>
                     <a href="roomchat.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                        </svg>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     </a>
-                    
                     <a href="profil.html" class="inline-block">
-                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">
-                            AK
-                        </div>
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
                     </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- MAIN KONTEN: DAFTAR NOTIFIKASI -->
     <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-1">
         
         <div class="mb-8">
@@ -94,42 +189,30 @@
 
         <div class="space-y-4">
             
-            <!-- NOTIFIKASI 1: Meminta Meminjam (BARU / ADA TITIK MERAH) -->
             <div class="bg-blue-50/40 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-6 transition-all shadow-sm relative">
                 <div class="flex items-start justify-between mb-2">
                     <div class="flex gap-4">
-                        <!-- Foto Profil Ringkas -->
-                        <div class="w-11 h-11 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-[15px] shrink-0">
-                            FM
-                        </div>
+                        <div class="w-11 h-11 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-[15px] shrink-0">FM</div>
                         <div>
-                            <!-- Nama Di-bold -->
                             <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Farhan Maulana</h2>
-                            <!-- Jurusan & Angkatan -->
                             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Teknik Informatika · Angkatan 2023</p>
                         </div>
                     </div>
                     
-                    <!-- Kumpulan Info Kanan (Waktu & Titik Merah Baru) -->
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-medium text-blue-600 dark:text-primary">Baru saja</span>
-                        <!-- Titik Merah Indikator Baru -->
                         <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                     </div>
                 </div>
-                <!-- Pesan Aksi Permintaan Pinjam -->
                 <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed ml-15 pl-15">
                     mengirimkan pesan dan <span class="font-semibold text-gray-900 dark:text-white">meminta izin untuk meminjam barang Anda</span> (Stand Laptop Aluminium).
                 </p>
             </div>
 
-            <!-- NOTIFIKASI 2: Meminta Membeli (BARU / ADA TITIK MERAH) -->
             <div class="bg-blue-50/40 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-6 transition-all shadow-sm relative">
                 <div class="flex items-start justify-between mb-2">
                     <div class="flex gap-4">
-                        <div class="w-11 h-11 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center font-bold text-[15px] shrink-0">
-                            RP
-                        </div>
+                        <div class="w-11 h-11 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center font-bold text-[15px] shrink-0">RP</div>
                         <div>
                             <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Rizky Pratama</h2>
                             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Sistem Informasi · Angkatan 2022</p>
@@ -140,19 +223,15 @@
                         <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                     </div>
                 </div>
-                <!-- Pesan Aksi Permintaan Beli -->
                 <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
                     tertarik dengan postingan Anda dan <span class="font-semibold text-gray-900 dark:text-white">meminta izin untuk membeli barang Anda</span> (Kalkulator Ilmiah Casio).
                 </p>
             </div>
 
-            <!-- NOTIFIKASI 3: Request Diterima (LAMA / TIDAK ADA TITIK MERAH) -->
             <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 transition-all shadow-sm">
                 <div class="flex items-start justify-between mb-2">
                     <div class="flex gap-4">
-                        <div class="w-11 h-11 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 flex items-center justify-center font-bold text-[15px] shrink-0">
-                            NS
-                        </div>
+                        <div class="w-11 h-11 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 flex items-center justify-center font-bold text-[15px] shrink-0">NS</div>
                         <div>
                             <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Nadhira Salsabila</h2>
                             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Kimia · Angkatan 2023</p>
@@ -160,19 +239,15 @@
                     </div>
                     <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Kemarin</span>
                 </div>
-                <!-- Pesan Status Diterima -->
                 <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
                     Kabar baik! <span class="font-semibold text-green-600 dark:text-green-400">Request diterima</span>. Permintaan Anda untuk meminjam Buku Teks Kimia Organik telah disetujui pemiliknya. Silakan atur lokasi COD via chat.
                 </p>
             </div>
 
-            <!-- NOTIFIKASI 4: Request Ditolak (LAMA / TIDAK ADA TITIK MERAH) -->
             <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 transition-all shadow-sm">
                 <div class="flex items-start justify-between mb-2">
                     <div class="flex gap-4">
-                        <div class="w-11 h-11 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 flex items-center justify-center font-bold text-[15px] shrink-0">
-                            MI
-                        </div>
+                        <div class="w-11 h-11 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 flex items-center justify-center font-bold text-[15px] shrink-0">MI</div>
                         <div>
                             <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Maya Indah</h2>
                             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Manajemen · Angkatan 2022</p>
@@ -180,7 +255,6 @@
                     </div>
                     <span class="text-xs font-medium text-gray-400 dark:text-gray-500">3 hari yang lalu</span>
                 </div>
-                <!-- Pesan Status Ditolak -->
                 <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
                     Mohon maaf, <span class="font-semibold text-red-500 dark:text-red-400">request ditolak</span>. Permintaan penawaran Anda untuk barang Casio FX-991EX tidak dapat diproses karena barang sudah dipesan mahasiswa lain.
                 </p>
@@ -189,25 +263,67 @@
         </div>
     </main>
 
-    <!-- FLOATING BUTTON (?) -->
-    <div class="fixed bottom-6 right-6 w-9 h-9 rounded-full bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-md flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3f3f46] transition-colors z-50">
+    <div class="fixed bottom-20 md:bottom-6 right-6 w-9 h-9 rounded-full bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-md flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3f3f46] transition-colors z-40">
         ?
     </div>
 
-    <!-- SCRIPT FOR DARK MODE -->
+    <div class="bottom-nav md:hidden">
+        <a href="dashboard.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>
+            <span>Beranda</span>
+        </a>
+        <a href="transaksi.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <span>Transaksi</span>
+        </a>
+        <a href="form-barang.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Upload</span>
+        </a>
+        <a href="notifikasi.html" class="active">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <span>Notifikasi</span>
+        </a>
+        <a href="profil.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span>Profil</span>
+        </a>
+    </div>
+
     <script>
+        // Logika Sidebar Mobile
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileNavOverlay');
+            nav.classList.toggle('open');
+            overlay.classList.toggle('open');
+            document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+        }
+        function closeMobileNav() {
+            const nav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileNavOverlay');
+            nav.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Logika Dark Mode
+        const html = document.documentElement;
         const themeToggleBtn = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('sun-icon');
         const moonIcon = document.getElementById('moon-icon');
-        const html = document.documentElement;
+        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        const themeLabelMobile = document.getElementById('theme-label-mobile');
 
         function updateIcons() {
             if (html.classList.contains('dark')) {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
+                if(sunIcon) sunIcon.classList.remove('hidden');
+                if(moonIcon) moonIcon.classList.add('hidden');
+                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
             } else {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
+                if(sunIcon) sunIcon.classList.add('hidden');
+                if(moonIcon) moonIcon.classList.remove('hidden');
+                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
             }
         }
 
@@ -218,11 +334,14 @@
         }
         updateIcons();
 
-        themeToggleBtn.addEventListener('click', () => {
+        function toggleTheme() {
             html.classList.toggle('dark');
             localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
             updateIcons();
-        });
+        }
+
+        if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+        if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
     </script>
 </body>
 </html>
