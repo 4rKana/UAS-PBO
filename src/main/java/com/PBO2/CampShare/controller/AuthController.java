@@ -16,20 +16,31 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User userRequest) {
+    public ResponseEntity<?> register(@RequestBody User userRequest) {
         String result = userService.register(userRequest);
         if (result.startsWith("Gagal")) {
-            return ResponseEntity.badRequest().body(result);
+            // Ubah balasan jadi format JSON {"message": "Gagal..."}
+            return ResponseEntity.badRequest().body(Map.of("message", result));
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(Map.of("message", result));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest) {
-        String result = userService.login(loginRequest.get("email"), loginRequest.get("password"));
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        String email = loginRequest.get("email");
+        String password = loginRequest.get("password");
+
+        String result = userService.login(email, password);
+        
         if (result.startsWith("Gagal")) {
-            return ResponseEntity.status(401).body(result);
+            // Ubah balasan error jadi format JSON {"message": "Gagal: Password salah!"}
+            return ResponseEntity.status(401).body(Map.of("message", result));
         }
-        return ResponseEntity.ok(result);
+        
+        // Jika sukses, ambil data User secara lengkap berdasarkan email
+        User loggedInUser = userService.findByEmail(email); 
+        
+        // Kembalikan objek User (Spring Boot otomatis menjadikannya JSON yang berisi idUser)
+        return ResponseEntity.ok(loggedInUser);
     }
 }

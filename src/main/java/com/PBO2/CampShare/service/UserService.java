@@ -47,4 +47,7 @@ public class UserService {
         }
         return "Sukses: Selamat Datang, " + user.getUsername() + " (Role: " + user.getRole() + ")!";
     }
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
 }
