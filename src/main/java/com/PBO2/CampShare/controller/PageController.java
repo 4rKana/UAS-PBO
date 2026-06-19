@@ -6,56 +6,58 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-    // Saat user buka /dashboard, tampilkan file dashboard.html
+    @GetMapping("/")
+    public String home() {
+        return "dashboard";
+    }
+
     @GetMapping("/dashboard")
-    public String dashboardPage() {
+    public String dashboard() {
         return "dashboard";
     }
 
     @GetMapping("/detail-barang")
-    public String detail_barangPage() {
+    public String detailBarang() {
         return "detail-barang";
     }
 
     @GetMapping("/form-barang")
-    public String form_barangPage() {
+    public String formBarang() {
         return "form-barang";
     }
 
-    // Saat user buka /login, tampilkan file login.html
     @GetMapping("/login")
-    public String loginPage() {
+    public String login() {
         return "login";
     }
 
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
     @GetMapping("/notifikasi")
-    public String notifikasiPage() {
+    public String notifikasi() {
         return "notifikasi";
     }
 
     @GetMapping("/papan-request")
-    public String papan_requestPage() {
+    public String papanRequest() {
         return "papan-request";
     }
 
     @GetMapping("/profil")
-    public String profilPage() {
+    public String profil() {
         return "profil";
     }
 
-    // Saat user buka /register, tampilkan file register.html
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
-    }
-
     @GetMapping("/roomchat")
-    public String roomchatPage() {
+    public String roomchat() {
         return "roomchat";
     }
 
-        @GetMapping("/transaksi")
-    public String transaksiPage() {
+    @GetMapping("/transaksi")
+    public String transaksi() {
         return "transaksi";
     }
 }
