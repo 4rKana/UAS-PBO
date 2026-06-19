@@ -366,8 +366,8 @@
 
     <!-- Tab Switcher -->
     <div class="tab-switcher">
-      <a href="register.html" class="tab-btn active">Daftar</a>
-      <a href="login.html" class="tab-btn">Masuk</a>
+      <a href="register" class="tab-btn active">Daftar</a>
+      <a href="login" class="tab-btn">Masuk</a>
     </div>
 
     <!-- Card -->
@@ -428,13 +428,13 @@
 
     <!-- Footer -->
     <p class="footer-link">
-      Sudah punya akun? <a href="login.html">Masuk di sini</a>
+      Sudah punya akun? <a href="login">Masuk di sini</a>
     </p>
 
   </div>
 
   <script>
-    // ── Dark mode (sama seperti login.html) ──
+    // ── Dark mode (sama seperti login) ──
     const html = document.documentElement;
     const btn = document.getElementById('darkToggle');
     const moon = `<svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
@@ -481,7 +481,7 @@
         .then(result => {
           alert(result); // Munculkan pesan sukses/gagal dari backend
           if (result.startsWith("Sukses")) {
-            window.location.href = "login.html";
+            window.location.href = "login";
           }
         })
         .catch(error => {

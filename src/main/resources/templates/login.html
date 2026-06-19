@@ -344,8 +344,8 @@
 
     <!-- Tab Switcher -->
     <div class="tab-switcher">
-      <a href="register.html" class="tab-btn">Daftar</a>
-      <a href="login.html" class="tab-btn active">Masuk</a>
+      <a href="register" class="tab-btn">Daftar</a>
+      <a href="login" class="tab-btn active">Masuk</a>
     </div>
 
     <!-- Card -->
@@ -371,7 +371,7 @@
 
     <!-- Footer -->
     <p class="footer-link">
-      Belum punya akun? <a href="register.html">Daftar di sini</a>
+      Belum punya akun? <a href="register">Daftar di sini</a>
     </p>
 
   </div>
@@ -440,7 +440,7 @@
           localStorage.setItem("userEmail", userData.email);
 
           // Pindah ke halaman utama (dashboard)
-          window.location.href = "dashboard.html";
+          window.location.href = "dashboard";
         })
         .catch(error => {
           alert(error.message);

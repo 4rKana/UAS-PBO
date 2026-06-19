@@ -51,9 +51,9 @@
 
             <div class="flex items-center gap-5">
                 <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
-                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
-                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
-                    <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
+                    <a href="dashboard" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
+                    <a href="papan-request" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
+                    <a href="form-barang" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
                 </nav>
                 
                 <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
@@ -62,19 +62,19 @@
                         <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
                     <!-- NOTIFIKASI -->
-                    <a href="notifikasi.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                    <a href="notifikasi" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </a>
 
                     <!-- chat -->
-                    <a href="roomchat.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                    <a href="roomchat" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </a>
                     <!-- Profile -->
-                    <a href="profil.html" class="inline-block">
+                    <a href="profil" class="inline-block">
                         <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">
                             AK
                         </div>
@@ -87,7 +87,7 @@
 
     <main class="max-w-6xl mx-auto px-4 py-8">
         
-        <a href="dashboard.html" class="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium mb-8 transition-colors" style="text-decoration: none;">
+        <a href="dashboard" class="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium mb-8 transition-colors" style="text-decoration: none;">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
              </svg>
@@ -157,7 +157,7 @@
                         Rp 150.000
                     </div>
 
-                    <a href="transaksi.html" class="block w-full">
+                    <a href="transaksi" class="block w-full">
                        <button id="btn-beli" class="w-full py-3.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold transition-colors">
         Beli & Pesan Barang
     </button>
@@ -241,7 +241,7 @@
 
         if (!idBarang) {
             alert("Barang tidak ditemukan!");
-            window.location.href = "dashboard.html";
+            window.location.href = "dashboard";
             return;
         }
 
@@ -310,7 +310,7 @@
                     const idUserAktif = localStorage.getItem("idUser");
                     if (!idUserAktif) {
                         alert("Kamu harus Login terlebih dahulu untuk meminjam barang!");
-                        window.location.href = "login.html"; // Arahkan ke halaman login
+                        window.location.href = "login"; // Arahkan ke halaman login
                         return;
                     }
 
@@ -340,7 +340,7 @@
 
                         if (res.ok) {
                             alert("Peminjaman berhasil diajukan!");
-                            window.location.href = "transaksi.html";
+                            window.location.href = "transaksi";
                         } else {
                             alert("Gagal mengajukan peminjaman.");
                             btnPinjam.innerText = "Ajukan Peminjaman";
@@ -363,7 +363,7 @@
                     const idUserAktif = localStorage.getItem("idUser");
                     if (!idUserAktif) {
                         alert("Kamu harus Login terlebih dahulu untuk membeli barang!");
-                        window.location.href = "login.html"; // Arahkan ke halaman login
+                        window.location.href = "login"; // Arahkan ke halaman login
                         return;
                     }
 
@@ -383,7 +383,7 @@
 
                         if (res.ok) {
                             alert("Barang berhasil dipesan!");
-                            window.location.href = "transaksi.html";
+                            window.location.href = "transaksi";
                         } else {
                             alert("Gagal memesan barang.");
                             btnBeli.innerText = "Beli & Pesan Barang";
