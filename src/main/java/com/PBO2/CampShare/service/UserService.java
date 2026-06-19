@@ -6,6 +6,7 @@ import com.PBO2.CampShare.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.mindrot.jbcrypt.BCrypt; // Import BCrypt
 
 @Service
 public class UserService {
@@ -30,6 +31,11 @@ public class UserService {
             return "Gagal: NIM sudah terdaftar!";
         }
         
+        // --- JURUS ENKRIPSI PASSWORD DIMULAI ---
+        String passwordEnkripsi = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(passwordEnkripsi);
+        // --- JURUS ENKRIPSI SELESAI ---
+
         // Setiap user baru mendaftar, otomatis rolenya jadi USER biasa
         user.setRole(Role.USER); 
         userRepository.save(user);
@@ -41,12 +47,19 @@ public class UserService {
         if (userOpt.isEmpty()) {
             return "Gagal: Email tidak ditemukan!";
         }
+        
         User user = userOpt.get();
-        if (!user.getPassword().equals(password)) {
+        
+        // --- JURUS CEK PASSWORD ENKRIPSI DIMULAI ---
+        // Penjelasan: BCrypt.checkpw(Password_Ketik, Password_Database)
+        if (!BCrypt.checkpw(password, user.getPassword())) {
             return "Gagal: Password salah!";
         }
+        // --- JURUS CEK SELESAI ---
+
         return "Sukses: Selamat Datang, " + user.getUsername() + " (Role: " + user.getRole() + ")!";
     }
+    
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
