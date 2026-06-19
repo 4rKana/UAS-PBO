@@ -339,19 +339,16 @@
 
 <body>
 
-  <!-- Dark mode toggle -->
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">
     <svg id="moonIcon" viewBox="0 0 24 24" stroke-width="2">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   </button>
 
-  <!-- Help button -->
   <button class="help-btn">?</button>
 
   <div class="container">
 
-    <!-- Logo -->
     <div class="logo-wrap">
       <div class="logo-icon">
         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -364,20 +361,20 @@
       </div>
     </div>
 
-    <!-- Tab Switcher -->
     <div class="tab-switcher">
-      <a href="register" class="tab-btn active">Daftar</a>
-      <a href="login" class="tab-btn">Masuk</a>
+      <a href="register*" class="tab-btn active">Daftar</a>
+      <a href="login*/" class="tab-btn">Masuk</a>
     </div>
 
-    <!-- Card -->
     <div class="card">
 
       <form id="registerForm">
-        <!-- Email Kampus -->
         <div class="field">
           <label class="field-label">Email Kampus</label>
-          <input type="email" name="email" placeholder="nim@student.uinsgd.ac.id" required autofocus />
+          <div style="display: flex; gap: 10px;">
+            <input type="email" name="email" placeholder="nim@student.uinsgd.ac.id" required autofocus style="flex: 1;" />
+            <button type="button" onclick="requestOtp()" style="padding: 0 16px; background: var(--btn-primary); color: white; border: none; border-radius: 12px; font-size: 13px; font-weight: bold; cursor: pointer; transition: background .15s;">Minta OTP</button>
+          </div>
           <div class="field-hint">
             <svg viewBox="0 0 24 24" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
@@ -388,19 +385,16 @@
           </div>
         </div>
 
-        <!-- Username -->
         <div class="field">
           <label class="field-label">Username</label>
           <input type="text" name="username" placeholder="contoh: rizky_pratama" required />
         </div>
 
-        <!-- NIM -->
         <div class="field">
           <label class="field-label">NIM</label>
           <input type="text" name="nim" placeholder="1xxxxxxxxx" required />
         </div>
 
-        <!-- Angkatan -->
         <div class="field">
           <label class="field-label">Angkatan</label>
           <select name="angkatan" required>
@@ -415,7 +409,6 @@
           </select>
         </div>
 
-        <!-- Password -->
         <div class="field" style="margin-bottom:24px;">
           <label class="field-label">Password</label>
           <input type="password" name="password" placeholder="**********" required />
@@ -426,7 +419,6 @@
 
     </div>
 
-    <!-- Footer -->
     <p class="footer-link">
       Sudah punya akun? <a href="login">Masuk di sini</a>
     </p>
@@ -461,15 +453,50 @@
       localStorage.setItem('campshare-theme', next);
     });
 
+    // ==========================================
+    // FUNGSI BARU: MINTA OTP
+    // ==========================================
+    async function requestOtp() {
+        const emailInput = document.querySelector('input[name="email"]').value;
+        if (!emailInput) {
+            alert("Harap isi alamat email terlebih dahulu!");
+            return;
+        }
+
+        alert("Memproses... Menunggu email terkirim. Mohon tunggu sebentar.");
+        try {
+            const res = await fetch("http://localhost:8080/api/auth/request-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailInput })
+            });
+            const data = await res.json();
+            alert(data.message);
+        } catch (err) {
+            alert("Gagal terhubung ke server Spring Boot!");
+            console.error(err);
+        }
+    }
+
+    // ==========================================
+    // FUNGSI UPDATE: DAFTAR DENGAN OTP
+    // ==========================================
     document.getElementById("registerForm").addEventListener("submit", function (event) {
       event.preventDefault();
+
+      const emailInput = document.querySelector('input[name="email"]').value;
+
+      // Meminta user mengetik OTP dari email
+      const inputOtp = prompt("Silakan periksa kotak masuk Gmail Anda.\nMasukkan 6-digit kode OTP di sini:");
+      if (!inputOtp) return; // Batal jika user menekan Cancel
 
       const formData = {
         nim: document.querySelector('input[name="nim"]').value,
         angkatan: document.querySelector('select[name="angkatan"]').value,
         username: document.querySelector('input[name="username"]').value,
-        email: document.querySelector('input[name="email"]').value,
-        password: document.querySelector('input[name="password"]').value
+        email: emailInput,
+        password: document.querySelector('input[name="password"]').value,
+        otp: inputOtp // <-- Tambahan OTP yang dikirim ke backend
       };
 
       fetch("http://localhost:8080/api/auth/register", {
@@ -477,19 +504,24 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       })
-        .then(response => response.text())
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.message || "Gagal mendaftar");
+          }
+          return data;
+        })
         .then(result => {
-          alert(result); // Munculkan pesan sukses/gagal dari backend
-          if (result.startsWith("Sukses")) {
-            window.location.href = "login";
+          alert(result.message); 
+          if (result.message.startsWith("Sukses")) {
+            window.location.href = "login"; 
           }
         })
         .catch(error => {
           console.error("Error:", error);
-          alert("Gagal terhubung ke server!");
+          alert(error.message);
         });
     });
-  </script>
   </script>
 </body>
 

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import org.mindrot.jbcrypt.BCrypt;
+import com.PBO2.CampShare.service.OtpService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -16,11 +17,43 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private OtpService otpService; // <-- Tambahkan ini
+
+    // --- API BARU UNTUK KIRIM EMAIL OTP ---
+    @PostMapping("/request-otp")
+    public ResponseEntity<?> requestOtp(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        try {
+            otpService.generateAndSendOtp(email);
+            return ResponseEntity.ok(Map.of("message", "OTP berhasil dikirim ke email!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Gagal mengirim email: " + e.getMessage()));
+        }
+    }
+
+    // --- API REGISTER DIUPDATE ---
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User userRequest) {
+    public ResponseEntity<?> register(@RequestBody Map<String, Object> requestData) {
+        String email = (String) requestData.get("email");
+        String otp = (String) requestData.get("otp");
+
+        // 1. Validasi OTP terlebih dahulu
+        if (!otpService.validateOtp(email, otp)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Gagal: Kode OTP salah atau kadaluarsa!"));
+        }
+
+        // 2. Jika OTP benar, pindahkan data ke object User
+        User userRequest = new User();
+        userRequest.setNim((String) requestData.get("nim"));
+        userRequest.setAngkatan((String) requestData.get("angkatan"));
+        userRequest.setUsername((String) requestData.get("username"));
+        userRequest.setEmail(email);
+        userRequest.setPassword((String) requestData.get("password"));
+
+        // 3. Lanjutkan pendaftaran seperti biasa
         String result = userService.register(userRequest);
         if (result.startsWith("Gagal")) {
-            // Ubah balasan jadi format JSON {"message": "Gagal..."}
             return ResponseEntity.badRequest().body(Map.of("message", result));
         }
         return ResponseEntity.ok(Map.of("message", result));
