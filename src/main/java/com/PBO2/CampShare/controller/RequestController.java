@@ -19,13 +19,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.PBO2.CampShare.entity.RequestBarang;
 import com.PBO2.CampShare.entity.enumeration.StatusRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import com.PBO2.CampShare.service.RequestService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/request")
