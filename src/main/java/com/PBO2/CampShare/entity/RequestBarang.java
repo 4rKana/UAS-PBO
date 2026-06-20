@@ -22,10 +22,12 @@ public class RequestBarang {
     private String deskripsi;
     
     @Enumerated(EnumType.STRING)
-    private StatusRequest statusRequest;
+    private StatusRequest statusRequest = StatusRequest.MENCARI;
 
     // Constructor Kosong (Wajib untuk JPA)
-    public RequestBarang() {}
+    public RequestBarang() {
+        this.statusRequest = StatusRequest.MENCARI;
+    }
 
     // Constructor dengan Parameter
     public RequestBarang(String namaBarang, String deskripsi, StatusRequest statusRequest) {
