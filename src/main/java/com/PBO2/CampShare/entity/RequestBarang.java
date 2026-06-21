@@ -2,6 +2,7 @@ package com.PBO2.CampShare.entity;
 
 import com.PBO2.CampShare.entity.enumeration.StatusRequest;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,6 +22,9 @@ public class RequestBarang {
     private String namaBarang;
     private String deskripsi;
     
+    @Column(name = "anggaran")
+    private Integer anggaran;
+
     @Enumerated(EnumType.STRING)
     private StatusRequest statusRequest;
 
@@ -32,6 +36,7 @@ public class RequestBarang {
         this.namaBarang = namaBarang;
         this.deskripsi = deskripsi;
         this.statusRequest = statusRequest;
+        this.anggaran = anggaran;
     }
 
     // Getter dan Setter
@@ -43,6 +48,9 @@ public class RequestBarang {
 
     public String getDeskripsi() { return deskripsi; }
     public void setDeskripsi(String deskripsi) { this.deskripsi = deskripsi; }
+
+    public Integer getAnggaran() { return anggaran; }
+    public void setAnggaran(Integer anggaran) { this.anggaran = anggaran; }
 
     public StatusRequest getStatusRequest() { return statusRequest; }
     public void setStatusRequest(StatusRequest statusRequest) { this.statusRequest = statusRequest; }
