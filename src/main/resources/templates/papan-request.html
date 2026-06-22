@@ -265,158 +265,196 @@
     </div>
 
     <!-- SCRIPT LOGIKA -->
-    <script>
-        // Logika Sidebar Mobile
-        function toggleMobileNav() {
-            const nav = document.getElementById('mobileNav');
-            const overlay = document.getElementById('mobileNavOverlay');
-            nav.classList.toggle('open');
-            overlay.classList.toggle('open');
-            document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
-        }
-        function closeMobileNav() {
-            const nav = document.getElementById('mobileNav');
-            const overlay = document.getElementById('mobileNavOverlay');
-            nav.classList.remove('open');
-            overlay.classList.remove('open');
-            document.body.style.overflow = '';
-        }
+<script>
+    // ==========================================
+    // 1. LOGIKA SIDEBAR MOBILE
+    // ==========================================
+    function toggleMobileNav() {
+        const nav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('mobileNavOverlay');
+        nav.classList.toggle('open');
+        overlay.classList.toggle('open');
+        document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    }
 
-        // Logika Modal Pop-up
-        const btnBukaPermintaan = document.getElementById('btn-buka-permintaan');
-        const btnCloseModal = document.getElementById('btn-close-modal');
-        const modalPermintaan = document.getElementById('modal-permintaan');
+    function closeMobileNav() {
+        const nav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('mobileNavOverlay');
+        nav.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
 
+    // ==========================================
+    // 2. LOGIKA MODAL POP-UP
+    // ==========================================
+    const btnBukaPermintaan = document.getElementById('btn-buka-permintaan');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const modalPermintaan = document.getElementById('modal-permintaan');
+
+    if (btnBukaPermintaan) {
         btnBukaPermintaan.addEventListener('click', () => {
             modalPermintaan.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
         });
+    }
 
+    if (btnCloseModal) {
         btnCloseModal.addEventListener('click', () => {
             modalPermintaan.classList.add('hidden');
             document.body.style.overflow = ''; 
         });
+    }
 
+    if (modalPermintaan) {
         modalPermintaan.addEventListener('click', (e) => {
             if (e.target === modalPermintaan) {
                 modalPermintaan.classList.add('hidden');
                 document.body.style.overflow = '';
             }
         });
+    }
 
-        // Logika Dark Mode
-        const html = document.documentElement;
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-        const themeLabelMobile = document.getElementById('theme-label-mobile');
+    // ==========================================
+    // 3. LOGIKA DARK MODE
+    // ==========================================
+    const html = document.documentElement;
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+    const themeLabelMobile = document.getElementById('theme-label-mobile');
 
-        function updateIcons() {
-            if (html.classList.contains('dark')) {
-                if(sunIcon) sunIcon.classList.remove('hidden');
-                if(moonIcon) moonIcon.classList.add('hidden');
-                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
-            } else {
-                if(sunIcon) sunIcon.classList.add('hidden');
-                if(moonIcon) moonIcon.classList.remove('hidden');
-                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
-            }
-        }
-
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
+    function updateIcons() {
+        if (html.classList.contains('dark')) {
+            if(sunIcon) sunIcon.classList.remove('hidden');
+            if(moonIcon) moonIcon.classList.add('hidden');
+            if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
         } else {
-            html.classList.remove('dark');
+            if(sunIcon) sunIcon.classList.add('hidden');
+            if(moonIcon) moonIcon.classList.remove('hidden');
+            if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
         }
+    }
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+    } else {
+        html.classList.remove('dark');
+    }
+    updateIcons();
+
+    function toggleTheme() {
+        html.classList.toggle('dark');
+        localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
         updateIcons();
+    }
 
-        function toggleTheme() {
-            html.classList.toggle('dark');
-            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
-            updateIcons();
-        }
+    if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+    if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
 
-        if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
-        if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
 
-        // Tambahkan fungsi ini di bawah fungsi submitForm yang sudah ada
-// Memuat Data Request dari Backend
-        async function loadRequest() {
-            const container = document.getElementById('list-permintaan');
-            if (!container) return;
+    // ==========================================
+    // 4. LOGIKA CRUD BACKEND (SPRING BOOT API)
+    // ==========================================
 
-            try {
-                const response = await fetch('http://localhost:8080/api/request');
-                const data = await response.json();
+    // A. Memuat Data Request dari Backend
+    async function loadRequest() {
+        const container = document.getElementById('list-permintaan');
+        if (!container) return;
+
+        try {
+            const response = await fetch('http://localhost:8080/api/request');
+            const data = await response.json();
+            
+            container.innerHTML = ''; // Kosongkan kontainer lama
+            
+            data.forEach(item => {
+                // Logika penentuan warna badge status berdasarkan nilainya
+                let statusBadgeClass = '';
                 
-                container.innerHTML = ''; // Kosongkan kontainer
-                
-                data.forEach(item => {
-                    // Logika penentuan warna badge status berdasarkan nilainya
-                    let statusBadgeClass = '';
-                    
-                    if (item.statusRequest === 'TERSEDIA') {
-                        // Warna Hijau untuk TERSEDIA
-                        statusBadgeClass = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 font-semibold';
-                    } else if (item.statusRequest === 'TERPENUHI') {
-                        // Warna Abu-abu untuk TERPENUHI
-                        statusBadgeClass = 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400 font-medium';
-                    } else {
-                        // Warna default cadangan jika ada status lain
-                        statusBadgeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-                    }
+                if (item.statusRequest === 'TERSEDIA') {
+                    statusBadgeClass = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 font-semibold';
+                } else if (item.statusRequest === 'TERPENUHI') {
+                    statusBadgeClass = 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400 font-medium';
+                } else {
+                    statusBadgeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+                }
 
-                    container.innerHTML += `
-                    <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="font-semibold text-[16px] dark:text-white">${item.namaBarang}</span>
-                            <button onclick="hapusRequest('${item.id}')" class="text-red-500 hover:text-red-600 text-[12px] font-medium transition-colors">Hapus</button>
-                        </div>
-                        <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-4">${item.deskripsi}</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-[15px] text-blue-600 dark:text-blue-400 font-bold">Rp ${item.anggaran.toLocaleString('id-ID')}</span>
-                            <span class="text-[11px] tracking-wide px-2.5 py-1 rounded-lg ${statusBadgeClass}">${item.statusRequest}</span>
-                        </div>
-                    </div>`;
-                });
-            } catch (error) {
-                console.error("Gagal memuat data:", error);
-            }
+                container.innerHTML += `
+                <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="font-semibold text-[16px] dark:text-white">${item.namaBarang}</span>
+                        <button onclick="hapusRequest('${item.id}')" class="text-red-500 hover:text-red-600 text-[12px] font-medium transition-colors">Hapus</button>
+                    </div>
+                    <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-4">${item.deskripsi}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[15px] text-blue-600 dark:text-blue-400 font-bold">Rp ${item.anggaran.toLocaleString('id-ID')}</span>
+                        <span class="text-[11px] tracking-wide px-2.5 py-1 rounded-lg ${statusBadgeClass}">${item.statusRequest}</span>
+                    </div>
+                </div>`;
+            });
+        } catch (error) {
+            console.error("Gagal memuat data:", error);
         }
+    }
 
-        // Tambahkan juga fungsi hapus agar tidak error
-        async function hapusRequest(id) {
-            if (confirm("Yakin ingin menghapus permintaan ini?")) {
-                await fetch(`http://localhost:8080/api/request/${id}`, { method: 'DELETE' });
-                loadRequest();
-            }
-        }
-
-        // PENTING: Jalankan fungsi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', loadRequest);
-
-        async function submitForm(event) {
-        event.preventDefault();
+    // B. Mengirim Data Request Baru ke Backend
+    async function submitForm(event) {
+        event.preventDefault(); // Mencegah halaman reload otomatis
         
-        // Sesuaikan nama field dengan Entity di Java
         const data = {
             namaBarang: document.getElementById('input-nama-barang').value,
             deskripsi: document.getElementById('input-deskripsi').value,
             anggaran: parseInt(document.getElementById('input-anggaran').value),
-            statusRequest: 'TERSEDIA' // Default status dari enum temanmu
+            statusRequest: 'TERSEDIA' 
         };
 
-        await fetch('http://localhost:8080/api/request', { // Sesuaikan URL controller temanmu
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
+        try {
+            const response = await fetch('http://localhost:8080/api/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-        document.getElementById('form-permintaan').reset();
-        document.getElementById('modal-permintaan').classList.add('hidden');
-        loadRequest();
+            if (response.ok) {
+                document.getElementById('form-permintaan').reset(); // Reset isi input form
+                document.getElementById('modal-permintaan').classList.add('hidden'); // Tutup modal
+                document.body.style.overflow = ''; // Kembalikan scrollbar
+                loadRequest(); // Refresh papan request agar data baru langsung muncul
+            } else {
+                alert("Gagal mengirim permintaan ke server.");
+            }
+        } catch (error) {
+            console.error("Error saat mengirim data:", error);
+        }
     }
-    </script>
+
+    // C. Menghapus Data Request
+    async function hapusRequest(id) {
+        if (confirm("Yakin ingin menghapus permintaan ini?")) {
+            try {
+                await fetch(`http://localhost:8080/api/request/${id}`, { method: 'DELETE' });
+                loadRequest();
+            } catch (error) {
+                console.error("Gagal menghapus data:", error);
+            }
+        }
+    }
+
+    // ==========================================
+    // 5. EVENT LISTENERS UTAMA (INISIALISASI)
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        // Jalankan load data pertama kali saat halaman dibuka
+        loadRequest();
+
+        // PASANG LISTENER FORM DI SINI (Ini kunci perbaikannya!)
+        const formPermintaan = document.getElementById('form-permintaan');
+        if (formPermintaan) {
+            formPermintaan.addEventListener('submit', submitForm);
+        }
+    });
+</script>
 </body>
 </html>
