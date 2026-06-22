@@ -20,7 +20,12 @@ public class RequestService {
     }
 
     public RequestBarang buatRequest(RequestBarang request) {
+<<<<<<< Updated upstream
         request.setStatusRequest(StatusRequest.MENCARI);
+=======
+        // Aturan Bisnis: Setiap request baru wajib berstatus TERSEDIA
+        request.setStatusRequest(StatusRequest.TERSEDIA);
+>>>>>>> Stashed changes
         return requestRepository.save(request);
     }
 
