@@ -32,11 +32,11 @@ public class RequestBarang {
     public RequestBarang() {}
 
     // Constructor dengan Parameter
-    public RequestBarang(String namaBarang, String deskripsi, StatusRequest statusRequest) {
+    public RequestBarang(String namaBarang, String deskripsi, Integer anggaran, StatusRequest statusRequest) {
         this.namaBarang = namaBarang;
         this.deskripsi = deskripsi;
-        this.statusRequest = statusRequest;
         this.anggaran = anggaran;
+        this.statusRequest = statusRequest;
     }
 
     // Getter dan Setter

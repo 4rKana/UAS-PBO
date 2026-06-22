@@ -32,6 +32,11 @@ public class RequestService {
 
     public RequestBarang buatRequest(RequestBarang request) {
 
+        // Pastikan request tidak null
+        if (request == null) {
+            throw new IllegalArgumentException("Data request tidak boleh kosong");
+        }
+
         // Aturan Bisnis: Setiap request baru wajib berstatus TERSEDIA
         request.setStatusRequest(StatusRequest.TERSEDIA);
         return requestRepository.save(request);
