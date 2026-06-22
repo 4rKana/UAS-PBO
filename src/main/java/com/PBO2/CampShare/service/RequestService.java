@@ -7,9 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.PBO2.CampShare.entity.RequestBarang;
-
 import com.PBO2.CampShare.entity.enumeration.StatusRequest;
-
 import com.PBO2.CampShare.repository.RequestRepository;
 
 @Service
@@ -33,8 +31,9 @@ public class RequestService {
     }
 
     public RequestBarang buatRequest(RequestBarang request) {
-        // Aturan Bisnis: Setiap request baru wajib berstatus MENCARI
-        request.setStatusRequest(StatusRequest.MENCARI);
+
+        // Aturan Bisnis: Setiap request baru wajib berstatus TERSEDIA
+        request.setStatusRequest(StatusRequest.TERSEDIA);
         return requestRepository.save(request);
     }
     // DISATUKAN: Cukup satu fungsi update status yang menerima tipe data Enum yang aman (Type-Safe)
