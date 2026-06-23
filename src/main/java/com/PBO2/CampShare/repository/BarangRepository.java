@@ -25,4 +25,8 @@ public interface BarangRepository extends JpaRepository<Barang, Long> {
 
     // Mencari barang berdasarkan statusnya
     List<Barang> findByStatus(StatusBarang status);
+
+    // --- TAMBAHKAN BARIS INI ---
+    // Mencari semua barang (baik jual maupun pinjam) milik satu user
+    List<Barang> findByPemilikIdUser(String idUser);
 }

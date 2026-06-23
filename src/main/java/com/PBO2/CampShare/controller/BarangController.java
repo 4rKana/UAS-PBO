@@ -64,4 +64,34 @@ public class BarangController {
         barangService.deleteBarang(id);
         return ResponseEntity.ok("Barang dengan ID " + id + " berhasil dihapus.");
     }
+  // --- TAMBAHKAN KODE INI DI BAWAH CONTROLLER (Ganti yang sebelumnya) ---
+
+    @Autowired
+    private com.PBO2.CampShare.repository.BarangRepository barangRepository;
+
+    @GetMapping("/user/{idUser}")
+    public ResponseEntity<?> getBarangByUser(@PathVariable String idUser) {
+        try {
+            // 1. Ambil semua barang milik user ini sekaligus dari database
+            List<Barang> semuaBarang = barangRepository.findByPemilikIdUser(idUser);
+
+            // 2. Pisahkan mana yang Barang Jual dan mana yang Barang Pinjam untuk dikirim ke HTML
+            List<Barang> jual = semuaBarang.stream()
+                .filter(b -> b instanceof com.PBO2.CampShare.entity.BarangJual)
+                .collect(java.util.stream.Collectors.toList());
+                
+            List<Barang> pinjam = semuaBarang.stream()
+                .filter(b -> b instanceof com.PBO2.CampShare.entity.BarangPinjam)
+                .collect(java.util.stream.Collectors.toList());
+
+            // 3. Masukkan ke format response
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("barangJual", jual);
+            response.put("barangPinjam", pinjam);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
 }

@@ -32,4 +32,11 @@ public abstract class Barang {
 
     @Enumerated(EnumType.STRING)
     private StatusBarang status;
+    // ... variabel status dan kategori ...
+
+    // --- TAMBAHKAN INI DI BARANG.JAVA ---
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "idUser")
+    private User pemilik;
+
 }

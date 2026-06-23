@@ -14,7 +14,7 @@ public class BarangJual extends Barang {
     @Column(nullable = false)
     private Double harga;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "idUser") // Menghubungkan ke idUser bertipe String di entity User
-    private User pemilik;
+    // @ManyToOne
+    // @JoinColumn(name = "user_id", referencedColumnName = "idUser") // Menghubungkan ke idUser bertipe String di entity User
+    // private User pemilik;
 }

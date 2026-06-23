@@ -17,7 +17,7 @@ public class BarangPinjam extends Barang {
     @Column(nullable = false)
     private Integer durasiMaksimalHari;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "idUser") // Menghubungkan ke idUser bertipe String di entity User
-    private User pemilik;
+//     @ManyToOne
+//     @JoinColumn(name = "user_id", referencedColumnName = "idUser") // Menghubungkan ke idUser bertipe String di entity User
+//     private User pemilik;
 }
