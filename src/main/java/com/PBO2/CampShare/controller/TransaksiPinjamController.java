@@ -2,6 +2,7 @@ package com.PBO2.CampShare.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.PBO2.CampShare.entity.TransaksiPinjam;
@@ -51,5 +52,14 @@ public class TransaksiPinjamController {
             @PathVariable String id) {
 
         service.delete(id);
+    }
+    
+    @Autowired
+    private com.PBO2.CampShare.repository.TransaksiPinjamRepository pinjamRepository;
+
+    // 2. Tambahkan Endpoint khusus untuk mengambil riwayat berdasarkan user
+    @GetMapping("/user/{idUser}")
+    public List<TransaksiPinjam> getRiwayatUser(@PathVariable String idUser) {
+        return pinjamRepository.findByPeminjamIdUser(idUser);
     }
 }
