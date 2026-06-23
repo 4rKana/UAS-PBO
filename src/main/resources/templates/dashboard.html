@@ -42,10 +42,9 @@
             background: #f5f6f8;
             color: #1a1a2e;
             transition: background 0.25s ease, color 0.25s ease;
-            padding-bottom: 72px; /* space untuk bottom nav di HP */
+            padding-bottom: 72px;
         }
 
-        /* ── MAIN ── */
         main {
             max-width: 1320px;
             margin: 0 auto;
@@ -291,7 +290,207 @@
             transition: color 0.2s;
         }
 
-        /* ── SIDEBAR / MOBILE NAV ── */
+        /* ── FILTER SIDEBAR ── */
+        .filter-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .filter-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .filter-sidebar {
+            position: fixed;
+            top: 0;
+            left: -380px;
+            width: 380px;
+            max-width: 92vw;
+            height: 100%;
+            background: #fff;
+            z-index: 1001;
+            padding: 28px 24px 32px;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 32px rgba(0, 0, 0, 0.15);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        html.dark .filter-sidebar {
+            background: #1c1f2e;
+        }
+        .filter-sidebar.open {
+            left: 0;
+        }
+
+        .filter-sidebar .filter-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 1.5px solid #e5e7ef;
+            margin-bottom: 20px;
+        }
+        html.dark .filter-sidebar .filter-header {
+            border-bottom-color: #3f3f46;
+        }
+
+        .filter-sidebar .filter-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        html.dark .filter-sidebar .filter-header h2 {
+            color: #fff;
+        }
+
+        .filter-sidebar .close-filter {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        html.dark .filter-sidebar .close-filter {
+            color: #9ca3af;
+        }
+
+        .filter-group {
+            margin-bottom: 22px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 6px;
+            letter-spacing: .3px;
+        }
+        html.dark .filter-group label {
+            color: #9ca3af;
+        }
+
+        .filter-group .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .filter-group .filter-options .opt-btn {
+            padding: 5px 14px;
+            border-radius: 999px;
+            border: 1.5px solid #dde1ef;
+            background: #fff;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+            transition: all .13s;
+        }
+        html.dark .filter-group .filter-options .opt-btn {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #aaa;
+        }
+        .filter-group .filter-options .opt-btn:hover {
+            border-color: #3b5bdb;
+            color: #3b5bdb;
+        }
+        .filter-group .filter-options .opt-btn.active {
+            background: #3b5bdb;
+            border-color: #3b5bdb;
+            color: #fff;
+        }
+        html.dark .filter-group .filter-options .opt-btn.active {
+            background: #3b5bdb;
+            border-color: #3b5bdb;
+            color: #fff;
+        }
+
+        .filter-group .filter-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1.5px solid #dde1ef;
+            background: #fff;
+            font-size: 14px;
+            color: #333;
+            outline: none;
+            transition: border-color .15s;
+        }
+        html.dark .filter-group .filter-input {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #ddd;
+        }
+        .filter-group .filter-input:focus {
+            border-color: #3b5bdb;
+        }
+
+        .filter-group .price-range {
+            display: flex;
+            gap: 12px;
+        }
+        .filter-group .price-range .filter-input {
+            flex: 1;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1.5px solid #e5e7ef;
+        }
+        html.dark .filter-actions {
+            border-top-color: #3f3f46;
+        }
+
+        .filter-actions .btn-apply {
+            flex: 2;
+            padding: 10px 0;
+            border: none;
+            border-radius: 12px;
+            background: #3b5bdb;
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background .15s;
+        }
+        .filter-actions .btn-apply:hover {
+            background: #2a4ac0;
+        }
+
+        .filter-actions .btn-reset {
+            flex: 1;
+            padding: 10px 0;
+            border: 1.5px solid #dde1ef;
+            border-radius: 12px;
+            background: transparent;
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all .15s;
+        }
+        html.dark .filter-actions .btn-reset {
+            border-color: #3f3f46;
+            color: #9ca3af;
+        }
+        .filter-actions .btn-reset:hover {
+            border-color: #fa5252;
+            color: #fa5252;
+        }
+
+        /* ── MOBILE NAV ── */
         .mobile-nav-overlay {
             position: fixed;
             inset: 0;
@@ -311,6 +510,7 @@
             top: 0;
             left: -280px;
             width: 280px;
+            max-width: 80vw;
             height: 100%;
             background: #fff;
             z-index: 1000;
@@ -413,7 +613,7 @@
             border-top-color: #3f3f46;
         }
 
-        /* ── BOTTOM NAV (HP) ── */
+        /* ── BOTTOM NAV ── */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -577,6 +777,14 @@
                 width: 100%;
                 flex-wrap: wrap;
             }
+            .filter-sidebar {
+                width: 92vw;
+                left: -92vw;
+                padding: 20px 16px 24px;
+            }
+            .filter-sidebar.open {
+                left: 0;
+            }
         }
 
         @media (min-width: 768px) {
@@ -594,6 +802,39 @@
             .desktop-search {
                 display: none !important;
             }
+        }
+
+        /* ── UTILITY ── */
+        .hidden-item {
+            display: none !important;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+        }
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            color: #9ca3af;
+            margin-bottom: 16px;
+        }
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+        .empty-state p {
+            color: #888;
+            font-size: 14px;
+        }
+        html.dark .empty-state h3 {
+            color: #fff;
+        }
+        html.dark .empty-state p {
+            color: #9ca3af;
         }
     </style>
 </head>
@@ -632,13 +873,76 @@
         </div>
     </div>
 
+    <!-- ─── FILTER SIDEBAR ─── -->
+    <div class="filter-overlay" id="filterOverlay" onclick="closeFilter()"></div>
+    <div class="filter-sidebar" id="filterSidebar">
+        <div class="filter-header">
+            <h2>🧹 Filter</h2>
+            <button class="close-filter" onclick="closeFilter()">✕</button>
+        </div>
+
+        <!-- Kategori -->
+        <div class="filter-group">
+            <label>Kategori</label>
+            <div class="filter-options" id="filterCategoryOptions">
+                <button class="opt-btn active" data-cat="SEMUA">Semua</button>
+                <button class="opt-btn" data-cat="ELEKTRONIK">Elektronik</button>
+                <button class="opt-btn" data-cat="BUKU">Buku</button>
+                <button class="opt-btn" data-cat="ALAT_TULIS">Alat Tulis</button>
+                <button class="opt-btn" data-cat="PAKAIAN">Pakaian</button>
+                <button class="opt-btn" data-cat="PERLENGKAPAN_KOS">Perlengkapan Kos</button>
+                <button class="opt-btn" data-cat="LAINNYA">Lainnya</button>
+            </div>
+        </div>
+
+        <!-- Tipe -->
+        <div class="filter-group">
+            <label>Tipe</label>
+            <div class="filter-options" id="filterTypeOptions">
+                <button class="opt-btn active" data-type="SEMUA">Semua</button>
+                <button class="opt-btn" data-type="JUAL">Jual</button>
+                <button class="opt-btn" data-type="SEWA">Sewa</button>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="filter-group">
+            <label>Status</label>
+            <div class="filter-options" id="filterStatusOptions">
+                <button class="opt-btn active" data-status="SEMUA">Semua</button>
+                <button class="opt-btn" data-status="available">Tersedia</button>
+                <button class="opt-btn" data-status="unavailable">Tidak Tersedia</button>
+            </div>
+        </div>
+
+        <!-- Harga Range -->
+        <div class="filter-group">
+            <label>Rentang Harga</label>
+            <div class="price-range">
+                <input type="number" class="filter-input" id="priceMin" placeholder="Min" min="0" step="1000">
+                <input type="number" class="filter-input" id="priceMax" placeholder="Max" min="0" step="1000">
+            </div>
+        </div>
+
+        <!-- Tanggal Post -->
+        <div class="filter-group">
+            <label>Diposting sejak</label>
+            <input type="date" class="filter-input" id="filterDate">
+        </div>
+
+        <!-- Actions -->
+        <div class="filter-actions">
+            <button class="btn-apply" onclick="applyFilters()">Terapkan Filter</button>
+            <button class="btn-reset" onclick="resetFilters()">Reset</button>
+        </div>
+    </div>
+
     <!-- ─── HEADER ─── -->
     <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
             <!-- kiri: logo + search -->
             <div class="flex items-center gap-3 flex-1">
-                <!-- Tombol menu untuk HP -->
                 <button id="menu-toggle" class="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onclick="toggleMobileNav()">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
@@ -658,7 +962,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input type="text" placeholder="Cari barang, buku, peralatan…"
+                    <input type="text" id="searchInput" placeholder="Cari barang, buku, peralatan…"
                     class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors">
                 </div>
             </div>
@@ -672,7 +976,6 @@
                 </nav>
 
                 <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
-                    <!-- Dark mode toggle -->
                     <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors hidden md:block">
                         <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
@@ -682,20 +985,17 @@
                         </svg>
                     </button>
 
-                    <!-- NOTIFIKASI -->
                     <a href="notifikasi.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </a>
 
-                    <!-- Chat -->
                     <a href="roomchat.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </a>
 
-                    <!-- Avatar -->
                     <a href="profil.html" class="inline-block">
                         <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">
                             AK
@@ -714,300 +1014,38 @@
         <div class="page-header">
             <div>
                 <h1>Jelajah Katalog</h1>
-                <p>8 barang tersedia</p>
+                <p id="itemCount">8 barang tersedia</p>
             </div>
             <div class="header-controls">
-                <button class="btn-filter">
+                <button class="btn-filter" onclick="openFilter()">
                     <svg viewBox="0 0 24 24" stroke-width="2">
                         <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                     </svg>
                     Filter
                 </button>
-                <select class="sort-select">
-                    <option>Terbaru</option>
-                    <option>Termurah</option>
-                    <option>Termahal</option>
+                <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+                    <option value="terbaru">Terbaru</option>
+                    <option value="termurah">Termurah</option>
+                    <option value="termahal">Termahal</option>
                 </select>
             </div>
         </div>
 
         <!-- Category Tabs -->
-        <div class="tabs">
-            <button class="tab active">Semua</button>
-            <button class="tab">Elektronik</button>
-            <button class="tab">Buku &amp; Catatan</button>
-            <button class="tab">Peralatan Lab</button>
-            <button class="tab">Alat Tulis</button>
-            <button class="tab">Olahraga</button>
-            <button class="tab">Lainnya</button>
-            <button class="tab">Disewakan</button>
-            <button class="tab">Dijual</button>
+        <div class="tabs" id="categoryTabs">
+            <button class="tab active" data-category="SEMUA">Semua</button>
+            <button class="tab" data-category="ELEKTRONIK">Elektronik</button>
+            <button class="tab" data-category="BUKU">Buku</button>
+            <button class="tab" data-category="ALAT_TULIS">Alat Tulis</button>
+            <button class="tab" data-category="PAKAIAN">Pakaian</button>
+            <button class="tab" data-category="PERLENGKAPAN_KOS">Perlengkapan Kos</button>
+            <button class="tab" data-category="LAINNYA">Lainnya</button>
         </div>
 
         <!-- Grid -->
         <div class="grid" id="barang-grid">
-
-            <!-- Card 1 – USB Hub -->
-            <a href="detail-barang.html" class="card-link" style="text-decoration: none; color: inherit; display: block;">
-                <div class="card">
-                    <div class="card-img">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
-                            <defs>
-                                <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stop-color="#e8b800"/>
-                                    <stop offset="100%" stop-color="#f5d000"/>
-                                </linearGradient>
-                            </defs>
-                            <rect width="480" height="200" fill="url(#g1)"/>
-                            <ellipse cx="240" cy="130" rx="55" ry="50" fill="rgba(255,255,255,0.18)"/>
-                            <ellipse cx="215" cy="80" rx="22" ry="36" fill="rgba(255,255,255,0.18)" transform="rotate(-10,215,80)"/>
-                            <ellipse cx="265" cy="80" rx="22" ry="36" fill="rgba(255,255,255,0.18)" transform="rotate(10,265,80)"/>
-                            <ellipse cx="240" cy="125" rx="38" ry="40" fill="rgba(255,255,255,0.22)"/>
-                            <rect x="30" y="20" width="160" height="110" rx="8" fill="rgba(0,0,0,0.18)"/>
-                            <path d="M390 160 Q430 140 440 100" stroke="rgba(0,0,0,0.3)" stroke-width="4" fill="none" stroke-linecap="round"/>
-                            <circle cx="440" cy="95" r="7" fill="rgba(0,0,0,0.25)"/>
-                            <rect x="390" y="120" width="30" height="40" rx="5" fill="#4ade80" opacity=".6"/>
-                        </svg>
-                        <span class="badge badge-jual">Jual</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-title">USB Hub 7-Port Anker</div>
-                        <div class="card-meta">
-                            <span class="tag-year">2022</span>
-                            <span class="tag-status available">Tersedia</span>
-                        </div>
-                        <div class="card-footer">
-                            <span class="price">Rp 75.000</span>
-                            <span class="seller">Sari Dewi</span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Card 2 – Clean Code -->
-            <a href="detail-barang.html" class="card-link" style="text-decoration: none; color: inherit; display: block;">
-                <div class="card">
-                <div class="card-img">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
-                        <defs>
-                            <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stop-color="#1a0a00"/>
-                                <stop offset="100%" stop-color="#3d1f00"/>
-                            </linearGradient>
-                        </defs>
-                        <rect width="480" height="200" fill="url(#g2)"/>
-                        <rect x="0" y="60" width="480" height="6" fill="rgba(255,200,100,.15)"/>
-                        <rect x="0" y="110" width="480" height="6" fill="rgba(255,200,100,.12)"/>
-                        <rect x="0" y="155" width="480" height="6" fill="rgba(255,200,100,.10)"/>
-                        <rect x="10" y="25" width="14" height="35" rx="2" fill="#8b4513" opacity=".8"/>
-                        <rect x="26" y="30" width="10" height="30" rx="2" fill="#a0522d" opacity=".7"/>
-                        <rect x="38" y="20" width="16" height="40" rx="2" fill="#6b3410" opacity=".9"/>
-                        <rect x="56" y="28" width="12" height="32" rx="2" fill="#c47a3a" opacity=".6"/>
-                        <g transform="translate(200,30)">
-                            <path d="M40 10 Q10 5 0 15 L0 110 Q10 100 40 105 Z" fill="rgba(255,255,255,0.88)"/>
-                            <path d="M40 10 Q70 5 80 15 L80 110 Q70 100 40 105 Z" fill="rgba(245,245,240,0.85)"/>
-                            <line x1="40" y1="10" x2="40" y2="105" stroke="#ccc" stroke-width="1"/>
-                            <line x1="8" y1="30" x2="36" y2="30" stroke="#ddd" stroke-width="1.5"/>
-                            <line x1="8" y1="40" x2="36" y2="40" stroke="#ddd" stroke-width="1.5"/>
-                            <line x1="8" y1="50" x2="30" y2="50" stroke="#ddd" stroke-width="1.5"/>
-                            <line x1="8" y1="60" x2="34" y2="60" stroke="#ddd" stroke-width="1.5"/>
-                            <line x1="44" y1="30" x2="72" y2="30" stroke="#ddd" stroke-width="1.5"/>
-                            <line x1="44" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1.5"/>
-                            <line x1="44" y1="50" x2="65" y2="50" stroke="#ddd" stroke-width="1.5"/>
-                        </g>
-                        <rect x="370" y="22" width="14" height="38" rx="2" fill="#7b3f00" opacity=".8"/>
-                        <rect x="386" y="28" width="18" height="32" rx="2" fill="#9c4b00" opacity=".7"/>
-                        <rect x="406" y="18" width="12" height="42" rx="2" fill="#6b2f00" opacity=".9"/>
-                        <rect x="420" y="25" width="16" height="35" rx="2" fill="#b55d00" opacity=".6"/>
-                        <rect x="438" y="30" width="14" height="30" rx="2" fill="#8a4200" opacity=".8"/>
-                        <radialGradient id="warmLight" cx="50%" cy="30%" r="50%">
-                            <stop offset="0%" stop-color="rgba(255,180,60,0.25)"/>
-                            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-                        </radialGradient>
-                        <rect width="480" height="200" fill="url(#warmLight)"/>
-                    </svg>
-                    <span class="badge badge-jual">Jual</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-title">Clean Code oleh R. Martin</div>
-                    <div class="card-meta">
-                        <span class="tag-year">2020</span>
-                        <span class="tag-status available">Tersedia</span>
-                    </div>
-                    <div class="card-footer">
-                        <span class="price">Rp 150.000</span>
-                        <span class="seller">Budi Santoso</span>
-                    </div>
-                </div>
-            </div>
-            </a>
-
-            <!-- Card 3 – Jas Lab -->
-             <a href="detail-barang.html" class="card-link" style="text-decoration: none; color: inherit; display: block;">
-                <div class="card">
-                <div class="card-img">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
-                        <defs>
-                            <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stop-color="#c9a0a0"/>
-                                <stop offset="100%" stop-color="#d4b0b0"/>
-                            </linearGradient>
-                        </defs>
-                        <rect width="480" height="200" fill="url(#g3)"/>
-                        <ellipse cx="280" cy="100" rx="120" ry="90" fill="rgba(180,100,100,.35)"/>
-                        <ellipse cx="260" cy="90" rx="80" ry="65" fill="rgba(200,130,130,.40)"/>
-                        <path d="M200 70 Q230 50 260 70 Q290 90 320 70" stroke="rgba(140,60,60,.5)" stroke-width="3" fill="none"/>
-                        <path d="M190 95 Q230 75 270 95 Q310 115 340 95" stroke="rgba(140,60,60,.45)" stroke-width="3" fill="none"/>
-                        <path d="M200 120 Q240 100 280 120 Q310 135 330 120" stroke="rgba(140,60,60,.4)" stroke-width="3" fill="none"/>
-                        <ellipse cx="310" cy="115" rx="55" ry="45" fill="rgba(240,220,190,.5)"/>
-                        <ellipse cx="320" cy="120" rx="38" ry="30" fill="rgba(230,210,180,.55)"/>
-                    </svg>
-                    <span class="badge badge-sewa">Sewa</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-title">Jas Lab Ukuran M</div>
-                    <div class="card-meta">
-                        <span class="tag-year">2023</span>
-                        <span class="tag-status available">Tersedia</span>
-                    </div>
-                    <div class="card-footer">
-                        <span class="price">Rp 10.000/hari</span>
-                        <span class="seller">Ayu Permata</span>
-                    </div>
-                </div>
-            </div>
-             </a>
-
-            <!-- Card 4 – Tablet/Drawing Pad (Sewa) -->
-             <a href="detail-barang.html" class="card-link" style="text-decoration: none; color: inherit; display: block;">
-                <div class="card">
-                <div class="card-img">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
-                        <defs>
-                            <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stop-color="#e8e8e8"/>
-                                <stop offset="100%" stop-color="#f5f5f5"/>
-                            </linearGradient>
-                        </defs>
-                        <rect width="480" height="200" fill="url(#g4)"/>
-                        <rect x="80" y="30" width="200" height="140" rx="10" fill="#fff" stroke="#ccc" stroke-width="2"/>
-                        <rect x="95" y="45" width="170" height="110" rx="4" fill="#f0f0f0"/>
-                        <line x1="130" y1="130" x2="230" y2="130" stroke="#555" stroke-width="2"/>
-                        <line x1="130" y1="130" x2="180" y2="60" stroke="#555" stroke-width="2"/>
-                        <line x1="180" y1="60" x2="230" y2="130" stroke="#555" stroke-width="2"/>
-                        <rect x="295" y="20" width="10" height="110" rx="4" fill="#555" transform="rotate(8,295,20)"/>
-                        <polygon points="295,130 305,130 300,148" fill="#333" transform="rotate(8,300,130)"/>
-                        <rect x="310" y="40" width="120" height="150" rx="6" fill="#e85d04" opacity=".85"/>
-                        <rect x="318" y="55" width="104" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
-                        <rect x="318" y="65" width="90" height="4" rx="2" fill="rgba(255,255,255,0.25)"/>
-                        <rect x="318" y="75" width="100" height="4" rx="2" fill="rgba(255,255,255,0.25)"/>
-                    </svg>
-                    <span class="badge badge-sewa">Sewa</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-title">Drawing Tablet Wacom S</div>
-                    <div class="card-meta">
-                        <span class="tag-year">2022</span>
-                        <span class="tag-status available">Tersedia</span>
-                    </div>
-                    <div class="card-footer">
-                        <span class="price">Rp 20.000/hari</span>
-                        <span class="seller">Rizky Aditya</span>
-                    </div>
-                </div>
-            </div>
-             </a>
-
-            <!-- Card 5 – Kalkulator (Jual) -->
-            <a href="detail-barang.html" class="card-link" style="text-decoration: none; color: inherit; display: block;">
-                <div class="card">
-                <div class="card-img">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
-                        <defs>
-                            <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stop-color="#3a3a3a"/>
-                                <stop offset="100%" stop-color="#555"/>
-                            </linearGradient>
-                        </defs>
-                        <rect width="480" height="200" fill="url(#g5)"/>
-                        <rect x="150" y="20" width="180" height="165" rx="14" fill="#222"/>
-                        <rect x="165" y="35" width="150" height="48" rx="6" fill="#b5cc8e"/>
-                        <text x="305" y="67" font-size="20" font-family="monospace" fill="#2a3a1a" text-anchor="end">123.45</text>
-                        <g fill="#444">
-                            <rect x="165" y="95" width="28" height="20" rx="4"/>
-                            <rect x="200" y="95" width="28" height="20" rx="4"/>
-                            <rect x="235" y="95" width="28" height="20" rx="4"/>
-                            <rect x="270" y="95" width="28" height="20" rx="4" fill="#e85d04"/>
-                            <rect x="165" y="122" width="28" height="20" rx="4"/>
-                            <rect x="200" y="122" width="28" height="20" rx="4"/>
-                            <rect x="235" y="122" width="28" height="20" rx="4"/>
-                            <rect x="270" y="122" width="28" height="20" rx="4" fill="#e85d04"/>
-                            <rect x="165" y="149" width="28" height="20" rx="4"/>
-                            <rect x="200" y="149" width="28" height="20" rx="4"/>
-                            <rect x="235" y="149" width="28" height="20" rx="4"/>
-                            <rect x="270" y="149" width="63" height="20" rx="4" fill="#3b5bdb"/>
-                        </g>
-                    </svg>
-                    <span class="badge badge-jual">Jual</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-title">Kalkulator Casio FX-991</div>
-                    <div class="card-meta">
-                        <span class="tag-year">2021</span>
-                        <span class="tag-status available">Tersedia</span>
-                    </div>
-                    <div class="card-footer">
-                        <span class="price">Rp 120.000</span>
-                        <span class="seller">Dewi Larasati</span>
-                    </div>
-                </div>
-            </div>
-            </a>
-
-            <!-- Card 6 – Bor Listrik (Sewa) -->
-             <a href="detail-barang.html" class="card-link" style="text-decoration: none; color: inherit; display: block;">
-                <div class="card">
-                <div class="card-img">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 200">
-                        <defs>
-                            <linearGradient id="g6" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stop-color="#444"/>
-                                <stop offset="100%" stop-color="#666"/>
-                            </linearGradient>
-                        </defs>
-                        <rect width="480" height="200" fill="url(#g6)"/>
-                        <ellipse cx="340" cy="60" rx="35" ry="40" fill="rgba(200,160,120,.6)"/>
-                        <rect x="305" y="95" width="70" height="80" rx="8" fill="rgba(80,80,80,.7)"/>
-                        <rect x="100" y="75" width="180" height="55" rx="10" fill="#222"/>
-                        <rect x="100" y="75" width="80" height="55" rx="8" fill="#3b5bdb" opacity=".7"/>
-                        <rect x="150" y="130" width="35" height="50" rx="8" fill="#333"/>
-                        <rect x="278" y="95" width="80" height="14" rx="3" fill="#aaa"/>
-                        <polygon points="358,96 380,102 358,108" fill="#888"/>
-                        <rect x="268" y="88" width="18" height="28" rx="4" fill="#555"/>
-                        <line x1="200" y1="85" x2="200" y2="120" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
-                        <line x1="215" y1="85" x2="215" y2="120" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
-                        <line x1="230" y1="85" x2="230" y2="120" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
-                        <ellipse cx="330" cy="55" rx="16" ry="8" fill="none" stroke="rgba(255,220,100,.5)" stroke-width="2"/>
-                        <ellipse cx="355" cy="55" rx="16" ry="8" fill="none" stroke="rgba(255,220,100,.5)" stroke-width="2"/>
-                        <line x1="346" y1="55" x2="339" y2="55" stroke="rgba(255,220,100,.5)" stroke-width="2"/>
-                    </svg>
-                    <span class="badge badge-sewa">Sewa</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-title">Bor Listrik Bosch 500W</div>
-                    <div class="card-meta">
-                        <span class="tag-year">2021</span>
-                        <span class="tag-status available">Tersedia</span>
-                    </div>
-                    <div class="card-footer">
-                        <span class="price">Rp 15.000/hari</span>
-                        <span class="seller">Fajar Nugroho</span>
-                    </div>
-                </div>
-            </div>
-             </a>
-
-        </div><!-- /grid -->
+            <!-- Cards will be rendered by JavaScript -->
+        </div>
     </main>
 
     <!-- ─── BOTTOM NAV (HP) ─── -->
@@ -1036,7 +1074,20 @@
 
     <!-- ─── JAVASCRIPT ─── -->
     <script>
-        // ── BUKA/TUTUP SIDEBAR ──
+        // ── DATA ──
+        let allItems = [];
+        let filteredItems = [];
+        let activeCategory = 'SEMUA';
+        let activeType = 'SEMUA';
+        let activeStatus = 'SEMUA';
+        let activeCategoryFilter = 'SEMUA'; // untuk filter sidebar
+
+        // ── DOM REFS ──
+        const grid = document.getElementById('barang-grid');
+        const itemCount = document.getElementById('itemCount');
+        const searchInput = document.getElementById('searchInput');
+
+        // ── SIDEBAR NAV ──
         function toggleMobileNav() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('mobileNavOverlay');
@@ -1044,6 +1095,7 @@
             overlay.classList.toggle('open');
             document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
         }
+
         function closeMobileNav() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('mobileNavOverlay');
@@ -1052,7 +1104,336 @@
             document.body.style.overflow = '';
         }
 
-        // ── Dark Mode ──
+        // ── FILTER SIDEBAR ──
+        function openFilter() {
+            document.getElementById('filterSidebar').classList.add('open');
+            document.getElementById('filterOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            // Sync filter sidebar with current active filters
+            syncFilterUI();
+        }
+
+        function closeFilter() {
+            document.getElementById('filterSidebar').classList.remove('open');
+            document.getElementById('filterOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function syncFilterUI() {
+            // Category
+            document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.cat === activeCategory);
+            });
+            // Type
+            document.querySelectorAll('#filterTypeOptions .opt-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === activeType);
+            });
+            // Status
+            document.querySelectorAll('#filterStatusOptions .opt-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.status === activeStatus);
+            });
+            // Price
+            // (keeps values as is)
+        }
+
+        // ── FILTER SIDEBAR EVENTS ──
+        document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(b => b.classList.remove(
+                'active'));
+                this.classList.add('active');
+                activeCategoryFilter = this.dataset.cat;
+            });
+        });
+
+        document.querySelectorAll('#filterTypeOptions .opt-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#filterTypeOptions .opt-btn').forEach(b => b.classList.remove(
+                'active'));
+                this.classList.add('active');
+                activeType = this.dataset.type;
+            });
+        });
+
+        document.querySelectorAll('#filterStatusOptions .opt-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#filterStatusOptions .opt-btn').forEach(b => b.classList.remove(
+                'active'));
+                this.classList.add('active');
+                activeStatus = this.dataset.status;
+            });
+        });
+
+        // ── APPLY FILTERS ──
+        function applyFilters() {
+            // Read values from filter sidebar
+            const catFilter = activeCategoryFilter;
+            const typeFilter = activeType;
+            const statusFilter = activeStatus;
+            const priceMin = parseFloat(document.getElementById('priceMin').value) || 0;
+            const priceMax = parseFloat(document.getElementById('priceMax').value) || Infinity;
+            const filterDate = document.getElementById('filterDate').value;
+
+            // Update active category for tabs
+            activeCategory = catFilter;
+
+            // Update tab UI
+            document.querySelectorAll('#categoryTabs .tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === catFilter);
+            });
+
+            // Apply all filters
+            filterAndRender(catFilter, typeFilter, statusFilter, priceMin, priceMax, filterDate);
+
+            // Close filter sidebar
+            closeFilter();
+        }
+
+        function resetFilters() {
+            // Reset UI
+            document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.cat === 'SEMUA');
+            });
+            document.querySelectorAll('#filterTypeOptions .opt-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === 'SEMUA');
+            });
+            document.querySelectorAll('#filterStatusOptions .opt-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.status === 'SEMUA');
+            });
+            document.getElementById('priceMin').value = '';
+            document.getElementById('priceMax').value = '';
+            document.getElementById('filterDate').value = '';
+
+            activeCategoryFilter = 'SEMUA';
+            activeType = 'SEMUA';
+            activeStatus = 'SEMUA';
+            activeCategory = 'SEMUA';
+
+            // Reset tabs
+            document.querySelectorAll('#categoryTabs .tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === 'SEMUA');
+            });
+
+            filterAndRender('SEMUA', 'SEMUA', 'SEMUA', 0, Infinity, '');
+            closeFilter();
+        }
+
+        // ── CATEGORY TABS ──
+        document.querySelectorAll('#categoryTabs .tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const cat = this.dataset.category;
+                activeCategory = cat;
+                activeCategoryFilter = cat;
+
+                // Update tab UI
+                document.querySelectorAll('#categoryTabs .tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update filter sidebar category selection
+                document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.cat === cat);
+                });
+
+                // Apply filter with current other filters
+                const typeFilter = activeType;
+                const statusFilter = activeStatus;
+                const priceMin = parseFloat(document.getElementById('priceMin').value) || 0;
+                const priceMax = parseFloat(document.getElementById('priceMax').value) || Infinity;
+                const filterDate = document.getElementById('filterDate').value;
+
+                filterAndRender(cat, typeFilter, statusFilter, priceMin, priceMax, filterDate);
+            });
+        });
+
+        // ── SEARCH ──
+        searchInput.addEventListener('input', function() {
+            applyFilters();
+        });
+
+        // ── SORT ──
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            applyFilters();
+        });
+
+        // ── MAIN FILTER + RENDER ──
+        function filterAndRender(category, type, status, priceMin, priceMax, filterDate) {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const sortBy = document.getElementById('sortSelect').value;
+
+            let result = allItems.filter(item => {
+                // Category filter
+                if (category !== 'SEMUA') {
+                    const itemCat = (item.kategori || '').toUpperCase();
+                    if (itemCat !== category) return false;
+                }
+
+                // Type filter (JUAL / SEWA)
+                if (type !== 'SEMUA') {
+                    const isSewa = item.tarifPinjam != null && item.tarifPinjam > 0;
+                    const isJual = item.harga != null && item.harga > 0;
+                    if (type === 'JUAL' && !isJual) return false;
+                    if (type === 'SEWA' && !isSewa) return false;
+                }
+
+                // Status filter
+                if (status !== 'SEMUA') {
+                    if (item.status !== status) return false;
+                }
+
+                // Price filter
+                const price = item.harga || item.tarifPinjam || 0;
+                if (price < priceMin || price > priceMax) return false;
+
+                // Date filter
+                if (filterDate) {
+                    const itemDate = item.createdAt || item.tanggalPost || '';
+                    if (!itemDate) return true; // skip if no date
+                    const itemDateStr = new Date(itemDate).toISOString().split('T')[0];
+                    if (itemDateStr !== filterDate) return false;
+                }
+
+                // Search filter
+                if (searchTerm) {
+                    const name = (item.namaBarang || '').toLowerCase();
+                    const desc = (item.deskripsi || '').toLowerCase();
+                    const seller = (item.pemilik?.username || '').toLowerCase();
+                    if (!name.includes(searchTerm) && !desc.includes(searchTerm) && !seller.includes(searchTerm)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            // Sort
+            if (sortBy === 'termurah') {
+                result.sort((a, b) => (a.harga || a.tarifPinjam || 0) - (b.harga || b.tarifPinjam || 0));
+            } else if (sortBy === 'termahal') {
+                result.sort((a, b) => (b.harga || b.tarifPinjam || 0) - (a.harga || a.tarifPinjam || 0));
+            } else {
+                // terbaru: by createdAt or id
+                result.sort((a, b) => {
+                    const da = a.createdAt || a.id || '';
+                    const db = b.createdAt || b.id || '';
+                    return da < db ? 1 : -1;
+                });
+            }
+
+            filteredItems = result;
+            renderItems(result);
+        }
+
+        // ── RENDER ──
+        function renderItems(items) {
+            if (!items || items.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3>Tidak ada barang ditemukan</h3>
+                        <p>Coba ubah filter atau cari dengan kata kunci lain.</p>
+                    </div>
+                `;
+                itemCount.textContent = '0 barang';
+                return;
+            }
+
+            let html = '';
+            items.forEach(barang => {
+                const isSewa = barang.tarifPinjam != null && barang.tarifPinjam > 0;
+                const isJual = barang.harga != null && barang.harga > 0;
+                const labelTipe = isSewa ? 'Sewa' : (isJual ? 'Jual' : '');
+                const classBadge = isSewa ? 'badge-sewa' : 'badge-jual';
+
+                const hargaTampil = isSewa ? barang.tarifPinjam : barang.harga;
+                const hargaRupiah = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    maximumFractionDigits: 0
+                }).format(hargaTampil || 0);
+                const hargaAkhir = isSewa ? `${hargaRupiah}/hari` : hargaRupiah;
+
+                const isAvailable = barang.status === 'available';
+                const statusClass = isAvailable ? 'available' : 'unavailable';
+                const statusText = isAvailable ? 'Tersedia' : 'Tidak Tersedia';
+
+                const namaPemilik = barang.pemilik && barang.pemilik.username ? barang.pemilik.username : 'Anonim';
+                const fotoUrl = barang.fotoUrl || 'https://via.placeholder.com/480x200?text=No+Image';
+
+                html += `
+                    <a href="detail-barang?id=${barang.id}" class="card-link" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="card">
+                            <div class="card-img">
+                                <img src="${fotoUrl}" alt="${barang.namaBarang || 'Barang'}" loading="lazy" />
+                                ${labelTipe ? `<span class="badge ${classBadge}">${labelTipe}</span>` : ''}
+                            </div>
+                            <div class="card-body">
+                                <div class="card-title">${barang.namaBarang || 'Tanpa Nama'}</div>
+                                <div class="card-meta">
+                                    <span class="tag-year">${barang.kategori || 'Umum'}</span>
+                                    <span class="tag-status ${statusClass}">${statusText}</span>
+                                </div>
+                                <div class="card-footer">
+                                    <span class="price">${hargaAkhir}</span>
+                                    <span class="seller">${namaPemilik}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+
+            grid.innerHTML = html;
+            itemCount.textContent = `${items.length} barang`;
+        }
+
+        // ── FETCH DATA ──
+        async function fetchDanTampilkanBarang() {
+            grid.innerHTML = '<p class="text-center col-span-3">Memuat data barang...</p>';
+
+            try {
+                const response = await fetch("http://localhost:8080/api/barang");
+                if (!response.ok) throw new Error("Gagal mengambil data dari server");
+
+                const data = await response.json();
+                allItems = data;
+
+                // Reset filters
+                activeCategory = 'SEMUA';
+                activeCategoryFilter = 'SEMUA';
+                activeType = 'SEMUA';
+                activeStatus = 'SEMUA';
+                document.getElementById('priceMin').value = '';
+                document.getElementById('priceMax').value = '';
+                document.getElementById('filterDate').value = '';
+
+                // Reset tabs
+                document.querySelectorAll('#categoryTabs .tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.category === 'SEMUA');
+                });
+
+                // Reset filter sidebar
+                document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.cat === 'SEMUA');
+                });
+                document.querySelectorAll('#filterTypeOptions .opt-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.type === 'SEMUA');
+                });
+                document.querySelectorAll('#filterStatusOptions .opt-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.status === 'SEMUA');
+                });
+
+                filterAndRender('SEMUA', 'SEMUA', 'SEMUA', 0, Infinity, '');
+
+            } catch (error) {
+                console.error("Error:", error);
+                grid.innerHTML =
+                    `<p class="text-center col-span-3 text-red-500">Gagal memuat barang. Pastikan Backend berjalan.</p>`;
+            }
+        }
+
+        // ── DARK MODE ──
         const themeToggleBtn = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('sun-icon');
         const moonIcon = document.getElementById('moon-icon');
@@ -1072,8 +1453,8 @@
             }
         }
 
-        // restore preferensi dari localStorage
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)')
+                .matches)) {
             html.classList.add('dark');
         } else {
             html.classList.remove('dark');
@@ -1091,87 +1472,8 @@
             themeToggleMobile.addEventListener('click', toggleTheme);
         }
 
-        // ── Tab switching ──
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-            });
-        });
-        // --- FUNGSI MENGAMBIL DATA BARANG DARI BACKEND ---
-async function fetchDanTampilkanBarang() {
-    const gridContainer = document.getElementById('barang-grid');
-    gridContainer.innerHTML = '<p class="text-center col-span-3">Memuat data barang...</p>';
-
-    try {
-        // Tembak API Backend kamu
-        const response = await fetch("http://localhost:8080/api/barang");
-        
-        if (!response.ok) {
-            throw new Error("Gagal mengambil data dari server");
-        }
-
-        const dataBarang = await response.json();
-        
-        // Kosongkan loading text
-        gridContainer.innerHTML = '';
-
-        // Looping setiap barang dari database
-        dataBarang.forEach(barang => {
-            // Tentukan apakah ini barang Jual atau Sewa
-            // Asumsi: jika ada tarifPinjam berarti disewa, jika ada harga berarti dijual
-            const isSewa = barang.tarifPinjam != null;
-            const labelTipe = isSewa ? 'Sewa' : 'Jual';
-            const classBadge = isSewa ? 'badge-sewa' : 'badge-jual';
-            
-            // Format Harga ke Rupiah
-            const hargaTampil = isSewa ? barang.tarifPinjam : barang.harga;
-            const hargaRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(hargaTampil);
-            const hargaAkhir = isSewa ? `${hargaRupiah}/hari` : hargaRupiah;
-
-            // Warna status (hijau jika available, merah jika tidak)
-            const isAvailable = barang.status === 'available';
-            const statusClass = isAvailable ? 'available' : 'unavailable';
-            const statusText = isAvailable ? 'Tersedia' : 'Tidak Tersedia';
-
-            // Nama pemilik (mencegah error jika null)
-            const namaPemilik = barang.pemilik && barang.pemilik.username ? barang.pemilik.username : 'Anonim';
-
-            // Template Card HTML
-            const cardHTML = `
-            <a href="detail-barang?id=${barang.id}" class="card-link" style="text-decoration: none; color: inherit; display: block;">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="${barang.fotoUrl || 'https://via.placeholder.com/480x200?text=No+Image'}" alt="${barang.namaBarang}" />
-                        <span class="badge ${classBadge}">${labelTipe}</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-title">${barang.namaBarang}</div>
-                        <div class="card-meta">
-                            <span class="tag-year">${barang.kategori}</span>
-                            <span class="tag-status ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="card-footer">
-                            <span class="price">${hargaAkhir}</span>
-                            <span class="seller">${namaPemilik}</span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            `;
-
-            // Masukkan card ke dalam grid HTML
-            gridContainer.insertAdjacentHTML('beforeend', cardHTML);
-        });
-
-    } catch (error) {
-        console.error("Error:", error);
-        gridContainer.innerHTML = `<p class="text-center col-span-3 text-red-500">Gagal memuat barang. Pastikan Backend berjalan.</p>`;
-    }
-}
-
-// Panggil fungsinya saat halaman selesai dimuat
-document.addEventListener('DOMContentLoaded', fetchDanTampilkanBarang);
+        // ── INIT ──
+        document.addEventListener('DOMContentLoaded', fetchDanTampilkanBarang);
     </script>
 
 </body>
