@@ -8,7 +8,7 @@ public class PageController {
 
     @GetMapping("/")
     public String home() {
-        return "dashboard";
+        return "login";
     }
 
     @GetMapping("/dashboard")
