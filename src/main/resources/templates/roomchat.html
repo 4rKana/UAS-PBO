@@ -458,189 +458,233 @@
         if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
 
 
-        // =========================================================
-        // 2. LOGIKA UTAMA: WEBSOCKET CHAT REAL-TIME & DAFTAR KONTAK
-        // =========================================================
-        const backendUrl = "http://localhost:8080";
-        let stompClient = null;
-        // Membikin nama acak seperti User_124, User_893, dll.
-        const currentUser = "User_" + Math.floor(Math.random() * 1000);
-        let activeRecipient = "User_333"; // Lawan bicara default awal
+// =========================================================
+    // 2. LOGIKA UTAMA: WEBSOCKET CHAT REAL-TIME (100% DINAMIS)
+    // =========================================================
+    const backendUrl = "http://localhost:8080";
+    let stompClient = null;
 
-        const kontainerPesan = document.getElementById('kontainer-pesan');
-        const inputPesan = document.getElementById('input-pesan');
-        const btnKirim = document.getElementById('btn-kirim');
-        const namaLawanBicara = document.getElementById('nama-lawan-bicara');
+    // Nama kamu otomatis acak & anonim tiap kali refresh halaman
+    const currentUser = "User_" + Math.floor(Math.random() * 1000); 
+    
+    // Mulai dari KOSONG. Tidak ada nama Dika, Maya, atau User_333 yang ditulis manual!
+    let daftarKontak = []; 
+    let activeRecipient = ""; 
 
-        // MOCK DATA: Daftar kontak awal (Bisa dimodifikasi/diambil dari backend nantinya)
-        let daftarKontak = [
-            { nama: "User_333", inisial: "U", pesanTerakhir: "", waktu: "", unread: 0 }, // Masukkan ID acak dari Tab 1 di sini ✨
-            { nama: "Nadhira Salsabila", inisial: "NS", pesanTerakhir: "Apakah masih tersedia minggu ini?", waktu: "Kemarin", unread: 0 },
-            { nama: "Maya Indah", inisial: "MI", pesanTerakhir: "Pembayaran dikonfirmasi! Sampai jum...", waktu: "Senin", unread: 0 }
-        ];
+    const kontainerPesan = document.getElementById('kontainer-pesan');
+    const inputPesan = document.getElementById('input-pesan');
+    const btnKirim = document.getElementById('btn-kirim');
+    const namaLawanBicara = document.getElementById('nama-lawan-bicara');
 
-        // Hubungkan ke WebSocket backend Spring Boot
-        function connectWebSocket() {
-            const socket = new SockJS(`${backendUrl}/ws`); 
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
-                console.log("Terhubung ke WebSocket: " + frame);
+    // Fungsi mengambil daftar kontak lama yang pernah chat dengan kita dari Backend Database
+    async function muatDaftarKontakDariBackend() {
+        try {
+            const response = await fetch(`${backendUrl}/api/chat/contacts/${currentUser}`);
+            if (response.ok) {
+                const data = await response.json();
+                // Format data dari backend dimasukkan ke array daftarKontak
+                daftarKontak = data.map(user => ({
+                    nama: user.username,
+                    inisial: user.username.substring(0, 2).toUpperCase(),
+                    pesanTerakhir: user.lastMessage || "",
+                    waktu: user.lastMessageTime || "",
+                    unread: user.unreadCount || 0
+                }));
                 
-                // Berlangganan (Subscribe) ke antrean pesan user aktif
-                stompClient.subscribe(`/queue/messages/${currentUser}`, function (response) {
-                    const pesanBaru = JSON.parse(response.body);
-                    
-                    // ⚡ LOGIKA REAL-TIME: Perbarui isi teks sidebar kiri saat ada pesan masuk
-                    const kontak = daftarKontak.find(k => k.nama === pesanBaru.sender);
-                    if (kontak) {
-                        kontak.pesanTerakhir = pesanBaru.content;
-                        kontak.waktu = new Date(pesanBaru.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        
-                        // Jika pesan masuk dari orang yang TIDAK sedang dibuka chat-nya, tambah angka notifikasi unread
-                        if (pesanBaru.sender !== activeRecipient) {
-                            kontak.unread += 1;
-                        }
-                        renderDaftarKontak(); // Gambar ulang list kontak sebelah kiri
-                    }
-
-                    // Render ke ruang chat kanan jika pesan berasal dari orang yang sedang dibuka ruang obrolannya
-                    if (pesanBaru.sender === activeRecipient || pesanBaru.sender === currentUser) {
-                        tampilkanBubbleChat(pesanBaru);
-                        scrollKeBawah();
-                    }
-                });
-            }, function (error) {
-                console.error("Koneksi terputus, mencoba menyambung kembali...", error);
-                setTimeout(connectWebSocket, 5000); 
-            });
-        }
-
-        // Mengirim pesan private ke endpoint Spring Boot
-        function kirimPesan() {
-            if (!inputPesan) return;
-            const text = inputPesan.value.trim();
-            if (!text || !stompClient) return;
-            
-            const objekPesan = { 
-                sender: currentUser, 
-                recipient: activeRecipient, 
-                content: text,
-                timestamp: new Date().toISOString()
-            };
-            
-            stompClient.send("/app/private-message", {}, JSON.stringify(objekPesan));
-            
-            // ⚡ LOGIKA REAL-TIME: Perbarui pesan terakhir milik kita sendiri di sidebar kiri
-            const kontak = daftarKontak.find(k => k.nama === activeRecipient);
-            if (kontak) {
-                kontak.pesanTerakhir = text;
-                kontak.waktu = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                // Jika ada kontak dari database, otomatis aktifkan kontak pertama
+                if (daftarKontak.length > 0 && !activeRecipient) {
+                    activeRecipient = daftarKontak[0].nama;
+                    loadChatHistory(currentUser, activeRecipient);
+                }
                 renderDaftarKontak();
             }
-
-            // Tampilkan langsung di chat kita sendiri (karena websocket hanya memantau chat masuk dari orang lain)
-            tampilkanBubbleChat(objekPesan);
-            scrollKeBawah();
-            inputPesan.value = ''; 
+        } catch (error) {
+            console.log("Belum ada riwayat kontak di database, siap menerima pesan baru.");
         }
+    }
 
-        // Mengambil riwayat obrolan terdahulu dari REST API Database
-        async function loadChatHistory(user1, user2) {
-            if (!kontainerPesan) return;
-            try {
-                if(namaLawanBicara) namaLawanBicara.textContent = activeRecipient;
-                kontainerPesan.innerHTML = ''; 
+    // Hubungkan ke WebSocket backend Spring Boot
+    function connectWebSocket() {
+        const socket = new SockJS(`${backendUrl}/ws`); 
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log("Terhubung ke WebSocket sebagai: " + currentUser);
+            
+            // Menguping jalur antrean khusus untuk nama kita
+            stompClient.subscribe(`/queue/messages/${currentUser}`, function (response) {
+                const pesanBaru = JSON.parse(response.body);
                 
-                const response = await fetch(`${backendUrl}/api/chat/history/${user1}/${user2}`);
-                if (response.ok) {
-                    const listPesan = await response.json();
-                    listPesan.forEach(pesan => tampilkanBubbleChat(pesan));
+                // ⚡ DINAMIS: Cari apakah pengirim pesan sudah ada di daftar kiri atau belum
+                let kontak = daftarKontak.find(k => k.nama === pesanBaru.sender);
+                
+                if (!kontak) {
+                    // Jika ADA ORANG BARU yang chat, otomatis buatkan slot barunya di sini!
+                    kontak = {
+                        nama: pesanBaru.sender,
+                        inisial: pesanBaru.sender.substring(0, 2).toUpperCase(),
+                        pesanTerakhir: pesanBaru.content,
+                        waktu: new Date(pesanBaru.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                        unread: 0
+                    };
+                    daftarKontak.unshift(kontak); // Masukkan ke urutan paling atas sidebar
+                } else {
+                    // Jika orangnya sudah ada, tinggal perbarui pesan terakhirnya
+                    kontak.pesanTerakhir = pesanBaru.content;
+                    kontak.waktu = new Date(pesanBaru.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }
+
+                // Tambah notifikasi angka kalau kamu lagi ga buka room chat orang itu
+                if (pesanBaru.sender !== activeRecipient) {
+                    kontak.unread += 1;
+                }
+
+                // Jika room chat masih kosong/belum ada yang aktif, langsung otomatis buka chat orang ini
+                if (!activeRecipient) {
+                    bukaChat(pesanBaru.sender);
+                }
+
+                renderDaftarKontak(); // Segarkan tampilan sidebar kiri
+
+                // Render bubble chat jika pesannya berasal dari orang yang sedang dibuka ruang obrolannya
+                if (pesanBaru.sender === activeRecipient) {
+                    tampilkanBubbleChat(pesanBaru);
                     scrollKeBawah();
                 }
-            } catch (error) { 
-                console.error("Gagal memuat history chat:", error); 
-            }
-        }
-
-        // Fungsi untuk menggambar daftar kontak ke dalam HTML secara dinamis
-        function renderDaftarKontak() {
-            const kontainer = document.getElementById('kontainer-kontak');
-            const badgeTotal = document.getElementById('total-notif');
-            if (!kontainer) return;
-
-            kontainer.innerHTML = '';
-            let totalUnread = 0;
-
-            daftarKontak.forEach(kontak => {
-                const isAktif = kontak.nama === activeRecipient;
-                totalUnread += kontak.unread;
-
-                const itemKontak = document.createElement('div');
-                // Memberikan warna background khusus (bg-blue-50/50 dst) jika kontak tersebut sedang aktif dipilih
-                itemKontak.className = `p-4 flex gap-3 cursor-pointer border-l-4 transition-colors ${isAktif ? 'bg-blue-50/50 dark:bg-blue-950/20 border-primary' : 'border-transparent hover:bg-gray-50 dark:hover:bg-cardbg/40'}`;
-                itemKontak.setAttribute('onclick', `bukaChat('${kontak.nama}')`);
-
-                itemKontak.innerHTML = `
-                    <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">${kontak.inisial}</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-baseline mb-0.5">
-                            <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">${kontak.nama}</h2>
-                            <span class="text-xs text-gray-400 shrink-0">${kontak.waktu}</span>
-                        </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${kontak.pesanTerakhir}</p>
-                    </div>
-                    ${kontak.unread >= 1 ? '<div class="w-2.5 h-2.5 bg-primary rounded-full shrink-0 self-center"></div>' : ''}
-                `;
-                kontainer.appendChild(itemKontak);
             });
-
-            // Menampilkan/menyembunyikan total badge notifikasi di bagian atas "Pesan"
-            if (badgeTotal) {
-                if (totalUnread >= 1) {
-                    badgeTotal.textContent = `${totalUnread} baru`;
-                    badgeTotal.classList.remove('hidden');
-                } else {
-                    badgeTotal.classList.add('hidden');
-                }
-            }
-        }
-
-        // Membuat HTML element bubble chat baru secara dinamis
-        function tampilkanBubbleChat(pesan) {
-            if (!kontainerPesan) return;
-            const isMe = pesan.sender === currentUser;
-            const bubbleWrapper = document.createElement('div');
-            bubbleWrapper.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-4`;
-            
-            const waktu = pesan.timestamp ? new Date(pesan.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-
-            bubbleWrapper.innerHTML = `
-                <div class="max-w-[70%] rounded-2xl px-4 py-2.5 text-sm ${isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white dark:bg-[#1e1e24] text-gray-900 dark:text-gray-100 rounded-tl-none border border-gray-100 dark:border-transparent'}" style="box-shadow: 0 1px 2px rgba(0,0,0,0.05)">
-                    <p class="leading-relaxed break-words">${pesan.content}</p>
-                    <span class="text-[10px] block text-right mt-1 ${isMe ? 'text-blue-200' : 'text-gray-400'}">
-                        ${waktu}
-                    </span>
-                </div>`;
-            kontainerPesan.appendChild(bubbleWrapper);
-        }
-
-        function scrollKeBawah() { 
-            if (kontainerPesan) kontainerPesan.scrollTop = kontainerPesan.scrollHeight; 
-        }
-
-        // Jalankan inisialisasi awal saat halaman web selesai dimuat browser
-        document.addEventListener("DOMContentLoaded", () => {
-            connectWebSocket();
-            renderDaftarKontak(); // Render daftar kontak kiri pertama kali 🌟
-            loadChatHistory(currentUser, activeRecipient); // Ambil history chat Dika Ramadan bawaan awal
-            
-            if(btnKirim) btnKirim.addEventListener('click', kirimPesan);
-            if(inputPesan) {
-                inputPesan.addEventListener('keypress', (e) => { 
-                    if (e.key === 'Enter') kirimPesan(); 
-                });
-            }
+        }, function (error) {
+            setTimeout(connectWebSocket, 5000); 
         });
+    }
+
+    // Mengirim pesan private ke backend
+    function kirimPesan() {
+        if (!inputPesan || !activeRecipient) return;
+        const text = inputPesan.value.trim();
+        if (!text || !stompClient) return;
+        
+        const objekPesan = { 
+            sender: currentUser, 
+            recipient: activeRecipient, 
+            content: text,
+            timestamp: new Date().toISOString()
+        };
+        
+        stompClient.send("/app/private-message", {}, JSON.stringify(objekPesan));
+        
+        // Perbarui pesan terakhir kita di sidebar kiri secara dinamis
+        let kontak = daftarKontak.find(k => k.nama === activeRecipient);
+        if (kontak) {
+            kontak.pesanTerakhir = text;
+            kontak.waktu = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            renderDaftarKontak();
+        }
+
+        tampilkanBubbleChat(objekPesan);
+        scrollKeBawah();
+        inputPesan.value = ''; 
+    }
+
+    // Mengambil riwayat obrolan dari database
+    async function loadChatHistory(user1, user2) {
+        if (!kontainerPesan || !user2) return;
+        try {
+            if(namaLawanBicara) namaLawanBicara.textContent = user2;
+            kontainerPesan.innerHTML = ''; 
+            
+            const response = await fetch(`${backendUrl}/api/chat/history/${user1}/${user2}`);
+            if (response.ok) {
+                const listPesan = await response.json();
+                listPesan.forEach(pesan => tampilkanBubbleChat(pesan));
+                scrollKeBawah();
+            }
+        } catch (error) { 
+            console.error("Gagal memuat history chat:", error); 
+        }
+    }
+
+    // Merender tampilan HTML list kontak kiri secara dinamis
+    function renderDaftarKontak() {
+        const kontainer = document.getElementById('kontainer-kontak');
+        const badgeTotal = document.getElementById('total-notif');
+        if (!kontainer) return;
+
+        kontainer.innerHTML = '';
+        let totalUnread = 0;
+
+        // Jika benar-benar belum ada chat sama sekali
+        if (daftarKontak.length === 0) {
+            kontainer.innerHTML = '<p class="text-center text-xs text-gray-400 mt-10">Belum ada pesan masuk</p>';
+            if (badgeTotal) badgeTotal.classList.add('hidden');
+            return;
+        }
+
+        daftarKontak.forEach(kontak => {
+            const isAktif = kontak.nama === activeRecipient;
+            totalUnread += kontak.unread;
+
+            const itemKontak = document.createElement('div');
+            itemKontak.className = `p-4 flex gap-3 cursor-pointer border-l-4 transition-colors ${isAktif ? 'bg-blue-50/50 dark:bg-blue-950/20 border-primary' : 'border-transparent hover:bg-gray-50 dark:hover:bg-cardbg/40'}`;
+            itemKontak.setAttribute('onclick', `bukaChat('${kontak.nama}')`);
+
+            itemKontak.innerHTML = `
+                <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">${kontak.inisial}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-baseline mb-0.5">
+                        <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">${kontak.nama}</h2>
+                        <span class="text-xs text-gray-400 shrink-0">${kontak.waktu}</span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${kontak.pesanTerakhir}</p>
+                </div>
+                ${kontak.unread >= 1 ? `<div class="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 self-center">${kontak.unread}</div>` : ''}
+            `;
+            kontainer.appendChild(itemKontak);
+        });
+
+        if (badgeTotal) {
+            if (totalUnread >= 1) {
+                badgeTotal.textContent = `${totalUnread} baru`;
+                badgeTotal.classList.remove('hidden');
+            } else {
+                badgeTotal.classList.add('hidden');
+            }
+        }
+    }
+
+    function tampilkanBubbleChat(pesan) {
+        if (!kontainerPesan) return;
+        const isMe = pesan.sender === currentUser;
+        const bubbleWrapper = document.createElement('div');
+        bubbleWrapper.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-4`;
+        
+        const waktu = pesan.timestamp ? new Date(pesan.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+
+        bubbleWrapper.innerHTML = `
+            <div class="max-w-[70%] rounded-2xl px-4 py-2.5 text-sm ${isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white dark:bg-[#1e1e24] text-gray-900 dark:text-gray-100 rounded-tl-none border border-gray-100 dark:border-transparent'}" style="box-shadow: 0 1px 2px rgba(0,0,0,0.05)">
+                <p class="leading-relaxed break-words">${pesan.content}</p>
+                <span class="text-[10px] block text-right mt-1 ${isMe ? 'text-blue-200' : 'text-gray-400'}">
+                    ${waktu}
+                </span>
+            </div>`;
+        kontainerPesan.appendChild(bubbleWrapper);
+    }
+
+    function scrollKeBawah() { 
+        if (kontainerPesan) kontainerPesan.scrollTop = kontainerPesan.scrollHeight; 
+    }
+
+    // Inisialisasi awal halaman
+    document.addEventListener("DOMContentLoaded", () => {
+        connectWebSocket();
+        muatDaftarKontakDariBackend(); // Tarik kontak asli dari DB backend jika ada
+        renderDaftarKontak(); // Render awal (akan memunculkan "Belum ada pesan masuk")
+        
+        if(btnKirim) btnKirim.addEventListener('click', kirimPesan);
+        if(inputPesan) {
+            inputPesan.addEventListener('keypress', (e) => { 
+                if (e.key === 'Enter') kirimPesan(); 
+            });
+        }
+    });
     </script>
 </body>
 </html>
