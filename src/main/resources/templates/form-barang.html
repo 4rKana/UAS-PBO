@@ -410,7 +410,7 @@
 
                 if (response.ok) {
                     alert('Barang berhasil dimasukkan ke katalog database!');
-                    window.location.href = 'dashboard.html'; // Mengarahkan kembali ke halaman katalog utama
+                    window.location.href = 'dashboard'; // Mengarahkan kembali ke halaman katalog utama
                 } else {
                     const errorMsg = await response.text();
                     alert('Gagal mengupload data barang: ' + errorMsg);
