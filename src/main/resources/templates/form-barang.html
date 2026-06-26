@@ -198,21 +198,32 @@
                 <div id="step-line" class="absolute left-10 top-3.5 h-0.5 bg-primary -z-10 transition-all duration-500" style="width: 66%;"></div>
                 
                 <div class="flex flex-col items-center gap-2">
-                    <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
-                    <span class="text-xs font-semibold text-gray-900 dark:text-gray-300">Foto</span>
+                    <div id="step1"
+                        class="step-circle w-7 h-7 rounded-full border-2 border-primary bg-white dark:bg-darkbg text-primary flex items-center justify-center text-[13px] font-bold">
+                        1
+                    </div>
+                    <span>Foto</span>
                 </div>
                 <div class="flex flex-col items-center gap-2">
-                    <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
-                    <span class="text-xs font-semibold text-gray-900 dark:text-gray-300">Detail</span>
+                    <div id="step2"
+                        class="step-circle w-7 h-7 rounded-full border-2 border-gray-300 dark:border-darkborder bg-white dark:bg-darkbg text-gray-400 flex items-center justify-center text-[13px] font-bold">
+                        2
+                    </div>
+                    <span>Detail</span>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div class="w-7 h-7 rounded-full border-2 border-primary bg-white dark:bg-darkbg text-primary flex items-center justify-center text-[13px] font-bold">3</div>
-                    <span class="text-xs font-semibold text-gray-900 dark:text-gray-300">Harga</span>
+            <div class="flex flex-col items-center gap-2">
+                <div id="step3"
+                    class="step-circle w-7 h-7 rounded-full border-2 border-gray-300 dark:border-darkborder bg-white dark:bg-darkbg text-gray-400 flex items-center justify-center text-[13px] font-bold">
+                    3
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div class="w-7 h-7 rounded-full border-2 border-gray-300 dark:border-darkborder bg-white dark:bg-darkbg text-gray-400 flex items-center justify-center text-[13px] font-bold">4</div>
-                    <span class="text-xs font-semibold text-gray-400 dark:text-gray-500">Publish</span>
+                <span>Harga</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+                <div id="step4"
+                    class="step-circle w-7 h-7 rounded-full border-2 border-gray-300 dark:border-darkborder bg-white dark:bg-darkbg text-gray-400 flex items-center justify-center text-[13px] font-bold">
+                    4
                 </div>
+                <span>Publish</span>
             </div>
         </div>
 
@@ -249,7 +260,7 @@
                 <select id="kategori" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-[15px] focus:ring-2 focus:ring-primary/30 outline-none dark:text-white cursor-pointer transition-all">
                     <option value="ELEKTRONIK">Elektronik</option>
                     <option value="BUKU">Buku & Diktat</option>
-                    <option value="ATK">Alat Tulis Kantor</option>
+                    <option value="ATK">Alat Tulis Kampus</option>
                     <option value="PERLENGKAPAN">Perlengkapan Kamar/Kost</option>
                     <option value="PAKAIAN">Pakaian</option>
                 </select>
@@ -510,11 +521,10 @@
             updateIcons();
         }
 
-                // --- LOGIKA MEMBUKA GALERI FOTO ---
+        // --- LOGIKA MEMBUKA GALERI FOTO ---
         const btnPilihFile = document.getElementById('btn-pilih-file');
-        const fotoInput = document.getElementById('fotoInput');
-
-        // Kalau tombol "Pilih File" diklik, picu input file tersembunyi agar galeri terbuka
+        
+        //  Kalau tombol "Pilih File" diklik, picu input file tersembunyi agar galeri terbuka
         btnPilihFile.addEventListener('click', () => {
             fotoInput.click();
         });
@@ -542,6 +552,129 @@
                     avatarEl.textContent = inisial;
                 }
             }
+
+        function updateStep(step) {
+        const line = document.getElementById("step-line");
+        const widths = [
+            "0%",
+            "33%",
+            "66%",
+            "100%"
+        ];
+
+        line.style.width = widths[step - 1];
+        for(let i=1;i<=4;i++){
+            const el = document.getElementById("step"+i);
+            if(i < step){
+                el.innerHTML =
+                `<svg class="w-4 h-4" fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M5 13l4 4L19 7"/>
+                </svg>`;
+
+                el.className =
+                "step-circle w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center";
+            }
+
+            else if(i===step){
+                el.innerHTML=i;
+                el.className =
+                "step-circle w-7 h-7 rounded-full border-2 border-primary bg-white dark:bg-darkbg text-primary flex items-center justify-center text-[13px] font-bold";
+            }
+
+            else{
+                el.innerHTML=i;
+                el.className =
+                "step-circle w-7 h-7 rounded-full border-2 border-gray-300 dark:border-darkborder bg-white dark:bg-darkbg text-gray-400 flex items-center justify-center text-[13px] font-bold";
+            }
+        }
+    }
+
+    // ================= STEP AWAL =================
+    updateStep(1);
+
+    // ================= STEP FOTO =================
+    fotoInput.addEventListener("change", () => {
+
+        if (fotoInput.files.length > 0) {
+
+            btnPilihFile.textContent =
+                `${fotoInput.files.length} Foto Terpilih`;
+
+            updateStep(2);
+
+            cekStepDetail();
+            cekStepHarga();
+        }
+
+    });
+
+    // ================= STEP DETAIL =================
+    function cekStepDetail() {
+
+        if (
+            document.getElementById("namaBarang").value.trim() !== "" &&
+            document.getElementById("deskripsi").value.trim() !== "" &&
+            document.getElementById("kategori").value !== ""
+        ) {
+            updateStep(3);
+            cekStepHarga();
+        }
+
+    }
+
+    document.getElementById("namaBarang")
+        .addEventListener("input", cekStepDetail);
+
+    document.getElementById("deskripsi")
+        .addEventListener("input", cekStepDetail);
+
+    document.getElementById("kategori")
+        .addEventListener("change", cekStepDetail);
+
+
+    // ================= STEP HARGA =================
+    function cekStepHarga() {
+
+        if (tipePajangan === "jual") {
+
+            if (document.getElementById("harga").value > 0) {
+                updateStep(4);
+            }
+
+        } else {
+
+            if (
+                document.getElementById("tarifPinjam").value > 0 &&
+                document.getElementById("durasiMaksimalHari").value > 0
+            ) {
+                updateStep(4);
+            }
+
+        }
+
+    }
+
+    document.getElementById("harga")
+        .addEventListener("input", cekStepHarga);
+
+    document.getElementById("tarifPinjam")
+        .addEventListener("input", cekStepHarga);
+
+    document.getElementById("durasiMaksimalHari")
+        .addEventListener("input", cekStepHarga);
+
+    // Saat pindah mode jual ↔ sewa
+    btnSale.addEventListener("click", cekStepHarga);
+    btnRent.addEventListener("click", cekStepHarga);
+
+    // Jalankan pengecekan saat halaman dibuka
+    cekStepDetail();
+    cekStepHarga();
     </script>
 </body>
 </html>
