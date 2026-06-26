@@ -14,7 +14,33 @@ import java.util.List;
 @RequestMapping("/api/barang")
 @CrossOrigin(origins = "*") // Penting: Agar tidak error CORS saat dihubungkan ke HTML lokal
 public class BarangController {
+    // Endpoint khusus untuk menerima upload file gambar
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFoto(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        try {
+            // 1. Tentukan folder penyimpanan (Kita simpan di dalam folder static/uploads)
+            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/uploads/";
+            java.io.File dir = new java.io.File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Buat foldernya jika belum ada
+            }
 
+            // 2. Buat nama file unik agar tidak bentrok (menggunakan waktu saat ini)
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename().replaceAll("\\s+", "_");
+            java.io.File serverFile = new java.io.File(uploadDir + fileName);
+            
+            // 3. Simpan file ke folder
+            file.transferTo(serverFile);
+
+            // 4. Kembalikan URL yang bisa diakses oleh frontend
+            String fileUrl = "http://localhost:8080/uploads/" + fileName;
+            return ResponseEntity.ok(fileUrl);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Gagal mengupload file: " + e.getMessage());
+        }
+    }
     @Autowired
     private BarangService barangService;
 
@@ -94,4 +120,5 @@ public class BarangController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+    
 }

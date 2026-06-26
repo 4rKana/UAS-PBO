@@ -370,10 +370,48 @@
             sectionSale.classList.add('hidden');
         });
 
-        // --- LOGIKA KONEKSI KE BACKEND SPRING BOOT (FETCH API) ---
+// --- LOGIKA KONEKSI KE BACKEND SPRING BOOT (FETCH API) ---
         const uploadForm = document.getElementById('form-upload-barang');
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Mencegah page reload bawaan form HTML
+
+            // 1. Ambil idUser dari LocalStorage (Gunakan "idUser" sesuai data asli)
+            const userId = localStorage.getItem("idUser");
+
+            if (!userId) {
+                alert("Sesi Anda habis atau Anda belum login. Silakan login kembali!");
+                window.location.href = "login"; // Tetap tanpa .html
+                return;
+            }
+
+            // ==========================================
+            // BAGIAN YANG DIUBAH 1: TAHAP UPLOAD FOTO
+            // ==========================================
+            const fotoInput = document.getElementById('fotoInput');
+            let linkFoto = "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=500"; // Placeholder bawaan
+
+            if (fotoInput && fotoInput.files.length > 0) {
+                const formData = new FormData();
+                formData.append("file", fotoInput.files[0]);
+
+                try {
+                    // Tembak API Upload Foto (Sesuaikan port/URL jika berbeda)
+                    const uploadResp = await fetch('http://localhost:8080/api/barang/upload', {
+                        method: 'POST',
+                        body: formData // Mengirim file asli
+                    });
+
+                    if (uploadResp.ok) {
+                        // Jika berhasil, timpa linkFoto dengan URL asli dari backend
+                        linkFoto = await uploadResp.text(); 
+                    } else {
+                        alert("Gagal mengupload foto, data barang akan disimpan dengan foto default.");
+                    }
+                } catch (err) {
+                    console.error("Error saat upload foto:", err);
+                }
+            }
+            // ==========================================
 
             // Membaca nilai dari field umum
             const namaBarang = document.getElementById('namaBarang').value;
@@ -385,8 +423,14 @@
                 namaBarang: namaBarang,
                 deskripsi: deskripsi,
                 kategori: kategori,
-                status: "TERSEDIA", // Default status mengikuti StatusBarang enum Anda
-                fotoUrl: "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=500" // Placeholder foto dummy sebelum integrasi file upload
+                status: "available",
+                // ==========================================
+                // BAGIAN YANG DIUBAH 2: MENGGUNAKAN LINK FOTO
+                // ==========================================
+                fotoUrl: linkFoto, // <-- Sekarang otomatis terisi dari hasil upload
+                pemilik: {
+                    idUser: userId 
+                }
             };
 
             let endpoint = '';
@@ -401,6 +445,12 @@
                 endpoint = 'http://localhost:8080/api/barang/pinjam';
             }
 
+            // Ubah teks tombol menjadi loading (Opsional tapi bagus untuk User Experience)
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            const teksAsli = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = "Mengupload...";
+            btnSubmit.disabled = true;
+
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -412,14 +462,18 @@
 
                 if (response.ok) {
                     alert('Barang berhasil dimasukkan ke katalog database!');
-                    window.location.href = 'dashboard'; // Mengarahkan kembali ke halaman katalog utama
+                    window.location.href = 'dashboard'; // Mengarahkan kembali tanpa .html
                 } else {
                     const errorMsg = await response.text();
                     alert('Gagal mengupload data barang: ' + errorMsg);
+                    btnSubmit.innerHTML = teksAsli;
+                    btnSubmit.disabled = false;
                 }
             } catch (error) {
                 console.error('Error saat menghubungi backend:', error);
                 alert('Tidak dapat terhubung ke server backend Spring Boot. Pastikan server Java menyala!');
+                btnSubmit.innerHTML = teksAsli;
+                btnSubmit.disabled = false;
             }
         });
 
