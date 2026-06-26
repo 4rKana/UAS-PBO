@@ -728,9 +728,8 @@
                 </div>
                 
                 <div class="grid grid-cols-3 gap-4">
-                    <div class="aspect-[16/10] rounded-xl bg-slate-800 border-2 border-blue-500"></div>
-                    <div class="aspect-[16/10] rounded-xl bg-gray-300 dark:bg-zinc-600"></div>
-                    <div class="aspect-[16/10] rounded-xl bg-gray-300 dark:bg-zinc-600"></div>
+                    <img id="thumb-image"
+                        class="aspect-[16/10] rounded-xl border-2 border-blue-500 object-cover hidden">
                 </div>
             </div>
 
@@ -755,7 +754,11 @@
                             </div>
                         </div>
                     </div>
-                    <button class="px-4 py-1.5 border border-gray-200 dark:border-darkborder text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">Profil</button>
+                    <button
+                        id="btn-owner-profile"
+                        class="px-4 py-1.5 border border-gray-200 dark:border-darkborder text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">
+                        Profil
+                    </button>
                 </div>
 
                 <div class="flex items-start gap-3 p-4 rounded-2xl border border-yellow-100 bg-yellow-50/70 text-amber-800 text-[14px] mb-6 dark:bg-amber-950/20 dark:border-amber-900/40 dark:text-amber-300">
@@ -905,9 +908,12 @@
         const ownerName = document.getElementById('owner-name');
         const ownerAvatar = document.getElementById('owner-avatar');
         const ownerBatch = document.getElementById('owner-batch');
+        const btnOwnerProfile = document.getElementById("btn-owner-profile");
         
         const actionSale = document.getElementById('action-sale');
+        const btnBeli = document.getElementById("btn-beli");
         const actionRent = document.getElementById('action-rent');
+        const btnPinjam = document.getElementById("btn-pinjam");
 
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
@@ -924,12 +930,22 @@
 
                 if (barang.fotoUrl) {
                     mainImage.src = barang.fotoUrl;
+                    const thumb = document.getElementById("thumb-image");
+
+                    thumb.src = barang.fotoUrl;
+                    thumb.classList.remove("hidden");
+                    thumb.onclick = () => {
+                        mainImage.src = thumb.src;
+                    };
                     mainImage.classList.remove('hidden');
                     placeholderIcon.classList.add('hidden');
                     mainImageBox.classList.remove('bg-gray-200');
                 }
 
                 if (barang.pemilik) {
+                    btnOwnerProfile.onclick = () => {
+                        window.location.href = `profil?id=${barang.pemilik.id}`;
+                    };
                     ownerName.innerText = barang.pemilik.username || 'Anonim';
                     ownerBatch.innerText = `Angkatan ${barang.pemilik.angkatan || '-'}`;
                     ownerAvatar.innerText = (barang.pemilik.username || 'U').substring(0, 2).toUpperCase();
@@ -944,6 +960,19 @@
                     
                     actionRent.querySelector('.rent-price-display').innerText = formatRupiah(barang.tarifPinjam);
                     actionRent.querySelector('.max-duration-display').innerText = `${barang.durasiMaksimalHari || 7} hari`;
+                    btnPinjam.onclick = () => {
+
+                    const mulai = document.getElementById("start-date").value;
+                    const kembali = document.getElementById("return-date").value;
+
+                    if (!mulai || !kembali) {
+                        alert("Pilih tanggal peminjaman.");
+                        return;
+                    }
+
+                    window.location.href =
+                        `roomchat?id=${barang.pemilik.id}&barang=${barang.id}`;
+                };
                 } else {
                     badgeType.innerText = 'Dijual';
                     badgeType.className = "px-2.5 py-1 rounded-full border border-orange-200 bg-orange-50 text-orange-600 text-[12px] font-semibold dark:border-orange-800/50 dark:bg-[#2c1f16] dark:text-orange-400";
@@ -952,6 +981,9 @@
                     actionSale.classList.remove('hidden');
                     
                     actionSale.querySelector('.sale-price-display').innerText = formatRupiah(barang.harga || 0);
+                    btnBeli.onclick = () => {
+                        window.location.href = `roomchat?id=${barang.pemilik.id}&barang=${barang.id}`;
+                    };
                 }
 
             } catch (error) {
