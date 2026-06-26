@@ -695,11 +695,11 @@
                     </a>
 
                     <!-- Avatar -->
-                    <a href="profil" class="inline-block">
-                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">
-                            AK
-                        </div>
-                    </a>
+                    <a href="profil" class="inline-block"> 
+                    <div id="dashboard-avatar" class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1"> 
+                        --
+                    </div> 
+                </a>
                 </div>
             </div>
 
@@ -983,6 +983,18 @@
             });
         }
     });
+
+     // 1. Ambil nama user dari LocalStorage
+            const username = localStorage.getItem("username");
+            
+            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
+            if (username) {
+                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+                const avatarEl = document.getElementById("dashboard-avatar");
+                if (avatarEl) {
+                    avatarEl.textContent = inisial;
+                }
+            }
 </script>
 </body>
 </html>
