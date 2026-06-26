@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
 <head>
-<meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>CampusShare - Pesan</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp-websocket/2.3.4/stomp.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CampusShare - Pesan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -183,11 +180,9 @@
                     <button class="p-2 text-primary bg-blue-50 dark:bg-blue-900/20 relative flex items-center justify-center rounded-full transition-colors cursor-default">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     </button>
-                   <a href="profil" class="inline-block"> 
-                    <div id="dashboard-avatar" class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1"> 
-                        --
-                    </div> 
-                </a>
+                    <a href="profil" class="inline-block">
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -196,8 +191,8 @@
     <main class="flex flex-1 overflow-hidden max-w-[100rem] w-full mx-auto relative h-[calc(100vh-4rem)]">
         
         <section id="sidebar-chat" class="w-full md:w-80 lg:w-96 border-r border-gray-200 dark:border-darkborder/50 flex flex-col bg-white dark:bg-darkbg shrink-0 h-full transition-all">
+            
             <div class="p-5 pb-3 shrink-0">
-<<<<<<< HEAD
                 <div class="flex items-center justify-between px-4 py-2">
                     <h1 class="text-2xl font-bold text-gray-950 dark:text-white">Pesan</h1>
                     <button id="addChatBtn" onclick="toggleSearchBox()" class="p-1.5 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors focus:outline-none" title="Tambah Obrolan Baru">
@@ -205,11 +200,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                     </button>
-=======
-                <div class="flex items-center justify-between mb-4">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h1>
-                    <span id="total-notif" class="bg-blue-100 text-primary dark:bg-blue-950 dark:text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full hidden">0 baru</span>
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
                 </div>
 
                 <div id="searchUserContainer" class="hidden px-4 mb-3">
@@ -218,7 +208,6 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
             <div class="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-darkborder/30 invisible-scrollbar pb-20 md:pb-0">
                 <div onclick="loadConversation(${chat.id})" class="p-4 flex gap-3 bg-blue-50/50 dark:bg-blue-950/20 cursor-pointer border-l-4 border-primary hover:bg-blue-100/50 transition-colors">
                     <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">DR</div>
@@ -231,9 +220,6 @@
                     </div>
                     <div class="w-2.5 h-2.5 bg-primary rounded-full shrink-0 self-center"></div>
                 </div>
-=======
-            <div id="kontainer-kontak" class="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-darkborder/30 invisible-scrollbar pb-20 md:pb-0">
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
             </div>
         </section>
 
@@ -248,7 +234,7 @@
                     </button>
                     <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">DR</div>
                     <div>
-                        <h2 id="nama-lawan-bicara" class="text-sm font-semibold text-gray-900 dark:text-white">Dika Ramadan</h2>
+                        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Dika Ramadan</h2>
                     </div>
                 </div>
                 
@@ -279,9 +265,66 @@
                 <span>Pesan menghilang setelah 24 jam untuk privasi Anda.</span>
             </div>
 
-            <!-- 👇 Tambahkan id="kontainer-pesan" di tag pembungkus ini 👇 -->
-            <div id="kontainer-pesan" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 invisible-scrollbar bg-gray-50 dark:bg-[#111113]">
-                <!-- Kosongkan bagian dalam ini, jangan ada teks atau div apa pun lagi -->
+            <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 invisible-scrollbar bg-gray-50 dark:bg-[#111113]">
+                
+                <div class="flex gap-3 max-w-lg">
+                    <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0 self-start mt-1">D</div>
+                    <div>
+                        <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                            Hai! Saya lihat postingan Stand Laptop kamu, apakah masih ada?
+                        </div>
+                        <span class="text-[10px] text-gray-400 ml-1 mt-1 block">10:00</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 max-w-lg ml-auto justify-end">
+                    <div class="text-right">
+                        <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+                            Ya, masih tersedia! Bisa disewa mulai besok.
+                        </div>
+                        <div class="flex items-center justify-end gap-1 mt-1">
+                            <span class="text-[10px] text-gray-400">10:05</span>
+                            <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 max-w-lg">
+                    <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0 self-start mt-1">D</div>
+                    <div>
+                        <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                            Bagus! Berapa uang jaminannya?
+                        </div>
+                        <span class="text-[10px] text-gray-400 ml-1 mt-1 block">10:10</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 max-w-lg ml-auto justify-end">
+                    <div class="text-right">
+                        <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+                            Tidak perlu uang jaminan, cukup biaya sewa harian Rp 15.000.
+                        </div>
+                        <div class="flex items-center justify-end gap-1 mt-1">
+                            <span class="text-[10px] text-gray-400">10:15</span>
+                            <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 max-w-lg">
+                    <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0 self-start mt-1">D</div>
+                    <div>
+                        <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                            Sempurna. Bisakah kita bertemu di perpustakaan sekitar jam 2 siang?
+                        </div>
+                        <span class="text-[10px] text-gray-400 ml-1 mt-1 block">10:20</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-center text-[11px] text-gray-400 items-center gap-1 pt-4 pb-2">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Pesan disembunyikan setelah 24 jam</span>
+                </div>
             </div>
 
             <div class="p-3 md:p-4 bg-white dark:bg-darkbg border-t border-gray-200 dark:border-darkborder/50 flex items-center gap-2 md:gap-3 shrink-0 relative pb-safe z-20">
@@ -300,17 +343,9 @@
                     </div>
                 </div>
 
-<<<<<<< HEAD
                 <input id="messageInput" type="text" class="flex-1 px-4 py-2.5 text-[15px] bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary/30 transition-all" placeholder="Ketik pesan...">
                 
                 <button id="sendBtn" class="p-3 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm shrink-0">
-=======
-                <!-- 1. Tambahkan id="input-pesan" -->
-                <input type="text" id="input-pesan" class="flex-1 px-4 py-2.5 text-[15px] bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary/30 transition-all" placeholder="Ketik pesan...">
-
-                <!-- 2. Tambahkan id="btn-kirim" dan type="button" -->
-                <button type="button" id="btn-kirim" class="p-3 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm shrink-0">
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
                     <svg class="w-5 h-5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                 </button>
             </div>
@@ -341,7 +376,6 @@
     </div>
 
     <script>
-<<<<<<< HEAD
         const currentUserId = document.body.dataset.userId;
         let currentConversation = null;
 
@@ -498,30 +532,19 @@
         // ==========================================
         // 1. LOGIKA UTAMA & RESPONSIVE (MOBILE)
         // ==========================================
-=======
-        // =========================================================
-        // 1. LOGIKA BAWAAN TEMPLATE (DARK MODE & UI RESPONSIVE)
-        // =========================================================
-        
-        // Logika Sidebar Mobile Navbar Utama
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
         function toggleMobileNav() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('mobileNavOverlay');
-            if(nav && overlay) {
-                nav.classList.toggle('open');
-                overlay.classList.toggle('open');
-                document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
-            }
+            nav.classList.toggle('open');
+            overlay.classList.toggle('open');
+            document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
         }
         function closeMobileNav() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('mobileNavOverlay');
-            if(nav && overlay) {
-                nav.classList.remove('open');
-                overlay.classList.remove('open');
-                document.body.style.overflow = '';
-            }
+            nav.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
         }
 
         // Fungsi saat salah satu kontak di list kiri diklik
@@ -535,7 +558,6 @@
             // Reset class background avatar (menghindari tumpukan class bg)
             chatAvatar.className = `w-10 h-10 rounded-full text-white flex items-center justify-center font-bold text-sm ${bgClass}`;
 
-<<<<<<< HEAD
             // Responsivitas Mobile
             if (window.innerWidth < 768) {
                 sidebarChat.classList.add('hidden');
@@ -560,52 +582,7 @@
         }
 
         // Jalankan reset tampilan jika ukuran layar di-resize dari HP ke Desktop
-=======
-        // Saat chat diklik (Menerima nama kontak yang diklik)
-        function bukaChat(namaKontak) {
-            if (namaKontak) {
-                activeRecipient = namaKontak; // Ganti lawan bicara aktif
-                
-                // Reset notifikasi kontak ini menjadi 0 karena pesannya sudah dibaca/dibuka
-                const kontak = daftarKontak.find(k => k.nama === namaKontak);
-                if (kontak) kontak.unread = 0;
-                
-                loadChatHistory(currentUser, activeRecipient); // Tarik history chat orang tersebut dari DB
-                renderDaftarKontak(); // Segarkan tampilan daftar kontak kiri untuk hapus notif & pindah background aktif
-            }
-
-            if (window.innerWidth < 768) {
-                if(sidebarChat) {
-                    sidebarChat.classList.add('hidden');
-                    sidebarChat.classList.remove('flex');
-                }
-                if(ruangChat) {
-                    ruangChat.classList.remove('hidden');
-                    ruangChat.classList.add('flex');
-                }
-                if (bottomNav) bottomNav.style.display = 'none'; 
-                if (mainBody) mainBody.classList.remove('has-bottom-nav');
-            }
-        }
-
-        // Saat panah back (<-) diklik di HP
-        function kembaliKeDaftar() {
-            if(sidebarChat) {
-                sidebarChat.classList.remove('hidden');
-                sidebarChat.classList.add('flex');
-            }
-            if(ruangChat) {
-                ruangChat.classList.add('hidden');
-                ruangChat.classList.remove('flex');
-            }
-            if (bottomNav) bottomNav.style.display = 'flex'; 
-            if (mainBody) mainBody.classList.add('has-bottom-nav');
-        }
-
-        // Cegah bug tampilan kalau layar di-rotate dari HP ke Desktop
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
         window.addEventListener('resize', () => {
-            if (!sidebarChat || !ruangChat) return;
             if (window.innerWidth >= 768) {
                 sidebarChat.classList.remove('hidden');
                 sidebarChat.classList.add('flex');
@@ -618,7 +595,6 @@
             }
         });
 
-<<<<<<< HEAD
 
         // ==========================================
         // 2. LOGIKA KIRIM PESAN REAL-TIME (DUMMY)
@@ -644,31 +620,6 @@
             e.stopPropagation();
             dropdownOptions.classList.toggle('hidden');
             popoverAttach.classList.add('hidden'); // tutup popover sebelah jika terbuka
-=======
-        // Logika Menu Tiga Titik & Upload Popover
-        const btnChatOptions = document.getElementById('btn-chat-options');
-        const dropdownChatOptions = document.getElementById('dropdown-chat-options');
-        const btnAttach = document.getElementById('btn-attach');
-        const popoverAttach = document.getElementById('popover-attach');
-
-        if(btnChatOptions) {
-            btnChatOptions.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if(dropdownChatOptions) dropdownChatOptions.classList.toggle('hidden');
-                if(popoverAttach) popoverAttach.classList.add('hidden');
-            });
-        }
-        if(btnAttach) {
-            btnAttach.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if(popoverAttach) popoverAttach.classList.toggle('hidden');
-                if(dropdownChatOptions) dropdownChatOptions.classList.add('hidden');
-            });
-        }
-        document.addEventListener('click', () => {
-            if(popoverAttach) popoverAttach.classList.add('hidden');
-            if(dropdownChatOptions) dropdownChatOptions.classList.add('hidden');
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
         });
 
         // Toggle popover attachment (klip kertas)
@@ -711,19 +662,10 @@
                 localStorage.setItem('theme', 'light');
             }
         }
-<<<<<<< HEAD
 
         // Cek preference tema user sebelumnya di LocalStorage
         const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         setDarkMode(savedTheme === 'dark');
-=======
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-        } else {
-            html.classList.remove('dark');
-        }
-        updateIcons();
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
 
         themeToggleBtn.addEventListener('click', () => {
             const isDark = document.documentElement.classList.contains('dark');
@@ -736,7 +678,6 @@
                 setDarkMode(!isDark);
             });
         }
-<<<<<<< HEAD
 
         // Jalankan scroll ke bawah saat pertama kali aplikasi dibuka
         window.onload = scrollChatToBottom;
@@ -876,251 +817,6 @@
                 }
             }
         });
-=======
-        if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
-        if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
-
-
-// =========================================================
-    // 2. LOGIKA UTAMA: WEBSOCKET CHAT REAL-TIME (100% DINAMIS)
-    // =========================================================
-    const backendUrl = "http://localhost:8080";
-    let stompClient = null;
-
-    // Nama kamu otomatis acak & anonim tiap kali refresh halaman
-    const currentUser = "User_" + Math.floor(Math.random() * 1000); 
-    
-    // Mulai dari KOSONG. Tidak ada nama Dika, Maya, atau User_333 yang ditulis manual!
-    let daftarKontak = []; 
-    let activeRecipient = ""; 
-
-    const kontainerPesan = document.getElementById('kontainer-pesan');
-    const inputPesan = document.getElementById('input-pesan');
-    const btnKirim = document.getElementById('btn-kirim');
-    const namaLawanBicara = document.getElementById('nama-lawan-bicara');
-
-    // Fungsi mengambil daftar kontak lama yang pernah chat dengan kita dari Backend Database
-    async function muatDaftarKontakDariBackend() {
-        try {
-            const response = await fetch(`${backendUrl}/api/chat/contacts/${currentUser}`);
-            if (response.ok) {
-                const data = await response.json();
-                // Format data dari backend dimasukkan ke array daftarKontak
-                daftarKontak = data.map(user => ({
-                    nama: user.username,
-                    inisial: user.username.substring(0, 2).toUpperCase(),
-                    pesanTerakhir: user.lastMessage || "",
-                    waktu: user.lastMessageTime || "",
-                    unread: user.unreadCount || 0
-                }));
-                
-                // Jika ada kontak dari database, otomatis aktifkan kontak pertama
-                if (daftarKontak.length > 0 && !activeRecipient) {
-                    activeRecipient = daftarKontak[0].nama;
-                    loadChatHistory(currentUser, activeRecipient);
-                }
-                renderDaftarKontak();
-            }
-        } catch (error) {
-            console.log("Belum ada riwayat kontak di database, siap menerima pesan baru.");
-        }
-    }
-
-    // Hubungkan ke WebSocket backend Spring Boot
-    function connectWebSocket() {
-        const socket = new SockJS(`${backendUrl}/ws`); 
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function (frame) {
-            console.log("Terhubung ke WebSocket sebagai: " + currentUser);
-            
-            // Menguping jalur antrean khusus untuk nama kita
-            stompClient.subscribe(`/queue/messages/${currentUser}`, function (response) {
-                const pesanBaru = JSON.parse(response.body);
-                
-                // ⚡ DINAMIS: Cari apakah pengirim pesan sudah ada di daftar kiri atau belum
-                let kontak = daftarKontak.find(k => k.nama === pesanBaru.sender);
-                
-                if (!kontak) {
-                    // Jika ADA ORANG BARU yang chat, otomatis buatkan slot barunya di sini!
-                    kontak = {
-                        nama: pesanBaru.sender,
-                        inisial: pesanBaru.sender.substring(0, 2).toUpperCase(),
-                        pesanTerakhir: pesanBaru.content,
-                        waktu: new Date(pesanBaru.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                        unread: 0
-                    };
-                    daftarKontak.unshift(kontak); // Masukkan ke urutan paling atas sidebar
-                } else {
-                    // Jika orangnya sudah ada, tinggal perbarui pesan terakhirnya
-                    kontak.pesanTerakhir = pesanBaru.content;
-                    kontak.waktu = new Date(pesanBaru.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                }
-
-                // Tambah notifikasi angka kalau kamu lagi ga buka room chat orang itu
-                if (pesanBaru.sender !== activeRecipient) {
-                    kontak.unread += 1;
-                }
-
-                // Jika room chat masih kosong/belum ada yang aktif, langsung otomatis buka chat orang ini
-                if (!activeRecipient) {
-                    bukaChat(pesanBaru.sender);
-                }
-
-                renderDaftarKontak(); // Segarkan tampilan sidebar kiri
-
-                // Render bubble chat jika pesannya berasal dari orang yang sedang dibuka ruang obrolannya
-                if (pesanBaru.sender === activeRecipient) {
-                    tampilkanBubbleChat(pesanBaru);
-                    scrollKeBawah();
-                }
-            });
-        }, function (error) {
-            setTimeout(connectWebSocket, 5000); 
-        });
-    }
-
-    // Mengirim pesan private ke backend
-    function kirimPesan() {
-        if (!inputPesan || !activeRecipient) return;
-        const text = inputPesan.value.trim();
-        if (!text || !stompClient) return;
-        
-        const objekPesan = { 
-            sender: currentUser, 
-            recipient: activeRecipient, 
-            content: text,
-            timestamp: new Date().toISOString()
-        };
-        
-        stompClient.send("/app/private-message", {}, JSON.stringify(objekPesan));
-        
-        // Perbarui pesan terakhir kita di sidebar kiri secara dinamis
-        let kontak = daftarKontak.find(k => k.nama === activeRecipient);
-        if (kontak) {
-            kontak.pesanTerakhir = text;
-            kontak.waktu = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            renderDaftarKontak();
-        }
-
-        tampilkanBubbleChat(objekPesan);
-        scrollKeBawah();
-        inputPesan.value = ''; 
-    }
-
-    // Mengambil riwayat obrolan dari database
-    async function loadChatHistory(user1, user2) {
-        if (!kontainerPesan || !user2) return;
-        try {
-            if(namaLawanBicara) namaLawanBicara.textContent = user2;
-            kontainerPesan.innerHTML = ''; 
-            
-            const response = await fetch(`${backendUrl}/api/chat/history/${user1}/${user2}`);
-            if (response.ok) {
-                const listPesan = await response.json();
-                listPesan.forEach(pesan => tampilkanBubbleChat(pesan));
-                scrollKeBawah();
-            }
-        } catch (error) { 
-            console.error("Gagal memuat history chat:", error); 
-        }
-    }
-
-    // Merender tampilan HTML list kontak kiri secara dinamis
-    function renderDaftarKontak() {
-        const kontainer = document.getElementById('kontainer-kontak');
-        const badgeTotal = document.getElementById('total-notif');
-        if (!kontainer) return;
-
-        kontainer.innerHTML = '';
-        let totalUnread = 0;
-
-        // Jika benar-benar belum ada chat sama sekali
-        if (daftarKontak.length === 0) {
-            kontainer.innerHTML = '<p class="text-center text-xs text-gray-400 mt-10">Belum ada pesan masuk</p>';
-            if (badgeTotal) badgeTotal.classList.add('hidden');
-            return;
-        }
-
-        daftarKontak.forEach(kontak => {
-            const isAktif = kontak.nama === activeRecipient;
-            totalUnread += kontak.unread;
-
-            const itemKontak = document.createElement('div');
-            itemKontak.className = `p-4 flex gap-3 cursor-pointer border-l-4 transition-colors ${isAktif ? 'bg-blue-50/50 dark:bg-blue-950/20 border-primary' : 'border-transparent hover:bg-gray-50 dark:hover:bg-cardbg/40'}`;
-            itemKontak.setAttribute('onclick', `bukaChat('${kontak.nama}')`);
-
-            itemKontak.innerHTML = `
-                <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">${kontak.inisial}</div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-baseline mb-0.5">
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">${kontak.nama}</h2>
-                        <span class="text-xs text-gray-400 shrink-0">${kontak.waktu}</span>
-                    </div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${kontak.pesanTerakhir}</p>
-                </div>
-                ${kontak.unread >= 1 ? `<div class="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 self-center">${kontak.unread}</div>` : ''}
-            `;
-            kontainer.appendChild(itemKontak);
-        });
-
-        if (badgeTotal) {
-            if (totalUnread >= 1) {
-                badgeTotal.textContent = `${totalUnread} baru`;
-                badgeTotal.classList.remove('hidden');
-            } else {
-                badgeTotal.classList.add('hidden');
-            }
-        }
-    }
-
-    function tampilkanBubbleChat(pesan) {
-        if (!kontainerPesan) return;
-        const isMe = pesan.sender === currentUser;
-        const bubbleWrapper = document.createElement('div');
-        bubbleWrapper.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-4`;
-        
-        const waktu = pesan.timestamp ? new Date(pesan.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-
-        bubbleWrapper.innerHTML = `
-            <div class="max-w-[70%] rounded-2xl px-4 py-2.5 text-sm ${isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white dark:bg-[#1e1e24] text-gray-900 dark:text-gray-100 rounded-tl-none border border-gray-100 dark:border-transparent'}" style="box-shadow: 0 1px 2px rgba(0,0,0,0.05)">
-                <p class="leading-relaxed break-words">${pesan.content}</p>
-                <span class="text-[10px] block text-right mt-1 ${isMe ? 'text-blue-200' : 'text-gray-400'}">
-                    ${waktu}
-                </span>
-            </div>`;
-        kontainerPesan.appendChild(bubbleWrapper);
-    }
-
-    function scrollKeBawah() { 
-        if (kontainerPesan) kontainerPesan.scrollTop = kontainerPesan.scrollHeight; 
-    }
-
-    // Inisialisasi awal halaman
-    document.addEventListener("DOMContentLoaded", () => {
-        connectWebSocket();
-        muatDaftarKontakDariBackend(); // Tarik kontak asli dari DB backend jika ada
-        renderDaftarKontak(); // Render awal (akan memunculkan "Belum ada pesan masuk")
-        
-        if(btnKirim) btnKirim.addEventListener('click', kirimPesan);
-        if(inputPesan) {
-            inputPesan.addEventListener('keypress', (e) => { 
-                if (e.key === 'Enter') kirimPesan(); 
-            });
-        }
-    });
-
-     // 1. Ambil nama user dari LocalStorage
-            const username = localStorage.getItem("username");
-            
-            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
-            if (username) {
-                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
-                const avatarEl = document.getElementById("dashboard-avatar");
-                if (avatarEl) {
-                    avatarEl.textContent = inisial;
-                }
-            }
->>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
     </script>
 </body>
 </html>
