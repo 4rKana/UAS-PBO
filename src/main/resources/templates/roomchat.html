@@ -112,7 +112,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 h-screen overflow-hidden transition-all duration-300 flex flex-col has-bottom-nav" id="main-body">
+<<body id="main-body" th:data-user-id="${session.userId}" class="bg-gray-50 dark:bg-darkbg transition-colors duration-200">
 
     <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
     <div class="mobile-nav" id="mobileNav">
@@ -161,7 +161,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
+                    <input id="searchBarang" type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
                 </div>
             </div>
 
@@ -197,19 +197,43 @@
         
         <section id="sidebar-chat" class="w-full md:w-80 lg:w-96 border-r border-gray-200 dark:border-darkborder/50 flex flex-col bg-white dark:bg-darkbg shrink-0 h-full transition-all">
             <div class="p-5 pb-3 shrink-0">
+<<<<<<< HEAD
+                <div class="flex items-center justify-between px-4 py-2">
+                    <h1 class="text-2xl font-bold text-gray-950 dark:text-white">Pesan</h1>
+                    <button id="addChatBtn" onclick="toggleSearchBox()" class="p-1.5 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors focus:outline-none" title="Tambah Obrolan Baru">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                    </button>
+=======
                 <div class="flex items-center justify-between mb-4">
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h1>
                     <span id="total-notif" class="bg-blue-100 text-primary dark:bg-blue-950 dark:text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full hidden">0 baru</span>
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
                 </div>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
-                    <input type="text" class="block w-full pl-9 pr-3 py-2 text-sm border-none rounded-xl bg-gray-100 dark:bg-cardbg placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary/30" placeholder="Cari pesan...">
+
+                <div id="searchUserContainer" class="hidden px-4 mb-3">
+                    <input type="text" id="searchUserInput" placeholder="Ketik Username lalu tekan Enter..." 
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-cardbg dark:border-darkborder dark:text-white" />
                 </div>
             </div>
 
+<<<<<<< HEAD
+            <div class="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-darkborder/30 invisible-scrollbar pb-20 md:pb-0">
+                <div onclick="loadConversation(${chat.id})" class="p-4 flex gap-3 bg-blue-50/50 dark:bg-blue-950/20 cursor-pointer border-l-4 border-primary hover:bg-blue-100/50 transition-colors">
+                    <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">DR</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline mb-0.5">
+                            <h2 class="text-sm font-semibold text-gray-900 dark:text-white truncate">Dika Ramadan</h2>
+                            <span class="text-xs text-gray-400 shrink-0">10:24</span>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Tentu! Kita bisa bertemu di perp...</p>
+                    </div>
+                    <div class="w-2.5 h-2.5 bg-primary rounded-full shrink-0 self-center"></div>
+                </div>
+=======
             <div id="kontainer-kontak" class="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-darkborder/30 invisible-scrollbar pb-20 md:pb-0">
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
             </div>
         </section>
 
@@ -276,11 +300,17 @@
                     </div>
                 </div>
 
+<<<<<<< HEAD
+                <input id="messageInput" type="text" class="flex-1 px-4 py-2.5 text-[15px] bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary/30 transition-all" placeholder="Ketik pesan...">
+                
+                <button id="sendBtn" class="p-3 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm shrink-0">
+=======
                 <!-- 1. Tambahkan id="input-pesan" -->
                 <input type="text" id="input-pesan" class="flex-1 px-4 py-2.5 text-[15px] bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary/30 transition-all" placeholder="Ketik pesan...">
 
                 <!-- 2. Tambahkan id="btn-kirim" dan type="button" -->
                 <button type="button" id="btn-kirim" class="p-3 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm shrink-0">
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
                     <svg class="w-5 h-5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                 </button>
             </div>
@@ -311,11 +341,170 @@
     </div>
 
     <script>
+<<<<<<< HEAD
+        const currentUserId = document.body.dataset.userId;
+        let currentConversation = null;
+
+        // Tambahkan deklarasi elemen yang kurang di sini
+        const sidebarChat = document.getElementById('sidebar-chat');
+        const ruangChat = document.getElementById('ruang-chat');
+        const mainBody = document.getElementById('main-body');
+        const bottomNav = document.querySelector('.bottom-nav'); // <- Ditambahkan agar tidak error
+
+        // 1. MEMUAT DAFTAR CHAT (DI SEBELAH KIRI)
+        async function loadChatList() {
+            // 1. Ambil ID User aktif dari attribute body secara dinamis
+            const bodyEl = document.getElementById("main-body");
+            const currentUserId = bodyEl ? bodyEl.getAttribute("data-user-id") : null;
+
+            // Validasi jika user id tidak ditemukan (belum login / thymeleaf gagal)
+            if (!currentUserId || currentUserId.startsWith("[[")) {
+                console.error("Gagal memuat daftar chat: ID Pengguna tidak valid.");
+                return;
+            }
+
+            try {
+                // 2. Gunakan backtick ( ` ) dan ${currentUserId} -> BUKAN [[${session.userId}]] langsung
+                const response = await fetch(`/api/chat/${currentUserId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Server bermasalah dengan status: ${response.status}`);
+                }
+
+                const chats = await response.json();
+                
+                const chatListContainer = document.getElementById("chatList");
+                if (chatListContainer) {
+                    chatListContainer.innerHTML = ""; // Mengosongkan chat statis terdahulu
+
+                    chats.forEach(chat => {
+                        const chatItem = document.createElement("div");
+                        // ... (kode pembuatan elemen chatItem kamu yang sudah ada sebelumnya) ...
+                        
+                        // Pastikan fungsi klik memanggil loadConversation sesuai bawaan kode kamu
+                        chatItem.onclick = () => loadConversation(chat.id, chat.nama);
+                        chatListContainer.appendChild(chatItem);
+                    });
+
+                    // Otomatis klik chat pertama jika ada data chat di database
+                    if (chats.length > 0) {
+                        const firstChat = chats[0];
+                        loadConversation(firstChat.id, firstChat.nama);
+                    } else {
+                        const activeChatName = document.getElementById("activeChatName");
+                        if (activeChatName) activeChatName.textContent = "Tidak ada obrolan";
+                    }
+                }
+
+            } catch (error) {
+                console.error("Gagal memuat daftar chat:", error);
+            }
+        }
+
+        // 2. MEMUAT ISI PESAN (DI RUANG CHAT)
+        async function loadConversation(conversationId, namaLawanBicara) {
+            currentConversation = conversationId;
+
+            // Update nama dan avatar di header chatroom menggunakan fungsi bawaan kamu
+            updateChatHeader(namaLawanBicara, namaLawanBicara.charAt(0).toUpperCase(), 'bg-blue-600');
+
+            try {
+                const response = await fetch(`/api/chat/messages/${conversationId}`);
+                const messages = await response.json();
+
+                const chatContainer = document.querySelector(".space-y-6");
+                chatContainer.innerHTML = "";
+
+                messages.forEach(msg => {
+                    if (msg.senderId === currentUserId) {
+                        // Pesan Pengirim (Kanan)
+                        chatContainer.innerHTML += `
+                        <div class="flex gap-3 max-w-lg ml-auto justify-end">
+                            <div class="text-right">
+                                <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+                                    ${msg.message}
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                    } else {
+                        // Pesan Penerima (Kiri)
+                        chatContainer.innerHTML += `
+                        <div class="flex gap-3 max-w-lg">
+                            <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                                ${msg.message}
+                            </div>
+                        </div>
+                        `;
+                    }
+                });
+
+                // Otomatis scroll ke pesan paling bawah setelah dimuat
+                scrollChatToBottom();
+
+                // Logika responsive mobile bawaan kamu
+                if (window.innerWidth < 768) {
+                    sidebarChat.classList.add("hidden");
+                    ruangChat.classList.remove("hidden");
+                    ruangChat.classList.add("flex");
+                    if(bottomNav) bottomNav.style.display = "none";
+                    mainBody.classList.remove("has-bottom-nav");
+                }
+            } catch (error) {
+                console.error("Gagal memuat pesan:", error);
+            }
+        }
+
+        // 3. FUNGSI KIRIM PESAN
+        async function sendMessage() {
+            const input = document.getElementById("messageInput");
+            const text = input.value.trim();
+
+            if (!text || !currentConversation) return;
+
+            try {
+                await fetch("/api/chat/send", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        conversationId: currentConversation,
+                        senderId: currentUserId,
+                        message: text
+                    })
+                });
+
+                input.value = "";
+                // Refresh obrolan setelah berhasil mengirim pesan
+                await loadConversation(currentConversation, ruangChat.querySelector('h2').textContent);
+            } catch (error) {
+                console.error("Gagal mengirim pesan:", error);
+            }
+        }
+
+        // Event listener saat halaman pertama kali dibuka
+        window.addEventListener("DOMContentLoaded", () => {
+            loadChatList();
+        });
+
+        document.getElementById("sendBtn").addEventListener("click", sendMessage);
+        
+        // Menambahkan trigger tombol Enter untuk mengirim pesan
+        document.getElementById("messageInput").addEventListener("keypress", (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // ==========================================
+        // 1. LOGIKA UTAMA & RESPONSIVE (MOBILE)
+        // ==========================================
+=======
         // =========================================================
         // 1. LOGIKA BAWAAN TEMPLATE (DARK MODE & UI RESPONSIVE)
         // =========================================================
         
         // Logika Sidebar Mobile Navbar Utama
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
         function toggleMobileNav() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('mobileNavOverlay');
@@ -335,12 +524,43 @@
             }
         }
 
-        // Logika Perpindahan Chat Kiri & Kanan (HP)
-        const sidebarChat = document.getElementById('sidebar-chat');
-        const ruangChat = document.getElementById('ruang-chat');
-        const bottomNav = document.querySelector('.bottom-nav'); 
-        const mainBody = document.getElementById('main-body');
+        // Fungsi saat salah satu kontak di list kiri diklik
+        function updateChatHeader(nama, inisial, bgClass) {
+            // Update Header Ruang Chat secara dinamis
+            const chatHeader = ruangChat.querySelector('h2');
+            const chatAvatar = ruangChat.querySelector('.w-10.h-10');
+            
+            chatHeader.textContent = nama;
+            chatAvatar.textContent = inisial;
+            // Reset class background avatar (menghindari tumpukan class bg)
+            chatAvatar.className = `w-10 h-10 rounded-full text-white flex items-center justify-center font-bold text-sm ${bgClass}`;
 
+<<<<<<< HEAD
+            // Responsivitas Mobile
+            if (window.innerWidth < 768) {
+                sidebarChat.classList.add('hidden');
+                sidebarChat.classList.remove('flex');
+                ruangChat.classList.remove('hidden');
+                ruangChat.classList.add('flex');
+                mainBody.classList.remove('has-bottom-nav'); // Sembunyikan padding bottom nav saat chat aktif
+            }
+
+            // Otomatis scroll ke pesan paling bawah setelah membuka chat
+            scrollChatToBottom();
+        }
+
+        function kembaliKeDaftar() {
+            if (window.innerWidth < 768) {
+                sidebarChat.classList.remove('hidden');
+                sidebarChat.classList.add('flex');
+                ruangChat.classList.add('hidden');
+                ruangChat.classList.remove('flex');
+                mainBody.classList.add('has-bottom-nav'); // Tampilkan kembali padding bottom nav
+            }
+        }
+
+        // Jalankan reset tampilan jika ukuran layar di-resize dari HP ke Desktop
+=======
         // Saat chat diklik (Menerima nama kontak yang diklik)
         function bukaChat(namaKontak) {
             if (namaKontak) {
@@ -383,6 +603,7 @@
         }
 
         // Cegah bug tampilan kalau layar di-rotate dari HP ke Desktop
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
         window.addEventListener('resize', () => {
             if (!sidebarChat || !ruangChat) return;
             if (window.innerWidth >= 768) {
@@ -390,16 +611,40 @@
                 sidebarChat.classList.add('flex');
                 ruangChat.classList.remove('hidden');
                 ruangChat.classList.add('flex');
-                if (bottomNav) bottomNav.style.display = 'none';
             } else {
-                sidebarChat.classList.remove('hidden');
-                sidebarChat.classList.add('flex');
-                ruangChat.classList.add('hidden');
-                ruangChat.classList.remove('flex');
-                if (bottomNav) bottomNav.style.display = 'flex';
+                if (ruangChat.classList.contains('hidden')) {
+                    sidebarChat.classList.remove('hidden');
+                }
             }
         });
 
+<<<<<<< HEAD
+
+        // ==========================================
+        // 2. LOGIKA KIRIM PESAN REAL-TIME (DUMMY)
+        // ==========================================
+        const chatContainer = ruangChat.querySelector('.flex-1.overflow-y-auto');
+        const chatInput = ruangChat.querySelector('input[type="text"]');
+        const sendBtn = ruangChat.querySelector('button .rotate-90').parentElement;
+
+        function scrollChatToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // ==========================================
+        // 3. LOGIKA TOGGLE DROPDOWN & POPOVER
+        // ==========================================
+        const btnOptions = document.getElementById('btn-chat-options');
+        const dropdownOptions = document.getElementById('dropdown-chat-options');
+        const btnAttach = document.getElementById('btn-attach');
+        const popoverAttach = document.getElementById('popover-attach');
+
+        // Toggle opsi chat (titik tiga)
+        btnOptions.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownOptions.classList.toggle('hidden');
+            popoverAttach.classList.add('hidden'); // tutup popover sebelah jika terbuka
+=======
         // Logika Menu Tiga Titik & Upload Popover
         const btnChatOptions = document.getElementById('btn-chat-options');
         const dropdownChatOptions = document.getElementById('dropdown-chat-options');
@@ -423,39 +668,215 @@
         document.addEventListener('click', () => {
             if(popoverAttach) popoverAttach.classList.add('hidden');
             if(dropdownChatOptions) dropdownChatOptions.classList.add('hidden');
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
         });
 
-        // Logika Dark Mode
-        const html = document.documentElement;
+        // Toggle popover attachment (klip kertas)
+        btnAttach.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popoverAttach.classList.toggle('hidden');
+            dropdownOptions.classList.add('hidden'); // tutup dropdown sebelah jika terbuka
+        });
+
+        // Tutup semua popover/dropdown saat klik di luar area bebas
+        document.addEventListener('click', () => {
+            dropdownOptions.classList.add('hidden');
+            popoverAttach.classList.add('hidden');
+        });
+
+
+        // ==========================================
+        // 4. LOGIKA DARK / LIGHT MODE SWITCHER
+        // ==========================================
         const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleMobileBtn = document.getElementById('theme-toggle-mobile');
         const sunIcon = document.getElementById('sun-icon');
         const moonIcon = document.getElementById('moon-icon');
-        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
         const themeLabelMobile = document.getElementById('theme-label-mobile');
 
-        function updateIcons() {
-            if (html.classList.contains('dark')) {
-                if(sunIcon) sunIcon.classList.remove('hidden');
-                if(moonIcon) moonIcon.classList.add('hidden');
-                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
+        function setDarkMode(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                if (themeLabelMobile) themeLabelMobile.textContent = "Mode Terang";
+                localStorage.setItem('theme', 'dark');
             } else {
-                if(sunIcon) sunIcon.classList.add('hidden');
-                if(moonIcon) moonIcon.classList.remove('hidden');
-                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                if (themeLabelMobile) themeLabelMobile.textContent = "Mode Gelap";
+                localStorage.setItem('theme', 'light');
             }
         }
+<<<<<<< HEAD
+
+        // Cek preference tema user sebelumnya di LocalStorage
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setDarkMode(savedTheme === 'dark');
+=======
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             html.classList.add('dark');
         } else {
             html.classList.remove('dark');
         }
         updateIcons();
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
 
-        function toggleTheme() {
-            html.classList.toggle('dark');
-            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
-            updateIcons();
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            setDarkMode(!isDark);
+        });
+
+        if (themeToggleMobileBtn) {
+            themeToggleMobileBtn.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                setDarkMode(!isDark);
+            });
         }
+<<<<<<< HEAD
+
+        // Jalankan scroll ke bawah saat pertama kali aplikasi dibuka
+        window.onload = scrollChatToBottom;
+
+        // Deklarasi Elemen DOM Pencarian
+        const addChatBtn = document.getElementById("addChatBtn");
+        const searchUserContainer = document.getElementById("searchUserContainer");
+        const searchUserInput = document.getElementById("searchUserInput");
+
+        // 1. Aksi ketika tombol '+' diklik (Toggle Tampilkan/Sembunyikan Input)
+        addChatBtn.addEventListener("click", () => {
+            searchUserContainer.classList.toggle("hidden");
+            if (!searchUserContainer.classList.contains("hidden")) {
+                searchUserInput.focus(); // Otomatis arahkan kursor ke dalam input
+            }
+        });
+
+        // 1. Fungsi Toggle Tampil/Sembunyi Kotak Pencarian (Dipanggil via onclick HTML)
+        function toggleSearchBox() {
+            console.log("-> Fungsi toggleSearchBox() BERHASIL DIPANGGIL!");
+            
+            const container = document.getElementById("searchUserContainer");
+            const input = document.getElementById("searchUserInput");
+            
+            if (container) {
+                // Jika sedang tersembunyi (punya class hidden atau display none)
+                if (container.classList.contains("hidden") || container.style.display === "none") {
+                    container.classList.remove("hidden");
+                    container.style.display = "block"; // Paksa browser menampilkan lewat inline CSS
+                    console.log("-> Kotak pencarian DIPAKSA MUNCUL (display: block)");
+                    if (input) input.focus();
+                } else {
+                    container.style.display = "none"; // Sembunyikan kembali jika diklik lagi
+                    container.classList.add("hidden");
+                    console.log("-> Kotak pencarian DISEMBUNYIKAN (display: none)");
+                }
+            } else {
+                console.error("-> Elemen #searchUserContainer tidak ditemukan!");
+            }
+        }
+
+        // 2. Listener untuk mendeteksi tombol Enter saat mengetik ID User
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchUserInput = document.getElementById("searchUserInput");
+            
+            if (searchUserInput) {
+                searchUserInput.addEventListener("keypress", async (e) => {
+                    if (e.key === "Enter") {
+                        const targetUserId = searchUserInput.value.trim();
+                        if (!targetUserId) return;
+
+                        // Mengambil ID User yang sedang login secara dinamis dari tag body
+                        const mainBody = document.getElementById("main-body");
+                        const currentUserId = mainBody ? mainBody.getAttribute("data-user-id") : null;
+
+                        if (!currentUserId) {
+                            alert("ID Pengguna aktif tidak ditemukan.");
+                            return;
+                        }
+
+                        try {
+                            // Panggil API backend untuk mencari/membuat obrolan baru
+                            const response = await fetch(`/api/chat/start?currentUserId=${currentUserId}&targetUsername=${targetUsername}`, {
+                                method: "POST"
+                            });
+
+                            if (response.ok) {
+                                const chatDto = await response.json();
+                                
+                                // Bersihkan text input & sembunyikan kembali kotak pencarian
+                                searchUserInput.value = "";
+                                document.getElementById("searchUserContainer").classList.add("hidden");
+                                
+                                // Refresh daftar chat sebelah kiri
+                                await loadChatList();
+                                
+                                // Membuka obrolan secara otomatis menggunakan fungsi bawaan roomchat.html kamu
+                                if (typeof loadConversation === "function") {
+                                    loadConversation(chatDto.id, chatDto.nama);
+                                } else {
+                                    console.log("Fungsi loadConversation tidak ditemukan, silakan refresh halaman.");
+                                }
+                            } else {
+                                // Menampilkan pesan error dari backend jika user tidak terdaftar
+                                const errorText = await response.text();
+                                alert(errorText || "Gagal memproses obrolan.");
+                            }
+                        } catch (error) {
+                            console.error("Error saat memulai obrolan baru:", error);
+                            alert("Terjadi masalah jaringan atau server.");
+                        }
+                    }
+                });
+            }
+        });
+
+        document.getElementById("searchUserInput").addEventListener("keypress", async (e) => {
+            if (e.key === "Enter") {
+                // 1. Ambil nilai input dari elemen yang memicu event
+                const targetUsername = e.target.value.trim(); 
+                
+                // 2. Ambil User ID dari atribut body (pastikan sudah diset sebelumnya)
+                const currentUserId = document.body.getAttribute("data-user-id");
+
+                if (!targetUsername) {
+                    alert("Username tidak boleh kosong!");
+                    return;
+                }
+
+                try {
+                    // 3. Kirim ke Backend dengan parameter 'targetUsername'
+                    const response = await fetch(`/api/chat/start?currentUserId=${currentUserId}&targetUsername=${targetUsername}`, {
+                        method: "POST"
+                    });
+
+                    if (response.ok) {
+                        const chatDto = await response.json();
+                        
+                        // Bersihkan input dan sembunyikan kotak
+                        e.target.value = "";
+                        const container = document.getElementById("searchUserContainer");
+                        container.classList.add("hidden");
+                        container.style.display = "none";
+                        
+                        // Refresh list & buka chat
+                        await loadChatList();
+                        if (typeof loadConversation === "function") {
+                            loadConversation(chatDto.id, chatDto.nama);
+                        }
+                    } else {
+                        const errorText = await response.text();
+                        alert(errorText || "User tidak ditemukan.");
+                    }
+                } catch (error) {
+                    console.error("Error saat memulai obrolan baru:", error);
+                    alert("Terjadi masalah jaringan.");
+                }
+            }
+        });
+=======
         if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
         if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
 
@@ -699,6 +1120,7 @@
                     avatarEl.textContent = inisial;
                 }
             }
+>>>>>>> 4e819ab9c9706d4430473210e4539ea500f1fcdc
     </script>
 </body>
 </html>

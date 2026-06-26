@@ -1,34 +1,58 @@
 package com.PBO2.CampShare.controller;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.PBO2.CampShare.entity.ChatMessageEntity;
-import com.PBO2.CampShare.repository.ChatRepository;
+import com.PBO2.CampShare.dto.ConversationDTO;
+import com.PBO2.CampShare.dto.MessageRequest;
+import com.PBO2.CampShare.entity.Conversation;
+import com.PBO2.CampShare.entity.Message;
+import com.PBO2.CampShare.service.ChatService;
 
-@Controller
+@RestController
+@RequestMapping("/api/chat")
 public class ChatController {
-    private final SimpMessagingTemplate messagingTemplate;
-    private final ChatRepository chatRepository;
 
-    @Autowired
-    public ChatController(SimpMessagingTemplate messagingTemplate, ChatRepository chatRepository) {
-        this.messagingTemplate = messagingTemplate;
-        this.chatRepository = chatRepository;
+    private final ChatService chatService;
+
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
     }
 
-    @MessageMapping("/private-message")
-    public void handlePrivateMessage(ChatMessageEntity message) {
-        message.setTimestamp(LocalDateTime.now());
+    @GetMapping("/{userId}")
+    public List<ConversationDTO> getChats(@PathVariable String userId) {
+        return chatService.getChats(userId);
+    }
 
-        chatRepository.save(message);
+    @GetMapping("/messages/{conversationId}")
+    public List<Message> getMessages(
+            @PathVariable Integer conversationId) {
 
-        messagingTemplate.convertAndSend("/queue/messages/" + message.getRecipient(), message);
+        return chatService.getMessages(
+                conversationId);
+    }
 
-        messagingTemplate.convertAndSend("/queue/messages/" + message.getSender(), message);
+    @PostMapping("/send")
+    public ResponseEntity<?> sendMessage(
+            @RequestBody MessageRequest request) {
+
+        chatService.sendMessage(request);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/start")
+    public ResponseEntity<?> startConversation(
+            @RequestParam String currentUserId, 
+            @RequestParam String targetUsername) {
+        try {
+            ConversationDTO dto = chatService.startConversation(currentUserId, targetUsername);
+            return ResponseEntity.ok(dto);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
     }
 }
