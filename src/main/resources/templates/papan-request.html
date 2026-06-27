@@ -360,6 +360,50 @@
     // ==========================================
     // 4. LOGIKA CRUD BACKEND (SPRING BOOT API)
     // ==========================================
+    // PENTING: Endpoint & parameter di bawah ini HARUS sama persis dengan
+    // RequestController.java, RequestRepository.java, RequestBarang.java
+    // yang sudah ada (tidak ada parameter requesterId/penawarId di backend,
+    // dan StatusRequest hanya TERSEDIA & TERPENUHI).
+    // Semua aturan "siapa boleh klik apa" dikerjakan di sini (front-end),
+    // memakai localStorage sebagai penanda sementara di sisi browser.
+
+    const API_BASE = 'http://localhost:8080/api/request';
+
+    // Penanda lokal: siapa yang sudah menekan "Tawarkan Barang Saya" untuk
+    // request tertentu. Backend tidak punya kolom ini, jadi disimpan di
+    // localStorage browser pemilik request sebagai catatan sementara.
+    // Struktur: { "<idRequest>": "<idUserPenawar>" }
+    function getPenawarMap() {
+        try {
+            return JSON.parse(localStorage.getItem('penawarMap') || '{}');
+        } catch (e) {
+            return {};
+        }
+    }
+    function setPenawar(idRequest, idUserPenawar) {
+        const map = getPenawarMap();
+        map[idRequest] = idUserPenawar;
+        localStorage.setItem('penawarMap', JSON.stringify(map));
+    }
+    function getPenawar(idRequest) {
+        return getPenawarMap()[idRequest] || null;
+    }
+
+    // Template pesan "kosong" yang dipakai ulang (data tidak ada / gagal dimuat)
+    function renderEmptyState(container, { title, message, isError = false } = {}) {
+        const iconColor = isError
+            ? 'text-red-400 dark:text-red-400/80'
+            : 'text-gray-400 dark:text-gray-500';
+
+        container.innerHTML = `
+        <div class="flex flex-col items-center justify-center text-center py-16 px-6 bg-white dark:bg-cardbg border border-dashed border-gray-200 dark:border-darkborder rounded-2xl">
+            <svg class="w-12 h-12 mb-4 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="font-semibold text-gray-700 dark:text-gray-200 text-[15px]">${title}</p>
+            <p class="text-gray-500 dark:text-gray-400 text-[13.5px] mt-1 max-w-xs">${message}</p>
+        </div>`;
+    }
 
     // A. Memuat Data Request dari Backend
     async function loadRequest() {
@@ -367,15 +411,36 @@
         if (!container) return;
 
         try {
-            const response = await fetch('http://localhost:8080/api/request');
+            const response = await fetch(API_BASE);
+
+            if (!response.ok) {
+                renderEmptyState(container, {
+                    title: 'Gagal memuat permintaan',
+                    message: 'Server tidak merespons dengan benar. Coba muat ulang halaman.',
+                    isError: true
+                });
+                return;
+            }
+
             const data = await response.json();
-            
+
+            // === EMPTY STATE: tidak ada data sama sekali dari backend ===
+            if (!Array.isArray(data) || data.length === 0) {
+                renderEmptyState(container, {
+                    title: 'Belum ada permintaan',
+                    message: 'Jadilah yang pertama membuat permintaan barang lewat tombol "Buat Permintaan Baru" di atas.'
+                });
+                return;
+            }
+
             container.innerHTML = ''; // Kosongkan kontainer lama
-            
+
+            const idUserLogin = localStorage.getItem("idUser");
+
             data.forEach(item => {
                 // Logika penentuan warna badge status berdasarkan nilainya
                 let statusBadgeClass = '';
-                
+
                 if (item.statusRequest === 'TERSEDIA') {
                     statusBadgeClass = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 font-semibold';
                 } else if (item.statusRequest === 'TERPENUHI') {
@@ -384,28 +449,56 @@
                     statusBadgeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
                 }
 
+                const isPemilik = idUserLogin && item.userId === idUserLogin;
+                const idPenawar = getPenawar(item.id);
+                const isPenawar = idUserLogin && idPenawar === idUserLogin;
+
+                // --- Sembunyikan Tombol Hapus (poin 1) ---
+                // Hanya muncul jika request ini milik user yang sedang login.
+                const tombolHapus = isPemilik
+                    ? `<button onclick="hapusRequest('${item.id}')" class="text-red-500 hover:text-red-600 text-[12px] font-medium transition-colors">Hapus</button>`
+                    : '';
+
+                // --- Update Status / Tombol Aksi (poin 2) ---
+                // Dibatasi berdasarkan status barang & siapa yang sedang login:
+                //  - Status TERSEDIA & bukan pemilik -> boleh "Tawarkan Barang Saya"
+                //  - Status TERSEDIA & pemilik       -> tidak ada aksi (tunggu penawar)
+                //  - Status TERPENUHI                -> tidak ada aksi sama sekali (sudah final)
+                let tombolAksi = '';
+                if (item.statusRequest === 'TERSEDIA') {
+                    if (!isPemilik) {
+                        tombolAksi = `<button onclick="tawarkanBarang('${item.id}')" class="px-3 py-1.5 bg-primary hover:bg-blue-600 text-white text-[12.5px] font-semibold rounded-lg transition-colors">Tawarkan Barang Saya</button>`;
+                    }
+                }
+
                 container.innerHTML += `
                 <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm">
                     <div class="flex justify-between items-start mb-3">
                         <span class="font-semibold text-[16px] dark:text-white">${item.namaBarang}</span>
-                        <button onclick="hapusRequest('${item.id}')" class="text-red-500 hover:text-red-600 text-[12px] font-medium transition-colors">Hapus</button>
+                        ${tombolHapus}
                     </div>
                     <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-4">${item.deskripsi}</p>
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center mb-1">
                         <span class="text-[15px] text-blue-600 dark:text-blue-400 font-bold">Rp ${item.anggaran.toLocaleString('id-ID')}</span>
                         <span class="text-[11px] tracking-wide px-2.5 py-1 rounded-lg ${statusBadgeClass}">${item.statusRequest}</span>
                     </div>
+                    ${tombolAksi ? `<div class="flex justify-end mt-3">${tombolAksi}</div>` : ''}
                 </div>`;
             });
         } catch (error) {
             console.error("Gagal memuat data:", error);
+            renderEmptyState(container, {
+                title: 'Tidak dapat terhubung ke server',
+                message: 'Pastikan server backend (Spring Boot) sedang berjalan, lalu coba lagi.',
+                isError: true
+            });
         }
     }
 
     // B. Mengirim Data Request Baru ke Backend
     async function submitForm(event) {
         event.preventDefault(); // Mencegah halaman reload otomatis
-        
+
         const data = {
             namaBarang: document.getElementById('input-nama-barang').value,
             deskripsi: document.getElementById('input-deskripsi').value,
@@ -415,7 +508,7 @@
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/request', {
+            const response = await fetch(API_BASE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -435,14 +528,62 @@
     }
 
     // C. Menghapus Data Request
+    // Sesuai RequestController asli: DELETE /api/request/{id} (tanpa query param).
+    // Tombolnya saja yang sudah disembunyikan untuk non-pemilik di loadRequest(),
+    // jadi di sini cukup konfirmasi lalu hapus.
     async function hapusRequest(id) {
         if (confirm("Yakin ingin menghapus permintaan ini?")) {
             try {
-                await fetch(`http://localhost:8080/api/request/${id}`, { method: 'DELETE' });
+                const response = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    alert("Gagal menghapus permintaan.");
+                    return;
+                }
                 loadRequest();
             } catch (error) {
                 console.error("Gagal menghapus data:", error);
+                alert("Tidak dapat terhubung ke server.");
             }
+        }
+    }
+
+    // D. Update Status (poin 2) — dipakai untuk "Tawarkan Barang Saya"
+    // Sesuai RequestController asli: PUT /api/request/{id}/status?status=...
+    async function updateStatus(id, statusBaru) {
+        const response = await fetch(`${API_BASE}/${id}/status?status=${encodeURIComponent(statusBaru)}`, {
+            method: 'PUT'
+        });
+        return response;
+    }
+
+    // Dipanggil saat kakak tingkat menekan "Tawarkan Barang Saya".
+    // Karena StatusRequest hanya TERSEDIA/TERPENUHI (tidak ada status tengah),
+    // begitu ditawarkan, status langsung berubah jadi TERPENUHI agar barang
+    // tidak bisa diajukan oleh orang lain lagi (poin 3: Fitur Transaksi Selesai).
+    async function tawarkanBarang(id) {
+        const idUserLogin = localStorage.getItem("idUser");
+        if (!idUserLogin) {
+            alert("Anda harus login terlebih dahulu untuk menawarkan barang.");
+            return;
+        }
+
+        if (!confirm("Tawarkan barang Anda untuk permintaan ini? Setelah ditawarkan, permintaan akan ditandai selesai.")) {
+            return;
+        }
+
+        try {
+            const response = await updateStatus(id, 'TERPENUHI');
+            if (!response.ok) {
+                alert("Gagal menawarkan barang. Coba lagi.");
+                return;
+            }
+            // Simpan catatan lokal siapa penawarnya (backend tidak punya kolom ini)
+            setPenawar(id, idUserLogin);
+            alert("Barang Anda berhasil ditawarkan! Permintaan ini sudah ditandai selesai.");
+            loadRequest();
+        } catch (error) {
+            console.error("Gagal menawarkan barang:", error);
+            alert("Tidak dapat terhubung ke server.");
         }
     }
 
