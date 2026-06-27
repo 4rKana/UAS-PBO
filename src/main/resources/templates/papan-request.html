@@ -520,7 +520,16 @@
                 document.body.style.overflow = ''; // Kembalikan scrollbar
                 loadRequest(); // Refresh papan request agar data baru langsung muncul
             } else {
-                alert("Gagal mengirim permintaan ke server.");
+                // Tampilkan detail error sebenarnya dari server agar mudah didiagnosis
+                let pesanError = `Gagal mengirim permintaan ke server (status ${response.status}).`;
+                try {
+                    const teksError = await response.text();
+                    console.error("Detail error dari server:", teksError);
+                    if (teksError) pesanError += `\n\nDetail: ${teksError}`;
+                } catch (e) {
+                    // tidak ada body error untuk dibaca
+                }
+                alert(pesanError);
             }
         } catch (error) {
             console.error("Error saat mengirim data:", error);
