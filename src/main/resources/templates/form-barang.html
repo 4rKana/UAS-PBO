@@ -195,8 +195,11 @@
         <div class="mb-12 relative px-4">
             <div class="flex items-center justify-between">
                 <div class="absolute left-10 right-10 top-3.5 h-0.5 bg-gray-200 dark:bg-darkborder -z-10"></div>
-                <div id="step-line" class="absolute left-10 top-3.5 h-0.5 bg-primary -z-10 transition-all duration-500" style="width: 66%;"></div>
-                
+
+                <div id="step-line"
+                    class="absolute left-10 right-10 top-3.5 h-0.5 bg-primary -z-10 transition-all duration-500"
+                    style="width:0%;">
+                </div>               
                 <div class="flex flex-col items-center gap-2">
                     <div id="step1"
                         class="step-circle w-7 h-7 rounded-full border-2 border-primary bg-white dark:bg-darkbg text-primary flex items-center justify-center text-[13px] font-bold">
@@ -557,9 +560,9 @@
         const line = document.getElementById("step-line");
         const widths = [
             "0%",
-            "33%",
-            "66%",
-            "100%"
+            "33.3%",
+            "66.6%",
+            "99%"
         ];
 
         line.style.width = widths[step - 1];
