@@ -21,6 +21,7 @@ public class RequestBarang {
 
     private String namaBarang;
     private String deskripsi;
+    private String userId;
     
     @Column(name = "anggaran")
     private Integer anggaran;
@@ -28,15 +29,17 @@ public class RequestBarang {
     @Enumerated(EnumType.STRING)
     private StatusRequest statusRequest;
 
+
     // Constructor Kosong (Wajib untuk JPA)
     public RequestBarang() {}
 
     // Constructor dengan Parameter
-    public RequestBarang(String namaBarang, String deskripsi, Integer anggaran, StatusRequest statusRequest) {
+    public RequestBarang(String namaBarang, String deskripsi, Integer anggaran, StatusRequest statusRequest, String userId) {
         this.namaBarang = namaBarang;
         this.deskripsi = deskripsi;
         this.anggaran = anggaran;
         this.statusRequest = statusRequest;
+        this.userId = userId;
     }
 
     // Getter dan Setter
@@ -54,4 +57,7 @@ public class RequestBarang {
 
     public StatusRequest getStatusRequest() { return statusRequest; }
     public void setStatusRequest(StatusRequest statusRequest) { this.statusRequest = statusRequest; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 }

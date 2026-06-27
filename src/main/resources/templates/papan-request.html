@@ -410,7 +410,8 @@
             namaBarang: document.getElementById('input-nama-barang').value,
             deskripsi: document.getElementById('input-deskripsi').value,
             anggaran: parseInt(document.getElementById('input-anggaran').value),
-            statusRequest: 'TERSEDIA' 
+            statusRequest: 'TERSEDIA',
+            userId: localStorage.getItem("idUser")
         };
 
         try {

@@ -36,6 +36,10 @@ public class RequestController {
 
     @PostMapping
     public ResponseEntity<RequestBarang> create(@RequestBody RequestBarang request) {
+        
+        // Cukup panggil satu fungsi saja agar tidak double save
+        RequestBarang savedRequest = requestService.buatRequest(request);
+    
         return ResponseEntity.ok(requestService.buatRequest(request));
     }
 

@@ -36,9 +36,14 @@ public class RequestService {
         if (request == null) {
             throw new IllegalArgumentException("Data request tidak boleh kosong");
         }
-
         // Aturan Bisnis: Setiap request baru wajib berstatus TERSEDIA
         request.setStatusRequest(StatusRequest.TERSEDIA);
+
+        // 2. Tambahkan validasi userId (Opsional tapi sangat disarankan)
+        if (request.getUserId() == null || request.getUserId().trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID tidak valid atau tidak ditemukan!");
+        }
+        
         return requestRepository.save(request);
     }
     // DISATUKAN: Cukup satu fungsi update status yang menerima tipe data Enum yang aman (Type-Safe)
