@@ -22,4 +22,10 @@ public interface ConversationRepository extends JpaRepository<Conversation, Inte
     // 3. Ambil nama/username dari tabel users (Sesuaikan nama kolom 'username' jika di DB-mu berbeda)
     @Query(value = "SELECT username FROM users WHERE id_user = :userId", nativeQuery = true)
     String findNamaByUserId(@Param("userId") String userId);
+
+    // 4. Cari ID asli (id_user) berdasarkan USERNAME yang diketik user di kotak pencarian.
+    //    Dipakai saat memulai obrolan baru, karena yang diketik user adalah username,
+    //    bukan id_user secara langsung.
+    @Query(value = "SELECT id_user FROM users WHERE username = :username", nativeQuery = true)
+    String findUserIdByUsername(@Param("username") String username);
 }

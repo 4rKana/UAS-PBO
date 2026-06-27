@@ -8,7 +8,7 @@ import com.PBO2.CampShare.entity.Message;
 
 public interface ChatService {
 
-    ConversationDTO startConversation(String currentUserId, String targetUserId);
+    ConversationDTO startConversation(String currentUserId, String targetUsername);
 
     List<ConversationDTO> getChats(String userId); // Ubah dari Conversation ke ConversationDTO
 

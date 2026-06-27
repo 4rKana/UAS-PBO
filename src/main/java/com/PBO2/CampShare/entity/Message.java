@@ -22,7 +22,7 @@ public class Message {
     @Column(name = "sender_id")
     private String senderId;
 
-    @Column(name = "message")
+    @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
     @Column(name = "created_at")

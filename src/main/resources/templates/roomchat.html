@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CampusShare - Pesan</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -153,12 +155,6 @@
                         </div>
                         <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white hidden sm:block">CampusShare</span>
                     </a>
-                </div>
-                <div class="hidden md:block w-full max-w-md relative ml-4 desktop-search">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
-                    <input id="searchBarang" type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
                 </div>
             </div>
 
@@ -396,6 +392,109 @@
         const currentUserId = document.body.dataset.userId;
         let currentConversation = null;
 
+        // ==========================================
+        // WEBSOCKET (STOMP) - CHAT REAL-TIME
+        // ==========================================
+        let stompClient = null;
+        let currentSubscription = null; // Subscription topic conversation yang sedang aktif
+
+        function connectWebSocket() {
+            const socket = new SockJS("/ws");
+            stompClient = Stomp.over(socket);
+
+            // Matikan log debug bawaan stomp.js di console (opsional, biar console bersih)
+            stompClient.debug = null;
+
+            stompClient.connect({}, () => {
+                console.log("WebSocket terhubung.");
+
+                // Kalau saat connect/reconnect user sudah berada di sebuah conversation,
+                // langsung subscribe ulang (berguna saat koneksi putus-sambung).
+                if (currentConversation) {
+                    subscribeToConversation(currentConversation);
+                }
+            }, (error) => {
+                console.error("WebSocket error, mencoba reconnect dalam 3 detik...", error);
+                setTimeout(connectWebSocket, 3000);
+            });
+        }
+
+        function subscribeToConversation(conversationId) {
+            if (!stompClient || !stompClient.connected) return;
+
+            // Lepas subscription topic sebelumnya agar tidak menumpuk
+            // (mis. saat pindah dari chat A ke chat B)
+            if (currentSubscription) {
+                currentSubscription.unsubscribe();
+                currentSubscription = null;
+            }
+
+            currentSubscription = stompClient.subscribe(
+                `/topic/chat/${conversationId}`,
+                (frame) => {
+                    const msg = JSON.parse(frame.body);
+                    appendMessageToChat(msg);
+                }
+            );
+        }
+
+        // Menambahkan satu pesan baru ke tampilan chat tanpa reload seluruh percakapan
+        function appendMessageToChat(msg) {
+            // Pastikan pesan ini memang untuk conversation yang sedang dibuka
+            if (String(msg.conversationId) !== String(currentConversation)) return;
+
+            const chatContainer = document.getElementById("chatContainer");
+            const isOwnMessage = String(msg.senderId) === String(currentUserId);
+
+            if (isOwnMessage) {
+                chatContainer.insertAdjacentHTML(
+                    "beforeend",
+                    `
+                    <div class="flex gap-3 max-w-lg ml-auto justify-end">
+                        <div class="text-right">
+                            <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+                                ${msg.message}
+                            </div>
+                        </div>
+                    </div>
+                    `
+                );
+            } else {
+                chatContainer.insertAdjacentHTML(
+                    "beforeend",
+                    `
+                    <div class="flex gap-3 max-w-lg">
+                        <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                            ${msg.message}
+                        </div>
+                    </div>
+                    `
+                );
+            }
+
+            scrollChatToBottom();
+
+            // Update juga preview "lastMessage" di daftar chat sebelah kiri
+            // (autoOpenFirst=false agar tidak memaksa pindah ke chat lain saat ada pesan masuk)
+            loadChatList(false);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            // 1. Cek sesi login
+            const bodyEl = document.getElementById("main-body");
+            const currentUserId = bodyEl ? bodyEl.getAttribute("data-user-id") : null;
+
+            // Jika user ID kosong, undefined, atau string kosong, arahkan ke login
+            if (!currentUserId || currentUserId === "" || currentUserId === "null") {
+                window.location.href = "/login";
+                return; // Hentikan eksekusi script selanjutnya
+            }
+
+            // 2. Jika sudah login, baru muat data
+            loadChatList();
+            connectWebSocket();
+        });
+
         document.getElementById("btnViewProfile").addEventListener("click", () => {
 
             // Sementara simpan nama target chat
@@ -475,7 +574,7 @@
         const bottomNav = document.querySelector('.bottom-nav'); // <- Ditambahkan agar tidak error
 
         // 1. MEMUAT DAFTAR CHAT (DI SEBELAH KIRI)
-        async function loadChatList() {
+        async function loadChatList(autoOpenFirst = true) {
             // 1. Ambil ID User aktif dari attribute body secara dinamis
             const bodyEl = document.getElementById("main-body");
             const currentUserId = bodyEl ? bodyEl.getAttribute("data-user-id") : null;
@@ -514,7 +613,7 @@
 
                             <div class="flex justify-between items-center">
 
-                                <h2 class="text-sm font-semibold truncate">
+                                <h2 class="text-sm font-semibold truncate text-gray-900 dark:text-white">
                                     ${chat.nama}
                                 </h2>
 
@@ -522,7 +621,7 @@
 
                             </div>
 
-                            <p class="text-xs text-gray-500 truncate">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
                                 ${chat.lastMessage ?? ""}
                             </p>
 
@@ -535,9 +634,12 @@
                     });
 
                     // Otomatis klik chat pertama jika ada data chat di database
+                    // (hanya saat initial load / belum ada chat yang terbuka, bukan setiap refresh)
                     if (chats.length > 0) {
-                        const firstChat = chats[0];
-                        loadConversation(firstChat.id, firstChat.nama);
+                        if (autoOpenFirst && !currentConversation) {
+                            const firstChat = chats[0];
+                            loadConversation(firstChat.id, firstChat.nama);
+                        }
                     } else {
                         const activeChatName = document.getElementById("activeChatName");
                         if (activeChatName) activeChatName.textContent = "Tidak ada obrolan";
@@ -552,6 +654,10 @@
         // 2. MEMUAT ISI PESAN (DI RUANG CHAT)
         async function loadConversation(conversationId, namaLawanBicara) {
             currentConversation = conversationId;
+
+            // Subscribe ke topic WebSocket khusus conversation ini,
+            // supaya pesan baru (dari diri sendiri maupun lawan bicara) langsung muncul.
+            subscribeToConversation(conversationId);
 
             // Update nama dan avatar di header chatroom menggunakan fungsi bawaan kamu
             updateChatHeader(
@@ -575,8 +681,9 @@
                 chatContainer.innerHTML = "";
 
                 messages.forEach(msg => {
-                    if (Number(msg.senderId) === Number(currentUserId)) {
-                        // Pesan Pengirim (Kanan)
+                    // Pastikan perbandingan ID dilakukan dengan tipe data yang sama (string ke string)
+                    if (String(msg.senderId) === String(currentUserId)) {
+                        // Pesan Pengirim (Posisi Kanan, Warna Biru)
                         chatContainer.insertAdjacentHTML(
                             "beforeend",
                             `
@@ -590,15 +697,17 @@
                             `
                         );
                     } else {
-                        // Pesan Penerima (Kiri)
+                        // Pesan Penerima (Posisi Kiri, Warna Putih/Abu)
                         chatContainer.insertAdjacentHTML(
-                        "beforeend", `
-                        <div class="flex gap-3 max-w-lg">
-                            <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
-                                ${msg.message}
+                            "beforeend", 
+                            `
+                            <div class="flex gap-3 max-w-lg">
+                                <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                                    ${msg.message}
+                                </div>
                             </div>
-                        </div>
-                        `);
+                            `
+                        );
                     }
                 });
 
@@ -625,6 +734,10 @@
 
             if (!text || !currentConversation) return;
 
+            // Kosongkan input segera supaya terasa responsif,
+            // tidak perlu menunggu broadcast WebSocket datang.
+            input.value = "";
+
             try {
                 await fetch("/api/chat/send", {
                     method: "POST",
@@ -638,16 +751,13 @@
                     })
                 });
 
-                input.value = "";
-
-            await loadConversation(
-                currentConversation,
-                document.getElementById("activeChatName").textContent
-            );
-
-                await loadChatList();
+                // Tidak perlu loadConversation()/loadChatList() manual di sini lagi.
+                // Setelah backend menyimpan pesan, ia akan broadcast lewat WebSocket
+                // ke topic /topic/chat/{conversationId}, dan appendMessageToChat()
+                // akan menampilkannya secara otomatis (baik untuk pengirim maupun penerima).
             } catch (error) {
                 console.error("Gagal mengirim pesan:", error);
+                alert("Pesan gagal terkirim. Periksa koneksi internet kamu.");
             }
         }
 
