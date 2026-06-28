@@ -1,6 +1,7 @@
 package com.PBO2.CampShare.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,30 @@ public class ChatController {
 
     public ChatController(ChatService chatService) {
         this.chatService = chatService;
+    }
+
+    // PENTING: path statis seperti "/unread-count/{userId}" HARUS dideklarasikan
+    // SEBELUM "/{userId}" di bawah, supaya Spring tidak salah mencocokkan
+    // "/unread-count/xxx" sebagai getChats dengan userId="unread-count".
+    // (Spring sebenarnya cukup pintar membedakan path statis vs variabel,
+    // tapi urutan ini tetap dijaga agar tidak ambigu dan mudah dibaca.)
+
+    // Jumlah pesan belum dibaca milik seorang user, lintas semua conversation
+    // (dipakai untuk titik merah pada tombol chat di header)
+    @GetMapping("/unread-count/{userId}")
+    public ResponseEntity<Map<String, Long>> getUnreadMessageCount(@PathVariable String userId) {
+        long count = chatService.getUnreadMessageCount(userId);
+        return ResponseEntity.ok(Map.of("unreadCount", count));
+    }
+
+    // Menandai sebuah conversation sebagai sudah dibaca oleh seorang user
+    // (dipanggil dari frontend setiap kali user membuka sebuah percakapan)
+    @PostMapping("/read/{conversationId}")
+    public ResponseEntity<?> markConversationAsRead(
+            @PathVariable Integer conversationId,
+            @RequestParam String userId) {
+        chatService.markConversationAsRead(conversationId, userId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{userId}")

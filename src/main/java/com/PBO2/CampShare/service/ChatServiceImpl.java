@@ -13,9 +13,12 @@ import org.springframework.web.server.ResponseStatusException;
 import com.PBO2.CampShare.dto.ChatMessageDTO;
 import com.PBO2.CampShare.dto.ConversationDTO;
 import com.PBO2.CampShare.dto.MessageRequest;
+import com.PBO2.CampShare.dto.UnreadCountEvent;
 import com.PBO2.CampShare.entity.Conversation;
+import com.PBO2.CampShare.entity.ConversationReadStatus;
 import com.PBO2.CampShare.entity.Message;
 import com.PBO2.CampShare.entity.User;
+import com.PBO2.CampShare.repository.ConversationReadStatusRepository;
 import com.PBO2.CampShare.repository.ConversationRepository;
 import com.PBO2.CampShare.repository.MessageRepository;
 import com.PBO2.CampShare.util.CryptoUtil;
@@ -30,14 +33,16 @@ public class ChatServiceImpl implements ChatService {
     private final MessageRepository messageRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final CryptoUtil cryptoUtil;
+    private final ConversationReadStatusRepository conversationReadStatusRepository;
     // private final UserRepository userRepository; // Inject jika ingin mengambil nama asli dari DB
 
-    public ChatServiceImpl(ConversationRepository conversationRepository, MessageRepository messageRepository, UserRepository userRepository, SimpMessagingTemplate messagingTemplate, CryptoUtil cryptoUtil) {
+    public ChatServiceImpl(ConversationRepository conversationRepository, MessageRepository messageRepository, UserRepository userRepository, SimpMessagingTemplate messagingTemplate, CryptoUtil cryptoUtil, ConversationReadStatusRepository conversationReadStatusRepository) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.messagingTemplate = messagingTemplate;
         this.cryptoUtil = cryptoUtil;
+        this.conversationReadStatusRepository = conversationReadStatusRepository;
     }
 
     @Override
@@ -57,15 +62,36 @@ public class ChatServiceImpl implements ChatService {
                 namaLawan = lawanBicaraId; 
             }
 
-            // 3. Ambil pesan terakhir
+            // 3. Ambil pesan terakhir (beserta waktunya, untuk timestamp ala WhatsApp)
             List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conv.getId());
-            String pesanTerakhir = messages.isEmpty()
-                    ? "Belum ada pesan"
-                    : cryptoUtil.decrypt(messages.get(messages.size() - 1).getMessage());
+            String pesanTerakhir;
+            LocalDateTime waktuPesanTerakhir = null;
 
-            // 4. Masukkan ke DTO dengan nama yang sudah benar
-            dtoList.add(new ConversationDTO(conv.getId(), namaLawan, pesanTerakhir));
+            if (messages.isEmpty()) {
+                pesanTerakhir = "Belum ada pesan";
+            } else {
+                Message lastMsg = messages.get(messages.size() - 1);
+                pesanTerakhir = cryptoUtil.decrypt(lastMsg.getMessage());
+                waktuPesanTerakhir = lastMsg.getCreatedAt();
+            }
+
+            // 4. Hitung jumlah pesan belum dibaca KHUSUS conversation ini
+            //    (untuk titik merah pada avatar item chat list)
+            long unreadCount = messageRepository.countUnreadMessagesInConversation(conv.getId(), userId);
+
+            // 5. Masukkan ke DTO dengan nama yang sudah benar
+            dtoList.add(new ConversationDTO(conv.getId(), namaLawan, pesanTerakhir, waktuPesanTerakhir, unreadCount));
         }
+
+        // Urutkan berdasarkan waktu pesan TERAKHIR, paling baru di atas (standar WhatsApp).
+        // Conversation yang belum punya pesan sama sekali (lastMessageAt == null)
+        // ditempatkan paling bawah, bukan di atas.
+        dtoList.sort((a, b) -> {
+            if (a.getLastMessageAt() == null && b.getLastMessageAt() == null) return 0;
+            if (a.getLastMessageAt() == null) return 1;  // a kosong -> a di bawah
+            if (b.getLastMessageAt() == null) return -1; // b kosong -> b di bawah
+            return b.getLastMessageAt().compareTo(a.getLastMessageAt()); // descending (terbaru dulu)
+        });
 
         return dtoList;
     }
@@ -114,6 +140,23 @@ public class ChatServiceImpl implements ChatService {
                 "/topic/chat/" + saved.getConversationId(),
                 payload
         );
+
+        // Beritahu PENERIMA pesan (bukan pengirim) bahwa jumlah pesan belum
+        // dibacanya bertambah — supaya titik merah indikator chat di halaman
+        // LAIN (misal notifikasi.html) bisa langsung update real-time, tanpa
+        // perlu reload halaman atau polling berkala.
+        conversationRepository.findById(saved.getConversationId()).ifPresent(conv -> {
+            String penerimaId = conv.getUser1Id().equals(saved.getSenderId())
+                    ? conv.getUser2Id()
+                    : conv.getUser1Id();
+
+            long unreadCountPenerima = messageRepository.countUnreadMessages(penerimaId);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/unread/" + penerimaId,
+                    new UnreadCountEvent(unreadCountPenerima)
+            );
+        });
     }
 
     @Override
@@ -160,11 +203,51 @@ public class ChatServiceImpl implements ChatService {
 
         // 4. Ambil pesan terakhir (kosong jika obrolan baru)
         List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conv.getId());
-        String lastMsg = messages.isEmpty()
-                ? "Belum ada pesan"
-                : cryptoUtil.decrypt(messages.get(messages.size() - 1).getMessage());
+        String lastMsg;
+        LocalDateTime lastMsgAt = null;
 
-        return new ConversationDTO(conv.getId(), namaLawan, lastMsg);
+        if (messages.isEmpty()) {
+            lastMsg = "Belum ada pesan";
+        } else {
+            Message lastMessage = messages.get(messages.size() - 1);
+            lastMsg = cryptoUtil.decrypt(lastMessage.getMessage());
+            lastMsgAt = lastMessage.getCreatedAt();
+        }
+
+        long unreadCount = messageRepository.countUnreadMessagesInConversation(conv.getId(), currentUserId);
+
+        return new ConversationDTO(conv.getId(), namaLawan, lastMsg, lastMsgAt, unreadCount);
+    }
+
+    @Override
+    public long getUnreadMessageCount(String userId) {
+        return messageRepository.countUnreadMessages(userId);
+    }
+
+    @Override
+    public void markConversationAsRead(Integer conversationId, String userId) {
+        ConversationReadStatus status = conversationReadStatusRepository
+                .findByConversationIdAndUserId(conversationId, userId)
+                .orElseGet(() -> {
+                    ConversationReadStatus newStatus = new ConversationReadStatus();
+                    newStatus.setConversationId(conversationId);
+                    newStatus.setUserId(userId);
+                    return newStatus;
+                });
+
+        status.setLastReadAt(LocalDateTime.now());
+        conversationReadStatusRepository.save(status);
+
+        // Beritahu user ini (lewat semua tab/halaman yang sedang terbuka dan
+        // subscribe) bahwa jumlah pesan belum dibacanya sudah berubah —
+        // supaya titik merah di halaman lain (misal notifikasi.html) langsung
+        // hilang secara real-time, tanpa perlu reload halaman tersebut.
+        long unreadCountTerbaru = messageRepository.countUnreadMessages(userId);
+
+        messagingTemplate.convertAndSend(
+                "/topic/unread/" + userId,
+                new UnreadCountEvent(unreadCountTerbaru)
+        );
     }
 
     public User findByUsername(String username) {

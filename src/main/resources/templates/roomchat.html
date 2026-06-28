@@ -156,6 +156,12 @@
                         <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white hidden sm:block">CampusShare</span>
                     </a>
                 </div>
+                <div class="hidden md:block w-full max-w-md relative ml-4 desktop-search">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input id="searchBarang" type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
+                </div>
             </div>
 
             <div class="flex items-center gap-5">
@@ -171,7 +177,7 @@
                     </button>
                     <a href="notifikasi" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                        <span id="notif-bell-dot" class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </a>
                     <button class="p-2 text-primary bg-blue-50 dark:bg-blue-900/20 relative flex items-center justify-center rounded-full transition-colors cursor-default">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
@@ -389,12 +395,122 @@
     </div>
 
     <script> 
-        // PERBAIKAN: jangan baca data-user-id sekali saja di awal (rawan kosong/undefined
-        // kalau elemen body belum siap saat script ini jalan). Selalu baca ulang via fungsi.
-        function getCurrentUserId() {
-            return document.body.getAttribute("data-user-id");
-        }
+        const currentUserId = document.body.dataset.userId;
         let currentConversation = null;
+        let kunciHariTerakhirDitampilkan = null; // Melacak hari dari bubble terakhir yang tampil di layar, untuk tahu kapan perlu sisip separator tanggal baru
+
+        // ==========================================
+        // FORMAT WAKTU ALA WHATSAPP
+        // Dipakai di chat list (preview waktu) dan di setiap bubble chat.
+        // - Hari ini       -> jam saja, misal "14:32"
+        // - Kemarin        -> "Kemarin"
+        // - 2-6 hari lalu  -> nama hari, misal "Selasa"
+        // - Lebih lama lagi -> tanggal lengkap, misal "24/06/2026"
+        // ==========================================
+        function formatWaktuChat(isoString) {
+            if (!isoString) return "";
+
+            const tanggalPesan = new Date(isoString);
+            const sekarang = new Date();
+
+            // Normalisasi ke awal hari (00:00) masing-masing, supaya selisih
+            // hari dihitung berdasarkan KALENDER, bukan jarak 24 jam mentah.
+            // (Penting: pesan jam 23:50 kemarin dan jam 00:10 hari ini hanya
+            // berselisih 20 menit, tapi tetap harus dianggap beda hari.)
+            const awalHariPesan = new Date(tanggalPesan.getFullYear(), tanggalPesan.getMonth(), tanggalPesan.getDate());
+            const awalHariSekarang = new Date(sekarang.getFullYear(), sekarang.getMonth(), sekarang.getDate());
+
+            const selisihHari = Math.round((awalHariSekarang - awalHariPesan) / (1000 * 60 * 60 * 24));
+
+            const jamMenit = tanggalPesan.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+
+            if (selisihHari === 0) {
+                return jamMenit; // Hari ini -> jam saja
+            }
+            if (selisihHari === 1) {
+                return "Kemarin";
+            }
+            if (selisihHari > 1 && selisihHari < 7) {
+                // Dalam seminggu terakhir -> nama hari
+                return tanggalPesan.toLocaleDateString("id-ID", { weekday: "long" });
+            }
+            // Lebih dari seminggu (atau tanggal pesan di masa depan, kasus langka) -> tanggal lengkap
+            return tanggalPesan.toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" });
+        }
+
+        // Versi khusus untuk bubble chat: selalu tampilkan JAM di sampingnya
+        // juga (selain label hari), supaya tetap informatif seperti WhatsApp
+        // yang menampilkan jam di setiap bubble pesan apapun harinya.
+        function formatWaktuBubble(isoString) {
+            if (!isoString) return "";
+            const tanggalPesan = new Date(isoString);
+            return tanggalPesan.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+        }
+
+        // Label untuk separator tanggal di tengah chat (mis. saat hari berganti),
+        // sama formatnya dengan formatWaktuChat TAPI "Hari ini" untuk hari ini
+        // (bukan jam), karena ini dipakai sebagai judul pemisah, bukan timestamp.
+        function formatLabelTanggalSeparator(isoString) {
+            const tanggalPesan = new Date(isoString);
+            const sekarang = new Date();
+
+            const awalHariPesan = new Date(tanggalPesan.getFullYear(), tanggalPesan.getMonth(), tanggalPesan.getDate());
+            const awalHariSekarang = new Date(sekarang.getFullYear(), sekarang.getMonth(), sekarang.getDate());
+            const selisihHari = Math.round((awalHariSekarang - awalHariPesan) / (1000 * 60 * 60 * 24));
+
+            if (selisihHari === 0) return "Hari ini";
+            if (selisihHari === 1) return "Kemarin";
+            if (selisihHari > 1 && selisihHari < 7) return tanggalPesan.toLocaleDateString("id-ID", { weekday: "long" });
+            return tanggalPesan.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
+        }
+
+        // Mengembalikan "kunci hari" (YYYY-MM-DD lokal) dari sebuah timestamp,
+        // dipakai untuk mendeteksi kapan hari berganti antar pesan yang berurutan.
+        function kunciHari(isoString) {
+            const d = new Date(isoString);
+            return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        }
+
+        // Membuat elemen separator tanggal (pil abu-abu di tengah, seperti WhatsApp)
+        function buatElemenDateSeparator(isoString) {
+            return `
+                <div class="flex justify-center my-3">
+                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-cardbg px-3 py-1 rounded-full">
+                        ${formatLabelTanggalSeparator(isoString)}
+                    </span>
+                </div>
+            `;
+        }
+
+        // Membuat HTML satu bubble pesan (kanan/kiri tergantung pengirim),
+        // sudah menyertakan jam di bagian bawah bubble seperti WhatsApp.
+        function buatElemenBubble(msg, isOwnMessage) {
+            const jam = formatWaktuBubble(msg.createdAt);
+
+            if (isOwnMessage) {
+                return `
+                    <div class="flex gap-3 max-w-lg ml-auto justify-end">
+                        <div class="text-right">
+                            <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+                                ${msg.message}
+                            </div>
+                            <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">${jam}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="flex gap-3 max-w-lg">
+                    <div>
+                        <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                            ${msg.message}
+                        </div>
+                        <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">${jam}</span>
+                    </div>
+                </div>
+            `;
+        }
 
         // ==========================================
         // WEBSOCKET (STOMP) - CHAT REAL-TIME
@@ -448,37 +564,28 @@
             if (String(msg.conversationId) !== String(currentConversation)) return;
 
             const chatContainer = document.getElementById("chatContainer");
-            const isOwnMessage = String(msg.senderId) === String(getCurrentUserId());
+            const isOwnMessage = String(msg.senderId) === String(currentUserId);
 
-            if (isOwnMessage) {
-                // Pesan yang KITA KIRIM -> tampil di KIRI (sesuai permintaan)
-                chatContainer.insertAdjacentHTML(
-                    "beforeend",
-                    `
-                    <div class="flex gap-3 max-w-lg">
-                        <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
-                            ${msg.message}
-                        </div>
-                    </div>
-                    `
-                );
-            } else {
-                // Pesan yang KITA TERIMA -> tampil di KANAN (sesuai permintaan)
-                chatContainer.insertAdjacentHTML(
-                    "beforeend",
-                    `
-                    <div class="flex gap-3 max-w-lg ml-auto justify-end">
-                        <div class="text-right">
-                            <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
-                                ${msg.message}
-                            </div>
-                        </div>
-                    </div>
-                    `
-                );
+            // Kalau hari dari pesan baru ini berbeda dari bubble terakhir yang
+            // tampil di layar (misal chat dibiarkan terbuka lewat tengah malam),
+            // sisipkan separator tanggal baru dulu sebelum bubble-nya.
+            const kunciHariPesanIni = kunciHari(msg.createdAt);
+            if (kunciHariPesanIni !== kunciHariTerakhirDitampilkan) {
+                chatContainer.insertAdjacentHTML("beforeend", buatElemenDateSeparator(msg.createdAt));
+                kunciHariTerakhirDitampilkan = kunciHariPesanIni;
             }
 
+            chatContainer.insertAdjacentHTML("beforeend", buatElemenBubble(msg, isOwnMessage));
+
             scrollChatToBottom();
+
+            // Kalau pesan yang baru masuk BUKAN dari diri sendiri, dan percakapan ini
+            // sedang terbuka, langsung tandai sebagai sudah dibaca juga — supaya
+            // indikator titik merah di halaman lain tidak menyala tanpa alasan
+            // (karena pesan ini sudah langsung terlihat oleh user saat ini).
+            if (!isOwnMessage) {
+                markConversationAsRead(currentConversation);
+            }
 
             // Update juga preview "lastMessage" di daftar chat sebelah kiri
             // (autoOpenFirst=false agar tidak memaksa pindah ke chat lain saat ada pesan masuk)
@@ -499,7 +606,25 @@
             // 2. Jika sudah login, baru muat data
             loadChatList();
             connectWebSocket();
+            updateNotifBellIndicator(currentUserId);
         });
+
+        // Titik merah pada tombol bel notifikasi (notifikasi umum: request,
+        // transaksi, peminjaman, pembelian). TIDAK terkait status chat —
+        // tombol chat di halaman ini sendiri tidak perlu indikator karena
+        // sudah berada di halaman chat (cursor-default, tidak bisa diklik).
+        async function updateNotifBellIndicator(userId) {
+            try {
+                const res = await fetch(`/api/notifications/${userId}/unread-count`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const dot = document.getElementById("notif-bell-dot");
+                    if (dot) dot.classList.toggle("hidden", data.unreadCount <= 0);
+                }
+            } catch (error) {
+                console.error("Gagal memuat jumlah notifikasi belum dibaca:", error);
+            }
+        }
 
         document.getElementById("btnViewProfile").addEventListener("click", () => {
 
@@ -579,16 +704,6 @@
         const mainBody = document.getElementById('main-body');
         const bottomNav = document.querySelector('.bottom-nav'); // <- Ditambahkan agar tidak error
 
-        // Helper: ambil nama tampilan dari object chat/conversation yang dikirim backend.
-        // Diprioritaskan field yang berisi USERNAME asli, baru jatuh ke 'nama' kalau
-        // field username tidak ada. Ini supaya begitu backend mengirim field username
-        // yang benar, front-end otomatis memakainya tanpa perlu diubah lagi di sini.
-        function ambilNamaTampilan(obj) {
-            if (!obj) return "Pengguna";
-            const kandidat = obj.username || obj.namaUser || obj.nama || "";
-            return kandidat || "Pengguna";
-        }
-
         // 1. MEMUAT DAFTAR CHAT (DI SEBELAH KIRI)
         async function loadChatList(autoOpenFirst = true) {
             // 1. Ambil ID User aktif dari attribute body secara dinamis
@@ -616,15 +731,18 @@
                     chatListContainer.innerHTML = ""; // Mengosongkan chat statis terdahulu
 
                     chats.forEach(chat => {
-                        const namaTampilan = ambilNamaTampilan(chat);
-
                      const chatItem = document.createElement("div");
                         chatItem.className =
                         "p-4 flex gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-cardbg transition-colors";
 
                         chatItem.innerHTML = `
-                        <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                        ${namaTampilan.substring(0,2).toUpperCase()}
+                        <div class="relative w-11 h-11 shrink-0">
+                            <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                            ${(chat.nama || "?").substring(0,2).toUpperCase()}
+                            </div>
+                            ${chat.unreadCount > 0
+                                ? '<span class="chat-item-unread-dot absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-darkbg"></span>'
+                                : ""}
                         </div>
 
                         <div class="flex-1 min-w-0">
@@ -632,21 +750,34 @@
                             <div class="flex justify-between items-center">
 
                                 <h2 class="text-sm font-semibold truncate text-gray-900 dark:text-white">
-                                    ${namaTampilan}
+                                    ${chat.nama}
                                 </h2>
 
-                            <span class="text-xs text-gray-400"></span>
+                            <span class="text-xs text-gray-400 shrink-0 ml-2">${formatWaktuChat(chat.lastMessageAt)}</span>
 
                             </div>
 
-                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            <p class="chat-item-preview text-xs ${chat.unreadCount > 0 ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400'} truncate">
                                 ${chat.lastMessage ?? ""}
                             </p>
 
                         </div>
                         `;
 
-                        chatItem.onclick = () => loadConversation(chat.id, namaTampilan);
+                        chatItem.onclick = () => {
+                            // Hapus titik merah & gaya "belum dibaca" SEKETIKA saat diklik,
+                            // tanpa menunggu response dari backend ataupun reload chat list.
+                            const dot = chatItem.querySelector(".chat-item-unread-dot");
+                            if (dot) dot.remove();
+
+                            const preview = chatItem.querySelector(".chat-item-preview");
+                            if (preview) {
+                                preview.classList.remove("text-gray-900", "dark:text-white", "font-medium");
+                                preview.classList.add("text-gray-500", "dark:text-gray-400");
+                            }
+
+                            loadConversation(chat.id, chat.nama);
+                        };
 
                         chatListContainer.appendChild(chatItem);   
                     });
@@ -669,6 +800,20 @@
             }
         }
 
+        // Memberitahu backend bahwa user saat ini sudah membaca percakapan ini
+        // sampai waktu sekarang. Dipakai untuk menghitung indikator titik merah
+        // chat di halaman lain. Tidak menunggu hasil (fire-and-forget) supaya
+        // tidak menunda render chat itu sendiri.
+        async function markConversationAsRead(conversationId) {
+            try {
+                await fetch(`/api/chat/read/${conversationId}?userId=${currentUserId}`, {
+                    method: "POST"
+                });
+            } catch (error) {
+                console.error("Gagal menandai percakapan sebagai dibaca:", error);
+            }
+        }
+
         // 2. MEMUAT ISI PESAN (DI RUANG CHAT)
         async function loadConversation(conversationId, namaLawanBicara) {
             currentConversation = conversationId;
@@ -676,6 +821,12 @@
             // Subscribe ke topic WebSocket khusus conversation ini,
             // supaya pesan baru (dari diri sendiri maupun lawan bicara) langsung muncul.
             subscribeToConversation(conversationId);
+
+            // Tandai percakapan ini sebagai sudah dibaca oleh user saat ini.
+            // Dipakai HANYA untuk indikator titik merah pada tombol chat di
+            // halaman lain (misal notifikasi.html), tidak mempengaruhi tampilan
+            // di sini. "Fire and forget" — tidak perlu await/blocking.
+            markConversationAsRead(conversationId);
 
             // Update nama dan avatar di header chatroom menggunakan fungsi bawaan kamu
             updateChatHeader(
@@ -698,36 +849,25 @@
 
                 chatContainer.innerHTML = "";
 
+                let kunciHariSebelumnya = null;
+
                 messages.forEach(msg => {
-                    // Pastikan perbandingan ID dilakukan dengan tipe data yang sama (string ke string)
-                    if (String(msg.senderId) === String(getCurrentUserId())) {
-                        // Pesan yang KITA KIRIM -> Posisi KIRI
-                        chatContainer.insertAdjacentHTML(
-                            "beforeend",
-                            `
-                            <div class="flex gap-3 max-w-lg">
-                                <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
-                                    ${msg.message}
-                                </div>
-                            </div>
-                            `
-                        );
-                    } else {
-                        // Pesan yang KITA TERIMA -> Posisi KANAN
-                        chatContainer.insertAdjacentHTML(
-                            "beforeend", 
-                            `
-                            <div class="flex gap-3 max-w-lg ml-auto justify-end">
-                                <div class="text-right">
-                                    <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
-                                        ${msg.message}
-                                    </div>
-                                </div>
-                            </div>
-                            `
-                        );
+                    // Sisipkan separator tanggal setiap kali hari pesan berbeda
+                    // dari pesan sebelumnya (atau ini pesan pertama di percakapan).
+                    const kunciHariIni = kunciHari(msg.createdAt);
+                    if (kunciHariIni !== kunciHariSebelumnya) {
+                        chatContainer.insertAdjacentHTML("beforeend", buatElemenDateSeparator(msg.createdAt));
+                        kunciHariSebelumnya = kunciHariIni;
                     }
+
+                    // Pastikan perbandingan ID dilakukan dengan tipe data yang sama (string ke string)
+                    const isOwnMessage = String(msg.senderId) === String(currentUserId);
+                    chatContainer.insertAdjacentHTML("beforeend", buatElemenBubble(msg, isOwnMessage));
                 });
+
+                // Catat hari terakhir yang tampil, supaya pesan baru yang masuk lewat
+                // WebSocket (appendMessageToChat) tahu apakah perlu separator baru.
+                kunciHariTerakhirDitampilkan = kunciHariSebelumnya;
 
                 // Otomatis scroll ke pesan paling bawah setelah dimuat
                 scrollChatToBottom();
@@ -764,7 +904,7 @@
                     },
                     body: JSON.stringify({
                         conversationId: currentConversation,
-                        senderId: getCurrentUserId(),
+                        senderId: currentUserId,
                         message: text
                     })
                 });
@@ -1002,7 +1142,7 @@
                         // Refresh list & buka chat
                         await loadChatList();
                         if (typeof loadConversation === "function") {
-                            loadConversation(chatDto.id, ambilNamaTampilan(chatDto));
+                            loadConversation(chatDto.id, chatDto.nama);
                         }
                     } else {
                         const errorText = await response.text();
