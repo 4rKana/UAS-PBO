@@ -218,7 +218,7 @@
             </button>
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Buat Permintaan</h2>
             
-            <form id="form-permintaan" class="space-y-4" onsubmit="submitForm(event)">
+            <form id="form-permintaan" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Barang yang Dibutuhkan</label>
                     <input type="text" id="input-nama-barang" required placeholder="misal: Kalkulator Casio FX-9750" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm focus:ring-2 focus:ring-primary/30 outline-none dark:text-white transition-all">
@@ -410,6 +410,9 @@
         const container = document.getElementById('list-permintaan');
         if (!container) return;
 
+        // TAMBAHKAN INI: Pastikan selalu kosong sebelum isi data baru
+        container.innerHTML = '';
+
         try {
             const response = await fetch(API_BASE);
 
@@ -543,9 +546,16 @@
     async function hapusRequest(id) {
         if (confirm("Yakin ingin menghapus permintaan ini?")) {
             try {
-                const response = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+                const response = await fetch(`${API_BASE}/${id}`, { 
+                    method: 'DELETE',
+                    headers: {
+                        'userId': localStorage.getItem("idUser")
+                    } 
+                });
+
                 if (!response.ok) {
-                    alert("Gagal menghapus permintaan.");
+                    const errorMsg = await response.text();
+                    alert("Gagal" + errorMsg);
                     return;
                 }
                 loadRequest();
@@ -608,19 +618,19 @@
         if (formPermintaan) {
             formPermintaan.addEventListener('submit', submitForm);
         }
-    });
-
-     // 1. Ambil nama user dari LocalStorage
-            const username = localStorage.getItem("username");
-            
-            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
-            if (username) {
-                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
-                const avatarEl = document.getElementById("dashboard-avatar");
-                if (avatarEl) {
-                    avatarEl.textContent = inisial;
-                }
+        
+        // 1. Ambil nama user dari LocalStorage
+        const username = localStorage.getItem("username");
+        
+        // 2. Jika ada nama, buat inisial dan masukkan ke avatar
+        if (username) {
+            const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+            const avatarEl = document.getElementById("dashboard-avatar");
+            if (avatarEl) {
+                avatarEl.textContent = inisial;
             }
+        }
+    });
 </script>
 </body>
 </html>

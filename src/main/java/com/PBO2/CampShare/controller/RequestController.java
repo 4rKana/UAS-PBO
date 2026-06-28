@@ -35,12 +35,16 @@ public class RequestController {
     }
 
     @PostMapping
-    public ResponseEntity<RequestBarang> create(@RequestBody RequestBarang request) {
+    public ResponseEntity<?> create(@RequestBody RequestBarang request) {
         
         // Cukup panggil satu fungsi saja agar tidak double save
-        RequestBarang savedRequest = requestService.buatRequest(request);
-    
-        return ResponseEntity.ok(requestService.buatRequest(request));
+        try {
+            RequestBarang savedRequest = requestService.buatRequest(request);
+            return ResponseEntity.ok(savedRequest);
+        } catch (IllegalArgumentException e) {
+        // Ini akan mengirim pesan error ke frontend
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}/status")
@@ -54,8 +58,12 @@ public class RequestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        requestService.hapusRequest(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> delete(@PathVariable Long id, @RequestHeader("userId") String userId) {
+        try {
+            requestService.hapusRequest(id, userId);
+            return ResponseEntity.ok("Data berhasil dihapus");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        }
     }
 }
