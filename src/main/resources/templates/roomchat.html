@@ -389,7 +389,11 @@
     </div>
 
     <script> 
-        const currentUserId = document.body.dataset.userId;
+        // PERBAIKAN: jangan baca data-user-id sekali saja di awal (rawan kosong/undefined
+        // kalau elemen body belum siap saat script ini jalan). Selalu baca ulang via fungsi.
+        function getCurrentUserId() {
+            return document.body.getAttribute("data-user-id");
+        }
         let currentConversation = null;
 
         // ==========================================
@@ -444,28 +448,30 @@
             if (String(msg.conversationId) !== String(currentConversation)) return;
 
             const chatContainer = document.getElementById("chatContainer");
-            const isOwnMessage = String(msg.senderId) === String(currentUserId);
+            const isOwnMessage = String(msg.senderId) === String(getCurrentUserId());
 
             if (isOwnMessage) {
+                // Pesan yang KITA KIRIM -> tampil di KIRI (sesuai permintaan)
                 chatContainer.insertAdjacentHTML(
                     "beforeend",
                     `
-                    <div class="flex gap-3 max-w-lg ml-auto justify-end">
-                        <div class="text-right">
-                            <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
-                                ${msg.message}
-                            </div>
+                    <div class="flex gap-3 max-w-lg">
+                        <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
+                            ${msg.message}
                         </div>
                     </div>
                     `
                 );
             } else {
+                // Pesan yang KITA TERIMA -> tampil di KANAN (sesuai permintaan)
                 chatContainer.insertAdjacentHTML(
                     "beforeend",
                     `
-                    <div class="flex gap-3 max-w-lg">
-                        <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
-                            ${msg.message}
+                    <div class="flex gap-3 max-w-lg ml-auto justify-end">
+                        <div class="text-right">
+                            <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                                ${msg.message}
+                            </div>
                         </div>
                     </div>
                     `
@@ -573,6 +579,16 @@
         const mainBody = document.getElementById('main-body');
         const bottomNav = document.querySelector('.bottom-nav'); // <- Ditambahkan agar tidak error
 
+        // Helper: ambil nama tampilan dari object chat/conversation yang dikirim backend.
+        // Diprioritaskan field yang berisi USERNAME asli, baru jatuh ke 'nama' kalau
+        // field username tidak ada. Ini supaya begitu backend mengirim field username
+        // yang benar, front-end otomatis memakainya tanpa perlu diubah lagi di sini.
+        function ambilNamaTampilan(obj) {
+            if (!obj) return "Pengguna";
+            const kandidat = obj.username || obj.namaUser || obj.nama || "";
+            return kandidat || "Pengguna";
+        }
+
         // 1. MEMUAT DAFTAR CHAT (DI SEBELAH KIRI)
         async function loadChatList(autoOpenFirst = true) {
             // 1. Ambil ID User aktif dari attribute body secara dinamis
@@ -600,13 +616,15 @@
                     chatListContainer.innerHTML = ""; // Mengosongkan chat statis terdahulu
 
                     chats.forEach(chat => {
+                        const namaTampilan = ambilNamaTampilan(chat);
+
                      const chatItem = document.createElement("div");
                         chatItem.className =
                         "p-4 flex gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-cardbg transition-colors";
 
                         chatItem.innerHTML = `
                         <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                        ${(chat.nama || "?").substring(0,2).toUpperCase()}
+                        ${namaTampilan.substring(0,2).toUpperCase()}
                         </div>
 
                         <div class="flex-1 min-w-0">
@@ -614,7 +632,7 @@
                             <div class="flex justify-between items-center">
 
                                 <h2 class="text-sm font-semibold truncate text-gray-900 dark:text-white">
-                                    ${chat.nama}
+                                    ${namaTampilan}
                                 </h2>
 
                             <span class="text-xs text-gray-400"></span>
@@ -628,7 +646,7 @@
                         </div>
                         `;
 
-                        chatItem.onclick = () => loadConversation(chat.id, chat.nama);
+                        chatItem.onclick = () => loadConversation(chat.id, namaTampilan);
 
                         chatListContainer.appendChild(chatItem);   
                     });
@@ -682,28 +700,28 @@
 
                 messages.forEach(msg => {
                     // Pastikan perbandingan ID dilakukan dengan tipe data yang sama (string ke string)
-                    if (String(msg.senderId) === String(currentUserId)) {
-                        // Pesan Pengirim (Posisi Kanan, Warna Biru)
+                    if (String(msg.senderId) === String(getCurrentUserId())) {
+                        // Pesan yang KITA KIRIM -> Posisi KIRI
                         chatContainer.insertAdjacentHTML(
                             "beforeend",
                             `
-                            <div class="flex gap-3 max-w-lg ml-auto justify-end">
-                                <div class="text-right">
-                                    <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
-                                        ${msg.message}
-                                    </div>
+                            <div class="flex gap-3 max-w-lg">
+                                <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
+                                    ${msg.message}
                                 </div>
                             </div>
                             `
                         );
                     } else {
-                        // Pesan Penerima (Posisi Kiri, Warna Putih/Abu)
+                        // Pesan yang KITA TERIMA -> Posisi KANAN
                         chatContainer.insertAdjacentHTML(
                             "beforeend", 
                             `
-                            <div class="flex gap-3 max-w-lg">
-                                <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
-                                    ${msg.message}
+                            <div class="flex gap-3 max-w-lg ml-auto justify-end">
+                                <div class="text-right">
+                                    <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                                        ${msg.message}
+                                    </div>
                                 </div>
                             </div>
                             `
@@ -746,7 +764,7 @@
                     },
                     body: JSON.stringify({
                         conversationId: currentConversation,
-                        senderId: currentUserId,
+                        senderId: getCurrentUserId(),
                         message: text
                     })
                 });
@@ -984,7 +1002,7 @@
                         // Refresh list & buka chat
                         await loadChatList();
                         if (typeof loadConversation === "function") {
-                            loadConversation(chatDto.id, chatDto.nama);
+                            loadConversation(chatDto.id, ambilNamaTampilan(chatDto));
                         }
                     } else {
                         const errorText = await response.text();
