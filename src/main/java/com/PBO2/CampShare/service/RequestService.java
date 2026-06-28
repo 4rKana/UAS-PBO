@@ -55,9 +55,14 @@ public class RequestService {
         return requestRepository.save(request);
     }
 
-    public void hapusRequest(Long id) {
+    public void hapusRequest(Long id, String userIdLogin) {
         RequestBarang requestBarang = requestRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Request dengan ID " + id + " tidak ditemukan"));
+
+        if (!requestBarang.getUserId().equals(userIdLogin)) {
+            throw new RuntimeException("Anda tidak dapat memiliki izin untuk menghapus data ini!");
+        }
+
         requestRepository.delete(requestBarang);
     }
 } 
