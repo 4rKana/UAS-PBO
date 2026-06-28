@@ -498,9 +498,26 @@
         }
     }
 
+    let isSubmitting = false;
+
     // B. Mengirim Data Request Baru ke Backend
     async function submitForm(event) {
         event.preventDefault(); // Mencegah halaman reload otomatis
+
+        // 1. Cek gembok: Jika sedang proses pengiriman, langsung hentikan fungsi
+        if (isSubmitting) return;
+
+        // 2. Kunci gembok: Set penanda bahwa proses sedang berjalan
+        isSubmitting = true;
+
+        // Tangkap tombol untuk di-disable secara visual
+        const btnSubmit = event.target.querySelector('button[type="submit"]');
+        const teksAsli = btnSubmit.innerHTML;
+        
+        // Ubah tampilan tombol jadi "Mengirim..." dan tidak bisa diklik
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = 'Mengirim...';
+        btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
 
         const data = {
             namaBarang: document.getElementById('input-nama-barang').value,
@@ -536,6 +553,13 @@
             }
         } catch (error) {
             console.error("Error saat mengirim data:", error);
+            alert("Terjadi kesalahan jaringan.");
+        }finally {
+            // 3. Buka gembok kembali: Kembalikan tombol ke keadaan semula (baik sukses maupun gagal)
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = teksAsli;
+        btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+        isSubmitting = false;
         }
     }
 
