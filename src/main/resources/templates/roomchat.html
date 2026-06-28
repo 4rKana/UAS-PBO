@@ -528,6 +528,15 @@
             stompClient.connect({}, () => {
                 console.log("WebSocket terhubung.");
 
+                // Subscribe GLOBAL (sekali saja, tidak perlu unsubscribe/resubscribe
+                // saat pindah-pindah chat) untuk tahu kapan harus refresh chat list
+                // di sebelah kiri — baik urutannya (terbaru di atas) maupun preview
+                // pesannya — terlepas dari conversation mana yang sedang dibuka.
+                stompClient.subscribe(`/topic/chatlist/${currentUserId}`, (frame) => {
+                    console.log("[chatlist] Event refresh diterima:", frame.body);
+                    loadChatList(false);
+                });
+
                 // Kalau saat connect/reconnect user sudah berada di sebuah conversation,
                 // langsung subscribe ulang (berguna saat koneksi putus-sambung).
                 if (currentConversation) {
@@ -587,9 +596,11 @@
                 markConversationAsRead(currentConversation);
             }
 
-            // Update juga preview "lastMessage" di daftar chat sebelah kiri
-            // (autoOpenFirst=false agar tidak memaksa pindah ke chat lain saat ada pesan masuk)
-            loadChatList(false);
+            // Catatan: refresh chat list (urutan & preview) sekarang ditangani oleh
+            // subscription GLOBAL /topic/chatlist/{userId} di connectWebSocket(),
+            // bukan di sini lagi — supaya tetap ter-refresh juga untuk pesan yang
+            // masuk ke conversation LAIN (yang sedang tidak dibuka, sehingga function
+            // ini bahkan tidak terpanggil sama sekali untuk kasus tersebut).
         }
 
         window.addEventListener("DOMContentLoaded", () => {
@@ -725,6 +736,7 @@
                 }
 
                 const chats = await response.json();
+                console.log("[loadChatList] Data diterima, urutan ID:", chats.map(c => `${c.id}(${c.nama})`));
                                 
                 const chatListContainer = document.getElementById("chatList");
                 if (chatListContainer) {

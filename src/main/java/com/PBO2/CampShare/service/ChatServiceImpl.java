@@ -156,6 +156,15 @@ public class ChatServiceImpl implements ChatService {
                     "/topic/unread/" + penerimaId,
                     new UnreadCountEvent(unreadCountPenerima)
             );
+
+            // Beritahu KEDUA pihak (pengirim & penerima) bahwa ada aktivitas baru
+            // di salah satu conversation mereka, supaya chat list di sebelah kiri
+            // langsung reorder & update preview secara real-time — terlepas dari
+            // conversation mana yang sedang dibuka saat ini. Ini topic GLOBAL milik
+            // tiap user (bukan per-conversation seperti /topic/chat/{id}), sehingga
+            // tidak perlu subscribe/unsubscribe berulang setiap pindah chat.
+            messagingTemplate.convertAndSend("/topic/chatlist/" + saved.getSenderId(), "refresh");
+            messagingTemplate.convertAndSend("/topic/chatlist/" + penerimaId, "refresh");
         });
     }
 
