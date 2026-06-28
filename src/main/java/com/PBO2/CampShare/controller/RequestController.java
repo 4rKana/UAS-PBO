@@ -48,12 +48,14 @@ public class RequestController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<RequestBarang> updateStatus(@PathVariable Long id, @RequestParam String status) {
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, 
+                                                        @RequestParam StatusRequest status,
+                                                        @RequestHeader("userId") String userIdLogin) {
         try {
-            StatusRequest statusEnum = StatusRequest.valueOf(status.toUpperCase());
-            return ResponseEntity.ok(requestService.ubahStatus(id, statusEnum));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            RequestBarang updateRequest = requestService.ubahStatus(id, status, userIdLogin);
+            return ResponseEntity.ok(updateRequest);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 

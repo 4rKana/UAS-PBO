@@ -594,7 +594,11 @@
     // Sesuai RequestController asli: PUT /api/request/{id}/status?status=...
     async function updateStatus(id, statusBaru) {
         const response = await fetch(`${API_BASE}/${id}/status?status=${encodeURIComponent(statusBaru)}`, {
-            method: 'PUT'
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'userId': localStorage.getItem("idUser")
+            }
         });
         return response;
     }

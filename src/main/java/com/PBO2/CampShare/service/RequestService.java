@@ -47,11 +47,20 @@ public class RequestService {
         return requestRepository.save(request);
     }
     // DISATUKAN: Cukup satu fungsi update status yang menerima tipe data Enum yang aman (Type-Safe)
-    public RequestBarang ubahStatus(Long id, StatusRequest statusBaru) {
+    public RequestBarang ubahStatus(Long id, StatusRequest statusBaru, String userIdLogin) {
         RequestBarang request = requestRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Request dengan ID " + id + " tidak ditemukan"));
-        request.setStatusRequest(statusBaru);
+        
+        if(request.getUserId().equals(userIdLogin)) {
+            throw new RuntimeException("Anda tidak bisa menawar barang anda sendiri");
+        }
 
+        // 2. Hanya status TERSEDIA yang bisa diubah jadi TERPENUHI (untuk tawar barang)
+        if (request.getStatusRequest() != StatusRequest.TERSEDIA) {
+            throw new RuntimeException("Barang sudah tidak tersedia untuk ditawar!");
+        }
+        
+        request.setStatusRequest(statusBaru);
         return requestRepository.save(request);
     }
 
