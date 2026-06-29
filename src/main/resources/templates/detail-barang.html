@@ -1,37 +1,647 @@
 <!DOCTYPE html>
-<html lang="id" class="light">
+<html lang="id" class="light" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <script th:src="@{/auth-guard.js}"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>CampusShare - Detail Barang</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6', 
-                        sale: '#ff6b00',    
-                        rent: '#00a843',    
-                        darkbg: '#18181b',  
-                        cardbg: '#27272a',  
-                        darkborder: '#3f3f46' 
+    <!-- Tailwind + konfigurasi -->
+        <script src="https://cdn.tailwindcss.com">
+        </script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#3b82f6',
+                            sale: '#ff6b00',
+                            rent: '#00a843',
+                            darkbg: '#18181b',
+                            cardbg: '#27272a',
+                            darkborder: '#3f3f46'
+                        }
                     }
                 }
             }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        </script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        /* ── reset & dasar ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #f5f6f8;
+            color: #1a1a2e;
+            transition: background 0.25s ease, color 0.25s ease;
+            padding-bottom: 72px; /* space untuk bottom nav di HP */
+        }
+
+        /* ── MAIN ── */
+        main {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 36px 32px 60px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1a1a2e;
+            line-height: 1.2;
+            transition: color 0.2s;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #888;
+            margin-top: 3px;
+            transition: color 0.2s;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            border: 1.5px solid #dde1ef;
+            background: #fff;
+            border-radius: 10px;
+            padding: 7px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: border-color .12s, background .2s, color .2s;
+        }
+
+        .btn-filter:hover {
+            border-color: #3b5bdb;
+        }
+
+        .btn-filter svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .sort-select {
+            border: 1.5px solid #dde1ef;
+            border-radius: 10px;
+            padding: 7px 30px 7px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            appearance: none;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+            cursor: pointer;
+            outline: none;
+            transition: background .2s, border-color .2s, color .2s;
+        }
+
+        /* ── TABS ── */
+        .tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            margin-bottom: 28px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 7px 16px;
+            border-radius: 999px;
+            border: 1.5px solid #dde1ef;
+            background: #fff;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+            transition: all .13s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tab:hover {
+            border-color: #3b5bdb;
+            color: #3b5bdb;
+        }
+
+        .tab.active {
+            background: #3b5bdb;
+            border-color: #3b5bdb;
+            color: #fff;
+        }
+
+        /* ── GRID ── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+            transition: transform .18s, box-shadow .18s, background .25s, border-color .25s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .10);
+        }
+
+        .card-img {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }
+
+        .badge-jual {
+            background: #fa5252;
+            color: #fff;
+        }
+        .badge-sewa {
+            background: #12b886;
+            color: #fff;
+        }
+
+        .card-body {
+            padding: 16px 18px 18px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            transition: color 0.2s;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .tag-year {
+            display: inline-block;
+            background: #eef0fb;
+            color: #3b5bdb;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .tag-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .tag-status.available {
+            background: #e6fcf5;
+            color: #12b886;
+            border: 1.5px solid #12b886;
+        }
+
+        .tag-status.unavailable {
+            background: #fff5f5;
+            color: #fa5252;
+            border: 1.5px solid #fa5252;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .price {
+            font-size: 17px;
+            font-weight: 800;
+            color: #3b5bdb;
+            transition: color 0.2s;
+        }
+
+        .seller {
+            font-size: 13px;
+            color: #888;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        /* ── SIDEBAR / MOBILE NAV ── */
+        .mobile-nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .mobile-nav-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: #fff;
+            z-index: 1000;
+            padding: 24px 20px;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        html.dark .mobile-nav {
+            background: #1c1f2e;
+        }
+        .mobile-nav.open {
+            left: 0;
+        }
+
+        .mobile-nav .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px 8px;
+            margin-bottom: 16px;
+        }
+        html.dark .mobile-nav .close-btn {
+            color: #9ca3af;
+        }
+
+        .mobile-nav .nav-logo-mobile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .mobile-nav .nav-logo-mobile .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #3b5bdb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mobile-nav .nav-logo-mobile .logo-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: #fff;
+            fill: none;
+        }
+        .mobile-nav .nav-logo-mobile span {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+        html.dark .mobile-nav .nav-logo-mobile span {
+            color: #fff;
+        }
+
+        .mobile-nav .nav-links-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+        .mobile-nav .nav-links-mobile a {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #6b7280;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        .mobile-nav .nav-links-mobile a:hover {
+            background: #f3f4f6;
+        }
+        .mobile-nav .nav-links-mobile a.active {
+            background: #eef2ff;
+            color: #3b5bdb;
+        }
+        html.dark .mobile-nav .nav-links-mobile a {
+            color: #9ca3af;
+        }
+        html.dark .mobile-nav .nav-links-mobile a:hover {
+            background: #2d3040;
+        }
+        html.dark .mobile-nav .nav-links-mobile a.active {
+            background: #1e2a4a;
+            color: #60a5fa;
+        }
+
+        .mobile-nav .nav-divider {
+            border-top: 1px solid #e5e7ef;
+            margin: 12px 0;
+        }
+        html.dark .mobile-nav .nav-divider {
+            border-top-color: #3f3f46;
+        }
+
+        /* ── BOTTOM NAV (HP) ── */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #fff;
+            border-top: 1px solid #e5e7ef;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 100;
+            transition: background 0.25s, border-color 0.25s;
+            padding: 0 8px;
+        }
+        html.dark .bottom-nav {
+            background: #1c1f2e;
+            border-top-color: #3f3f46;
+        }
+
+        .bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 600;
+            color: #9ca3af;
+            padding: 4px 12px;
+            border-radius: 8px;
+            transition: color 0.15s, background 0.15s;
+            min-width: 56px;
+        }
+        .bottom-nav a svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+        .bottom-nav a.active {
+            color: #3b5bdb;
+        }
+        .bottom-nav a.active svg {
+            stroke: #3b5bdb;
+        }
+        html.dark .bottom-nav a.active {
+            color: #60a5fa;
+        }
+        html.dark .bottom-nav a.active svg {
+            stroke: #60a5fa;
+        }
+
+        /* ── DARK MODE ── */
+        html.dark body {
+            background: #18181b;
+            color: #e5e5e5;
+        }
+
+        html.dark .page-header h1 {
+            color: #fff;
+        }
+
+        html.dark .page-header p {
+            color: #9ca3af;
+        }
+
+        html.dark .btn-filter {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #ddd;
+        }
+
+        html.dark .btn-filter:hover {
+            border-color: #60a5fa;
+        }
+
+        html.dark .sort-select {
+            background: #27272a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+            border-color: #3f3f46;
+            color: #ddd;
+        }
+
+        html.dark .tab {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #aaa;
+        }
+
+        html.dark .tab:hover {
+            border-color: #60a5fa;
+            color: #93c5fd;
+        }
+
+        html.dark .tab.active {
+            background: #3b5bdb;
+            border-color: #3b5bdb;
+            color: #fff;
+        }
+
+        html.dark .card {
+            background: #27272a;
+            border-color: #3f3f46;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .4);
+        }
+
+        html.dark .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
+        }
+
+        html.dark .card-title {
+            color: #fff;
+        }
+
+        html.dark .tag-year {
+            background: #3f3f46;
+            color: #93c5fd;
+        }
+
+        html.dark .tag-status.available {
+            background: #1a3a2a;
+            color: #4ade80;
+            border-color: #4ade80;
+        }
+
+        html.dark .tag-status.unavailable {
+            background: #3a1a1a;
+            color: #f87171;
+            border-color: #f87171;
+        }
+
+        html.dark .price {
+            color: #60a5fa;
+        }
+
+        html.dark .seller {
+            color: #9ca3af;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 580px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            main {
+                padding: 24px 16px;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .header-controls {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .mobile-nav-overlay,
+            .mobile-nav,
+            .bottom-nav {
+                display: none;
+            }
+            body {
+                padding-bottom: 0;
+            }
+        }
+        @media (max-width: 767px) {
+            .desktop-nav,
+            .desktop-search {
+                display: none !important;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 transition-colors">
 
+    <!-- ─── OVERLAY SIDEBAR ─── -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+
+    <!-- ─── SIDEBAR ─── -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="close-btn" onclick="closeMobileNav()">✕</button>
+        <div class="nav-logo-mobile">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+            </div>
+            <span>CampusShare</span>
+        </div>
+
+        <div class="nav-links-mobile">
+            <a href="dashboard" class="active">Katalog</a>
+            <a href="papan-request">Request</a>
+            <a href="form-barang">Upload</a>
+            <a href="transaksi">Transaksi</a>
+            <a href="profil">Profil</a>
+        </div>
+
+        <div class="nav-divider"></div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 p-2">
+            <button id="theme-toggle-mobile" class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-darkbg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span id="theme-label-mobile">Mode Gelap</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── HEADER ─── -->
     <header class="bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 sticky top-0 z-50 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-4 flex-1">
+
+            <!-- kiri: logo + search -->
+            <div class="flex items-center gap-3 flex-1">
+                <!-- Tombol menu untuk HP -->
+                <button id="menu-toggle" class="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onclick="toggleMobileNav()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,402 +651,504 @@
                     <span class="font-semibold text-[21px] tracking-tight text-gray-900 dark:text-white">CampusShare</span>
                 </div>
 
-                <div class="hidden md:block w-full max-w-md relative ml-4">
+                <div class="hidden md:block w-full max-w-md relative ml-4 desktop-search">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
                     </div>
-                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors" placeholder="Cari barang, buku, peralatan...">
+                    <input type="text" placeholder="Cari barang, buku, peralatan…"
+                    class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 dark:bg-cardbg text-sm placeholder-gray-500 focus:ring-2 focus:ring-primary/30 outline-none dark:text-gray-200 transition-colors">
                 </div>
             </div>
 
+            <!-- kanan: nav + actions -->
             <div class="flex items-center gap-5">
-                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium">
-                    <a href="dashboard" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
+                <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium desktop-nav">
+                    <a href="dashboard" class="text-primary bg-blue-50 dark:bg-blue-900/20 dark:text-primary px-4 py-2 rounded-xl font-semibold transition-all">Katalog</a>
                     <a href="papan-request" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
                     <a href="form-barang" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
                 </nav>
-                
+
                 <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
-                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors">
-                        <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
-                        <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <!-- Dark mode toggle -->
+                    <button id="theme-toggle" class="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-cardbg rounded-full transition-colors hidden md:block">
+                        <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
+                        </svg>
+                        <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                        </svg>
                     </button>
+
                     <!-- NOTIFIKASI -->
                     <a href="notifikasi" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </a>
 
-                    <!-- chat -->
+                    <!-- Chat -->
                     <a href="roomchat" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </a>
-                    <!-- Profile -->
-                    <a href="profil" class="inline-block">
-                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">
-                            AK
-                        </div>
-                    </a>
-                    </a>
+
+                    <!-- Avatar -->
+                    <a href="profil" class="inline-block"> 
+                    <div id="dashboard-avatar" class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1"> 
+                        --
+                    </div> 
+                </a>
                 </div>
             </div>
+
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        
-        <a href="dashboard" class="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium mb-8 transition-colors" style="text-decoration: none;">
+    <main class="max-w-[1320px] mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <a href="dashboard" th:href="@{/dashboard}" class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium mb-8 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
              </svg>
              Kembali ke Katalog
         </a>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            
+        <div id="error-message" class="hidden text-center py-12">
+            <p class="text-red-500 font-medium text-lg">Gagal memuat barang. Pastikan Backend berjalan.</p>
+        </div>
+
+        <div id="detail-container" class="grid grid-cols-1 lg:grid-cols-2 gap-10">
             <div class="space-y-4">
-                <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-sm relative">
-<div id="main-image-bg" class="w-full h-full bg-gray-200 dark:bg-[#1e232a] flex items-center justify-center overflow-hidden">
-    <img id="main-image" src="https://via.placeholder.com/600x400?text=Memuat+Gambar..." class="w-full h-full object-cover" alt="Foto Produk">
-</div>
+                <div id="main-image-box" class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-200 dark:bg-cardbg border border-gray-200 dark:border-darkborder shadow-sm flex items-center justify-center">
+                    <img id="main-image" src="" class="hidden w-full h-full object-cover" alt="Foto Produk Real-time">
+                    <svg id="img-placeholder-icon" class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
                 </div>
-                <div class="flex gap-4">
-                    <div class="w-1/3 aspect-video rounded-xl overflow-hidden border-2 border-primary bg-gray-100 cursor-pointer">
-                        <div id="thumb-1" class="w-full h-full bg-[#1e232a] transition-colors duration-500"></div>
-                    </div>
-                    <div class="w-1/3 aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-darkborder opacity-60 hover:opacity-100 cursor-pointer transition-opacity">
-                        <div id="thumb-2" class="w-full h-full bg-[#1e232a] transition-colors duration-500"></div>
-                    </div>
-                    <div class="w-1/3 aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-darkborder opacity-60 hover:opacity-100 cursor-pointer transition-opacity">
-                        <div id="thumb-3" class="w-full h-full bg-[#1e232a] transition-colors duration-500"></div>
-                    </div>
+                
+                <div class="grid grid-cols-3 gap-4">
+                    <img id="thumb-image"
+                        class="aspect-[16/10] rounded-xl border-2 border-blue-500 object-cover hidden">
                 </div>
             </div>
 
             <div class="flex flex-col">
-                
                 <div class="flex items-center gap-2 mb-3">
-                    <span id="badge-sale" class="px-2.5 py-1 rounded-full border border-orange-200 dark:border-orange-800/50 bg-orange-50 dark:bg-[#2c1f16] text-orange-600 dark:text-orange-400 text-[12px] font-semibold">Dijual</span>
-                    <span id="badge-rent" class="hidden px-2.5 py-1 rounded-full border border-green-200 dark:border-green-800/50 bg-green-50 dark:bg-[#064e3b]/30 text-green-600 dark:text-[#4ade80] text-[12px] font-semibold">Disewakan</span>
-                    <span id="badge-category" class="px-2.5 py-1 rounded-full border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-cardbg text-gray-600 dark:text-gray-300 text-[12px] font-medium">Buku & Catatan</span>
+                    <span id="badge-type" class="px-2.5 py-1 rounded-full border border-orange-200 bg-orange-50 text-orange-600 text-[12px] font-semibold dark:border-orange-800/50 dark:bg-[#2c1f16] dark:text-orange-400">Loading...</span>
+                    <span id="badge-category" class="px-2.5 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-600 text-[12px] font-medium dark:border-darkborder dark:bg-cardbg dark:text-gray-300">-</span>
                 </div>
 
-                <h1 id="item-title" class="text-3xl font-bold text-gray-900 dark:text-white mb-3">Clean Code oleh R. Martin</h1>
-                <p id="item-desc" class="text-[15px] text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                    Clean Code: A Handbook of Agile Software Craftsmanship oleh Robert C. Martin. Edisi pertama, bahasa Inggris. Sedikit lecet pada punggung buku. Tidak ada coretan di dalam.
-                </p>
+                <h1 id="item-title" class="text-3xl font-extrabold text-gray-900 dark:text-white mb-3"></h1>
+                <p id="item-desc" class="text-[15px] text-gray-500 dark:text-gray-400 mb-8 leading-relaxed"></p>
 
-                <div class="flex items-center justify-between p-4 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg mb-6">
+                <div class="flex items-center justify-between p-4 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg mb-4">
                     <div class="flex items-center gap-4">
-                        <div id="owner-avatar" class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">BS</div>
+                        <div id="owner-avatar" class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">...</div>
                         <div>
-                            <h4 id="owner-name" class="font-bold text-gray-900 dark:text-white text-[15px]">Budi Santoso</h4>
+                            <h4 id="owner-name" class="font-bold text-gray-900 dark:text-white text-[15px]">Loading Owner...</h4>
                             <div class="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 mt-0.5">
-                                <span id="owner-batch">Angkatan 2020</span>
+                                <span id="owner-batch">-</span>
                                 <span>·</span>
-                                <span class="flex items-center text-yellow-500">⭐ 4.9</span>
-                                <span>· 23 ulasan</span>
+                                <span class="flex items-center text-yellow-500">⭐ 5.0</span>
                             </div>
                         </div>
                     </div>
-                    <button class="px-4 py-1.5 border border-gray-200 dark:border-darkborder rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">
+                    <button
+                        id="btn-owner-profile"
+                        class="px-4 py-1.5 border border-gray-200 dark:border-darkborder text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">
                         Profil
                     </button>
                 </div>
 
-                <div class="flex items-start gap-3 p-4 rounded-xl border border-yellow-200 dark:border-yellow-900/30 bg-yellow-50 dark:bg-yellow-900/10 text-yellow-800 dark:text-yellow-600/90 mb-8">
-                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <p class="text-[14px] font-medium leading-snug">Wajib COD / Bertemu untuk serah terima. Atur dengan pemilik via Obrolan.</p>
+                <div class="flex items-start gap-3 p-4 rounded-2xl border border-yellow-100 bg-yellow-50/70 text-amber-800 text-[14px] mb-6 dark:bg-amber-950/20 dark:border-amber-900/40 dark:text-amber-300">
+                    <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <p class="font-medium">Wajib COD / Bertemu untuk serah terima. Atur dengan pemilik via Obrolan.</p>
                 </div>
 
-                <div id="action-sale" class="mt-auto p-6 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg shadow-sm">
+                <div id="action-sale" class="hidden mt-auto p-6 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg shadow-sm">
                     <p class="text-[13px] font-medium text-gray-500 dark:text-gray-400 mb-1">Harga Jual</p>
-                    <div class="text-[32px] font-bold text-primary mb-6">
-                        Rp 150.000
-                    </div>
-
-                    <a href="transaksi" class="block w-full">
-                       <button id="btn-beli" class="w-full py-3.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold transition-colors">
-        Beli & Pesan Barang
-    </button>
-                    </a>
-                </div> <div id="action-rent" class="hidden mt-auto p-6 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg shadow-sm">
+                    <div class="text-[32px] font-extrabold text-blue-600 dark:text-blue-400 mb-6 sale-price-display">Rp 0</div>
+                    <button id="btn-beli" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors">Beli & Pesan Barang</button>
+                </div> 
+                
+                <div id="action-rent" class="hidden mt-auto p-6 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg shadow-sm">
                     <div class="flex items-end justify-between mb-6">
                         <div class="flex items-baseline gap-1">
-                            <span class="text-[28px] font-bold text-primary">Rp 10.000</span>
+                            <span class="text-[28px] font-extrabold text-blue-600 dark:text-blue-400 rent-price-display">Rp 0</span>
                             <span class="text-[15px] font-medium text-gray-500 dark:text-gray-400">/hari</span>
                         </div>
                         <div class="text-right">
                             <p class="text-[11px] font-medium text-gray-400 dark:text-gray-500 mb-0.5">Durasi maks.</p>
-                            <p class="text-[14px] font-bold text-gray-900 dark:text-white">7 hari</p>
+                            <p class="text-[14px] font-bold text-gray-900 dark:text-white max-duration-display">-</p>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div>
                             <label class="block text-[12px] font-medium text-gray-500 dark:text-gray-400 mb-1.5">Tanggal Mulai</label>
-                            <input type="date" id="start-date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 dark:text-white [color-scheme:light] dark:[color-scheme:dark] cursor-pointer">
+                            <input type="date" id="start-date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm outline-none dark:text-white">
                         </div>
                         <div>
                             <label class="block text-[12px] font-medium text-gray-500 dark:text-gray-400 mb-1.5">Tanggal Kembali</label>
-                            <input type="date" id="return-date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 dark:text-white [color-scheme:light] dark:[color-scheme:dark] cursor-pointer" disabled>
+                            <input type="date" id="return-date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm outline-none dark:text-white" disabled>
                         </div>
                     </div>
-
-                    <button id="btn-pinjam" class="w-full py-3.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold transition-colors">
-                     Ajukan Peminjaman
-                     </button>
+                    <button id="btn-pinjam" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors">Ajukan Peminjaman</button>
                 </div>
-
             </div>
         </div>
     </main>
 
-    <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
-        <button id="dev-toggle-data" class="px-4 py-2 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-xs shadow-lg hover:opacity-90 transition-opacity">
-            🔄 Ganti Tampilan (Sewa/Jual)
-        </button>
+        <!-- ─── BOTTOM NAV (HP) ─── -->
+    <div class="bottom-nav md:hidden">
+        <a href="dashboard" class="active">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>
+            <span>Beranda</span>
+        </a>
+        <a href="transaksi">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <span>Transaksi</span>
+        </a>
+        <a href="form-barang">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Upload</span>
+        </a>
+        <a href="notifikasi">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <span>Notifikasi</span>
+        </a>
+        <a href="profil">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span>Profil</span>
+        </a>
     </div>
 
-  <script>
+<script>
+           // ── BUKA/TUTUP SIDEBAR ──
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileNavOverlay');
+            nav.classList.toggle('open');
+            overlay.classList.toggle('open');
+            document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+        }
+        function closeMobileNav() {
+            const nav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileNavOverlay');
+            nav.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
     document.addEventListener('DOMContentLoaded', async () => {
+        // ── Dark Mode ──
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        const themeLabelMobile = document.getElementById('theme-label-mobile');
+        const html = document.documentElement;
+
+        function updateIcons() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
+            }
+        }
+
+        // restore preferensi dari localStorage
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        updateIcons();
+
+        function toggleTheme() {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+            updateIcons();
+        }
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        if (themeToggleMobile) {
+            themeToggleMobile.addEventListener('click', toggleTheme);
+        }
+
+        // ── Tab switching ──
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Backend Integration
+        const urlParams = new URLSearchParams(window.location.search);
+        const idBarang = urlParams.get('id');
+
+        const detailContainer = document.getElementById('detail-container');
+        const errorMessage = document.getElementById('error-message');
+        const mainImageBox = document.getElementById('main-image-box');
+        const mainImage = document.getElementById('main-image');
+        const placeholderIcon = document.getElementById('img-placeholder-icon');
+
+        const title = document.getElementById('item-title');
+        const desc = document.getElementById('item-desc');
+        const badgeType = document.getElementById('badge-type');
+        const badgeCategory = document.getElementById('badge-category');
+        const ownerName = document.getElementById('owner-name');
+        const ownerAvatar = document.getElementById('owner-avatar');
+        const ownerBatch = document.getElementById('owner-batch');
+        const btnOwnerProfile = document.getElementById("btn-owner-profile");
         
-        // ==========================================
-        // 1. LOGIKA VALIDASI TANGGAL SEWA
-        // ==========================================
+        const actionSale = document.getElementById('action-sale');
+        const btnBeli = document.getElementById("btn-beli");
+        const actionRent = document.getElementById('action-rent');
+        const btnPinjam = document.getElementById("btn-pinjam");
+
+        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+
+        if (idBarang) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/barang/${idBarang}`);
+                if (!response.ok) throw new Error("Gagal terhubung ke backend server.");
+                
+                const barang = await response.json();
+
+                title.innerText = barang.namaBarang;
+                desc.innerText = barang.deskripsi;
+                badgeCategory.innerText = barang.kategori || 'LAINNYA';
+
+                // --- TAMBAHAN REVISI ARYA: Pengecekan Status Barang ---
+                // Berdasarkan enum di backend: available, sold, booked, archived
+                // 1. Cek siapa yang sedang buka halaman ini
+                const userIdLogin = localStorage.getItem("idUser");
+                const isPemilik = barang.pemilik && barang.pemilik.idUser === userIdLogin;
+
+                // --- Pengecekan Status Barang ---
+                const statusTag = document.createElement("span");
+                statusTag.className = "ml-3 px-2.5 py-1 rounded-full text-[12px] font-bold";
+
+                if (barang.status === "available") {
+                    statusTag.classList.add("bg-green-100", "text-green-700");
+                    statusTag.innerText = "Tersedia";
+                } else if (barang.status === "booked") {
+                    statusTag.classList.add("bg-yellow-100", "text-yellow-700");
+                    statusTag.innerText = "Telah di-Booked";
+                } else {
+                    statusTag.classList.add("bg-red-100", "text-red-700");
+                    statusTag.innerText = "Tidak Tersedia";
+                }
+                document.getElementById("item-title").appendChild(statusTag);
+
+                if (barang.fotoUrl) {
+                    mainImage.src = barang.fotoUrl;
+                    const thumb = document.getElementById("thumb-image");
+
+                    thumb.src = barang.fotoUrl;
+                    thumb.classList.remove("hidden");
+                    thumb.onclick = () => {
+                        mainImage.src = thumb.src;
+                    };
+                    mainImage.classList.remove('hidden');
+                    placeholderIcon.classList.add('hidden');
+                    mainImageBox.classList.remove('bg-gray-200');
+                }
+
+                if (barang.pemilik) {
+                    btnOwnerProfile.onclick = () => {
+                        window.location.href = `profil?id=${barang.pemilik.idUser}`; 
+                    };
+                    ownerName.innerText = barang.pemilik.username || 'Anonim';
+                    ownerBatch.innerText = `Angkatan ${barang.pemilik.angkatan || '-'}`;
+                    ownerAvatar.innerText = (barang.pemilik.username || 'U').substring(0, 2).toUpperCase();
+                }
+
+                if (barang.tarifPinjam != null) {
+                    // --- SETUP UI UNTUK BARANG SEWA ---
+                    badgeType.innerText = 'Disewakan';
+                    badgeType.className = "px-2.5 py-1 rounded-full border border-green-200 bg-green-50 text-green-600 text-[12px] font-semibold dark:border-green-800/50 dark:bg-[#064e3b]/30 dark:text-[#4ade80]";
+                    
+                    actionSale.classList.add('hidden');
+                    actionRent.classList.remove('hidden');
+                    
+                    actionRent.querySelector('.rent-price-display').innerText = formatRupiah(barang.tarifPinjam);
+                    actionRent.querySelector('.max-duration-display').innerText = `${barang.durasiMaksimalHari || 7} hari`;
+                    
+                    // --- LOGIKA TOMBOL PINJAM (Dengan validasi pemilik & booked) ---
+                    if (isPemilik) {
+                        btnPinjam.disabled = true;
+                        btnPinjam.classList.add("opacity-50", "cursor-not-allowed");
+                        btnPinjam.innerText = "Ini Barang Anda";
+                    } else if (barang.status === "booked") {
+                        btnPinjam.disabled = false;
+                        btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                        btnPinjam.classList.add("bg-green-600", "hover:bg-green-700");
+                        btnPinjam.innerText = "Hubungi Pemilik (Chat)";
+                        btnPinjam.onclick = () => {
+                            window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                        };
+                    } else if (barang.status !== "available") {
+                        btnPinjam.disabled = true;
+                        btnPinjam.classList.add("opacity-50", "cursor-not-allowed");
+                        btnPinjam.innerText = "Tidak Tersedia";
+                    } else {
+                        // Normal, bisa dipinjam
+                        btnPinjam.onclick = async () => {
+                            const mulai = document.getElementById("start-date").value;
+                            const kembali = document.getElementById("return-date").value;
+
+                            if (!mulai || !kembali) {
+                                alert("Pilih tanggal peminjaman terlebih dahulu.");
+                                return;
+                            }
+
+                            btnPinjam.disabled = true;
+                            btnPinjam.innerText = "Memproses...";
+
+                            try {
+                                const response = await fetch(`http://localhost:8080/api/pinjam`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        barang: { id: barang.id },
+                                        peminjam: { idUser: userIdLogin },
+                                        tanggalMulai: mulai,
+                                        tanggalKembali: kembali
+                                    })
+                                });
+
+                                if (response.ok) {
+                                    window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                                } else {
+                                    alert("Gagal mengajukan pinjaman. Cek kembali ketersediaan barang.");
+                                    btnPinjam.disabled = false;
+                                    btnPinjam.innerText = "Ajukan Peminjaman";
+                                }
+                            } catch (error) {
+                                console.error("Fetch error:", error);
+                                alert("Terjadi gangguan saat menghubungi server.");
+                                btnPinjam.disabled = false;
+                                btnPinjam.innerText = "Ajukan Peminjaman";
+                            }
+                        };
+                    }
+                } else {
+                    // --- SETUP UI UNTUK BARANG JUAL ---
+                    badgeType.innerText = 'Dijual';
+                    badgeType.className = "px-2.5 py-1 rounded-full border border-orange-200 bg-orange-50 text-orange-600 text-[12px] font-semibold dark:border-orange-800/50 dark:bg-[#2c1f16] dark:text-orange-400";
+                    
+                    actionRent.classList.add('hidden');
+                    actionSale.classList.remove('hidden');
+                    
+                    actionSale.querySelector('.sale-price-display').innerText = formatRupiah(barang.harga || 0);
+                    
+                    // --- LOGIKA TOMBOL BELI (Dengan validasi pemilik & booked) ---
+                    if (isPemilik) {
+                        btnBeli.disabled = true;
+                        btnBeli.classList.add("opacity-50", "cursor-not-allowed");
+                        btnBeli.innerText = "Ini Barang Anda";
+                    } else if (barang.status === "booked") {
+                        btnBeli.disabled = false;
+                        btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                        btnBeli.classList.add("bg-green-600", "hover:bg-green-700");
+                        btnBeli.innerText = "Hubungi Penjual (Chat)";
+                        btnBeli.onclick = () => {
+                            window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                        };
+                    } else if (barang.status !== "available") {
+                        btnBeli.disabled = true;
+                        btnBeli.classList.add("opacity-50", "cursor-not-allowed");
+                        btnBeli.innerText = "Tidak Tersedia";
+                    } else {
+                        // Normal, bisa dibeli
+                        btnBeli.onclick = async () => {
+                            btnBeli.disabled = true;
+                            btnBeli.innerText = "Memproses...";
+
+                            try {
+                                const responseBuat = await fetch(`http://localhost:8080/api/transaksi-beli/buat`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        barang: { id: barang.id },
+                                        pembeli: { idUser: userIdLogin }
+                                    })
+                                });
+
+                                if (responseBuat.ok) {
+                                    const dataTransaksi = await responseBuat.json();
+                                    
+                                    await fetch(`http://localhost:8080/api/transaksi-beli/${dataTransaksi.idTransaksi}/booking`, {
+                                        method: 'POST'
+                                    });
+                                    
+                                    window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                                } else {
+                                    alert("Gagal memproses pesanan. Barang mungkin sudah di-booked.");
+                                    btnBeli.disabled = false;
+                                    btnBeli.innerText = "Beli & Pesan Barang";
+                                }
+                            } catch (error) {
+                                console.error("Fetch error:", error);
+                                alert("Terjadi gangguan saat menghubungi server.");
+                                btnBeli.disabled = false;
+                                btnBeli.innerText = "Beli & Pesan Barang";
+                            }
+                        };
+                    }
+                }
+
+            } catch (error) {
+                console.error(error);
+                detailContainer.classList.add('hidden');
+                errorMessage.classList.remove('hidden');
+            }
+        } else {
+            detailContainer.classList.add('hidden');
+            errorMessage.classList.remove('hidden');
+            errorMessage.querySelector('p').innerText = "Parameter ID barang tidak ditemukan pada URL.";
+        }
+
+        // Validasi Tanggal Sewa
         const startDateInput = document.getElementById('start-date');
         const returnDateInput = document.getElementById('return-date');
-
         if (startDateInput && returnDateInput) {
-            // Set minimal tanggal mulai = hari ini
-            const today = new Date().toISOString().split('T')[0];
-            startDateInput.setAttribute('min', today);
-
+            startDateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
             startDateInput.addEventListener('change', function() {
                 if (this.value) {
                     returnDateInput.disabled = false;
-                    const start = new Date(this.value);
-                    start.setDate(start.getDate() + 1); // Minimal sewa 1 hari
-                    
-                    const minReturnDate = start.toISOString().split('T')[0];
-                    returnDateInput.setAttribute('min', minReturnDate);
-
-                    if (returnDateInput.value && returnDateInput.value < minReturnDate) {
-                        returnDateInput.value = minReturnDate;
-                    }
+                    const minReturn = new Date(this.value);
+                    minReturn.setDate(minReturn.getDate() + 1);
+                    returnDateInput.setAttribute('min', minReturn.toISOString().split('T')[0]);
                 } else {
                     returnDateInput.disabled = true;
                     returnDateInput.value = '';
                 }
             });
         }
-
-        // ==========================================
-        // 2. AMBIL DATA DETAIL BARANG DARI BACKEND
-        // ==========================================
-        const urlParams = new URLSearchParams(window.location.search);
-        const idBarang = urlParams.get('id');
-
-        if (!idBarang) {
-            alert("Barang tidak ditemukan!");
-            window.location.href = "dashboard";
-            return;
-        }
-
-        try {
-            const response = await fetch(`http://localhost:8080/api/barang/${idBarang}`);
-            if (!response.ok) throw new Error("Gagal memuat data barang.");
-            
-            const barang = await response.json();
-
-            // Elemen HTML
-            const title = document.getElementById('item-title');
-            const desc = document.getElementById('item-desc');
-            const category = document.getElementById('badge-category');
-            const ownerName = document.getElementById('owner-name');
-            const ownerAvatar = document.getElementById('owner-avatar');
-            const ownerBatch = document.getElementById('owner-batch');
-            const mainImage = document.getElementById('main-image');
-
-            const badgeRent = document.getElementById('badge-rent');
-            const badgeSale = document.getElementById('badge-sale');
-            const actionRent = document.getElementById('action-rent');
-            const actionSale = document.getElementById('action-sale');
-
-            // Masukkan data
-            title.innerText = barang.namaBarang;
-            desc.innerText = barang.deskripsi;
-            category.innerText = barang.kategori;
-            if(mainImage) mainImage.src = barang.fotoUrl || 'https://via.placeholder.com/600x400?text=No+Image';
-
-            // Data Pemilik
-            if (barang.pemilik) {
-                ownerName.innerText = barang.pemilik.username || 'Anonim';
-                ownerBatch.innerText = `Angkatan ${barang.pemilik.angkatan || '-'}`;
-                ownerAvatar.innerText = (barang.pemilik.username || 'AN').substring(0, 2).toUpperCase();
-            }
-
-            // Fungsi Format Rupiah
-            const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-
-            // Tampilan Jual vs Sewa
-            const isSewa = barang.tarifPinjam != null;
-
-            if (isSewa) {
-                badgeSale.classList.add('hidden');
-                badgeRent.classList.remove('hidden');
-                actionSale.classList.add('hidden');
-                actionRent.classList.remove('hidden');
-
-                actionRent.querySelector('.text-\\[28px\\]').innerText = formatRupiah(barang.tarifPinjam);
-                actionRent.querySelector('.text-\\[14px\\]').innerText = `${barang.durasiMaksimalHari} hari`;
-            } else {
-                badgeSale.classList.remove('hidden');
-                badgeRent.classList.add('hidden');
-                actionSale.classList.remove('hidden');
-                actionRent.classList.add('hidden');
-
-                actionSale.querySelector('.text-\\[32px\\]').innerText = formatRupiah(barang.harga);
-            }
-           // ==========================================
-            // LOGIKA KLIK TOMBOL PINJAM
-            // ==========================================
-            const btnPinjam = document.getElementById('btn-pinjam');
-            if (btnPinjam) {
-                btnPinjam.addEventListener('click', async () => {
-                    // 1. CEK APAKAH USER SUDAH LOGIN
-                    const idUserAktif = localStorage.getItem("idUser");
-                    if (!idUserAktif) {
-                        alert("Kamu harus Login terlebih dahulu untuk meminjam barang!");
-                        window.location.href = "login"; // Arahkan ke halaman login
-                        return;
-                    }
-
-                    const startDate = document.getElementById('start-date').value;
-                    const returnDate = document.getElementById('return-date').value;
-
-                    if (!startDate || !returnDate) {
-                        alert("Pilih Tanggal Mulai dan Tanggal Kembali terlebih dahulu!");
-                        return;
-                    }
-
-                    // 2. GUNAKAN ID DARI LOCALSTORAGE
-                    const payloadPinjam = {
-                        tanggalMulai: startDate,
-                        tanggalSelesai: returnDate,
-                        peminjam: { idUser: idUserAktif }, // <--- DI SINI BERUBAH
-                        barang: { id: idBarang }
-                    };
-
-                    try {
-                        btnPinjam.innerText = "Memproses...";
-                        const res = await fetch("http://localhost:8080/api/pinjam", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(payloadPinjam)
-                        });
-
-                        if (res.ok) {
-                            alert("Peminjaman berhasil diajukan!");
-                            window.location.href = "transaksi";
-                        } else {
-                            alert("Gagal mengajukan peminjaman.");
-                            btnPinjam.innerText = "Ajukan Peminjaman";
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        alert("Terjadi kesalahan sistem.");
-                        btnPinjam.innerText = "Ajukan Peminjaman";
-                    }
-                });
-            }
-
-            // ==========================================
-            // LOGIKA KLIK TOMBOL BELI
-            // ==========================================
-            const btnBeli = document.getElementById('btn-beli');
-            if (btnBeli) {
-                btnBeli.addEventListener('click', async () => {
-                    // 1. CEK APAKAH USER SUDAH LOGIN
-                    const idUserAktif = localStorage.getItem("idUser");
-                    if (!idUserAktif) {
-                        alert("Kamu harus Login terlebih dahulu untuk membeli barang!");
-                        window.location.href = "login"; // Arahkan ke halaman login
-                        return;
-                    }
-
-                    // 2. GUNAKAN ID DARI LOCALSTORAGE
-                    const payloadBeli = {
-                        pembeli: { idUser: idUserAktif }, // <--- DI SINI BERUBAH
-                        barang: { id: idBarang }
-                    };
-
-                    try {
-                        btnBeli.innerText = "Memproses...";
-                        const res = await fetch("http://localhost:8080/api/beli", { 
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(payloadBeli)
-                        });
-
-                        if (res.ok) {
-                            alert("Barang berhasil dipesan!");
-                            window.location.href = "transaksi";
-                        } else {
-                            alert("Gagal memesan barang.");
-                            btnBeli.innerText = "Beli & Pesan Barang";
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        alert("Terjadi kesalahan sistem.");
-                        btnBeli.innerText = "Beli & Pesan Barang";
-                    }
-                });
-            }
-        } catch (error) {
-            console.error("Error fetching detail:", error);
-            // alert("Terjadi kesalahan saat memuat detail barang."); // Boleh diaktifkan jika butuh
-        }
     });
 
-    // ==========================================
-    // 3. LOGIKA DARK MODE Bawaan
-    // ==========================================
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const sunIcon = document.getElementById('sun-icon');
-    const moonIcon = document.getElementById('moon-icon');
-    const html = document.documentElement;
-
-    function updateIcons() {
-        if (html.classList.contains('dark')) {
-            sunIcon.classList.remove('hidden');
-            moonIcon.classList.add('hidden');
-        } else {
-            sunIcon.classList.add('hidden');
-            moonIcon.classList.remove('hidden');
-        }
-    }
-
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        html.classList.add('dark');
-    } else {
-        html.classList.remove('dark');
-    }
-    updateIcons();
-
-    if(themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
-            updateIcons();
-        });
-    }
-
-    // Sembunyikan tombol dev (Sewa/Jual Manual) jika masih ada
-    const devBtn = document.getElementById('dev-toggle-data');
-    if (devBtn) devBtn.style.display = 'none';
+     // 1. Ambil nama user dari LocalStorage
+            const username = localStorage.getItem("username");
+            
+            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
+            if (username) {
+                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+                const avatarEl = document.getElementById("dashboard-avatar");
+                if (avatarEl) {
+                    avatarEl.textContent = inisial;
+                }
+            }
 </script>
 </body>
 </html>

@@ -32,6 +32,7 @@ public class RequestBarang {
     @Enumerated(EnumType.STRING)
     private StatusRequest statusRequest;
 
+
     // Constructor Kosong (Wajib untuk JPA)
     public RequestBarang() {}
 
@@ -41,6 +42,7 @@ public class RequestBarang {
 
         this.namaBarang = namaBarang;
         this.deskripsi = deskripsi;
+        this.anggaran = anggaran;
         this.statusRequest = statusRequest;
         this.anggaran = anggaran;
         this.userId = userId;

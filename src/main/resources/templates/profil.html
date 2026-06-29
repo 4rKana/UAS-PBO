@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
 <head>
+    <script th:src="@{/auth-guard.js}"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>CampusShare – Profil</title>
 
-    <!-- Tailwind + konfigurasi -->
     <script src="https://cdn.tailwindcss.com">
     </script>
     <script>
@@ -358,44 +358,6 @@
         .review-meta { font-size: 13px; color: #6b7280; transition: color 0.2s; }
         .review-stars { color: #f59e0b; font-size: 14px; letter-spacing: 1px; }
 
-        /* ── DARK MODE ── */
-        html.dark body {
-            background: #18181b;
-            color: #e5e5e5;
-        }
-        html.dark .profile-card {
-            background: #27272a;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-        }
-        html.dark .profile-name { color: #fff; }
-        html.dark .profile-major,
-        html.dark .profile-rating .reviews,
-        html.dark .stat-label,
-        html.dark .profile-tab,
-        html.dark .item-filter { color: #9ca3af; }
-        html.dark .profile-badge { background: #3f3f46; color: #93c5fd; }
-        html.dark .profile-rating { color: #fff; }
-        html.dark .profile-bio { color: #d1d5db; }
-        html.dark .profile-stats { border-top-color: #3f3f46; }
-        html.dark .stat-value { color: #fff; }
-        html.dark .profile-tabs { border-bottom-color: #3f3f46; }
-        html.dark .profile-tab.active { color: #fff; border-bottom-color: #60a5fa; }
-        html.dark .profile-tab:hover { color: #fff; }
-        html.dark .item-filter.active { color: #fff; border-bottom-color: #60a5fa; }
-        html.dark .item-filter:hover { color: #fff; }
-        html.dark .product-card { background: #27272a; border-color: #3f3f46; box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3); }
-        html.dark .product-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
-        html.dark .product-thumb { background: #3f3f46; color: #93c5fd; }
-        html.dark .product-name { color: #fff; }
-        html.dark .product-price { color: #60a5fa; }
-        html.dark .product-tag.jual { background: #3a1a1a; color: #f87171; }
-        html.dark .product-tag.sewa { background: #1a3a2a; color: #4ade80; }
-        html.dark .product-tag.tersedia { background: #1a3a2a; color: #4ade80; border-color: #4ade80; }
-        html.dark .review-item { background: #27272a; border-color: #3f3f46; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); }
-        html.dark .review-avatar { background: #3f3f46; color: #93c5fd; }
-        html.dark .review-name { color: #fff; }
-        html.dark .review-meta { color: #9ca3af; }
-
         /* ── SIDEBAR / MOBILE NAV ── */
         .mobile-nav-overlay {
             position: fixed;
@@ -528,6 +490,44 @@
         html.dark .bottom-nav a.active { color: #60a5fa; }
         html.dark .bottom-nav a.active svg { stroke: #60a5fa; }
 
+        /* ── DARK MODE ── */
+        html.dark body {
+            background: #18181b;
+            color: #e5e5e5;
+        }
+        html.dark .profile-card {
+            background: #27272a;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+        }
+        html.dark .profile-name { color: #fff; }
+        html.dark .profile-major,
+        html.dark .profile-rating .reviews,
+        html.dark .stat-label,
+        html.dark .profile-tab,
+        html.dark .item-filter { color: #9ca3af; }
+        html.dark .profile-badge { background: #3f3f46; color: #93c5fd; }
+        html.dark .profile-rating { color: #fff; }
+        html.dark .profile-bio { color: #d1d5db; }
+        html.dark .profile-stats { border-top-color: #3f3f46; }
+        html.dark .stat-value { color: #fff; }
+        html.dark .profile-tabs { border-bottom-color: #3f3f46; }
+        html.dark .profile-tab.active { color: #fff; border-bottom-color: #60a5fa; }
+        html.dark .profile-tab:hover { color: #fff; }
+        html.dark .item-filter.active { color: #fff; border-bottom-color: #60a5fa; }
+        html.dark .item-filter:hover { color: #fff; }
+        html.dark .product-card { background: #27272a; border-color: #3f3f46; box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3); }
+        html.dark .product-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
+        html.dark .product-thumb { background: #3f3f46; color: #93c5fd; }
+        html.dark .product-name { color: #fff; }
+        html.dark .product-price { color: #60a5fa; }
+        html.dark .product-tag.jual { background: #3a1a1a; color: #f87171; }
+        html.dark .product-tag.sewa { background: #1a3a2a; color: #4ade80; }
+        html.dark .product-tag.tersedia { background: #1a3a2a; color: #4ade80; border-color: #4ade80; }
+        html.dark .review-item { background: #27272a; border-color: #3f3f46; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); }
+        html.dark .review-avatar { background: #3f3f46; color: #93c5fd; }
+        html.dark .review-name { color: #fff; }
+        html.dark .review-meta { color: #9ca3af; }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
             .profile-top { flex-direction: column; align-items: center; text-align: center; }
@@ -574,11 +574,11 @@
         </div>
 
         <div class="nav-links-mobile">
-            <a href="dashboard.html">Katalog</a>
-            <a href="papan-request.html">Request</a>
-            <a href="form-barang.html">Upload</a>
-            <a href="transaksi.html">Transaksi</a>
-            <a href="profil.html" class="active">Profil</a>
+            <a href="dashboard">Katalog</a>
+            <a href="papan-request">Request</a>
+            <a href="form-barang">Upload</a>
+            <a href="transaksi">Transaksi</a>
+            <a href="profil" class="active">Profil</a>
         </div>
 
         <div class="nav-divider"></div>
@@ -601,7 +601,7 @@
                 </button>
 
                 <div class="flex items-center gap-3">
-                    <a href="dashboard.html" class="flex items-center gap-3">
+                    <a href="dashboard" class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-primary rounded-[12px] flex items-center justify-center shadow-sm">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
@@ -625,9 +625,9 @@
 
             <div class="flex items-center gap-5">
                 <nav class="hidden lg:flex items-center gap-2 text-[15px] font-medium desktop-nav">
-                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
-                    <a href="papan-request.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
-                    <a href="form-barang.html" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
+                    <a href="dashboard" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Katalog</a>
+                    <a href="papan-request" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Request</a>
+                    <a href="form-barang" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 py-2 rounded-xl transition-all">Upload</a>
                 </nav>
 
                 <div class="flex items-center gap-3 border-l pl-5 border-gray-200 dark:border-darkborder/50">
@@ -640,20 +640,22 @@
                         </svg>
                     </button>
 
-                    <a href="notifikasi.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                    <a href="notifikasi" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </a>
 
-                    <a href="roomchat.html" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                    <a href="roomchat" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </a>
 
-                    <a href="profil.html" class="inline-block">
-                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">DR</div>
-                    </a>
+                    <a href="profil" class="inline-block"> 
+                    <div id="dashboard-avatar" class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1"> 
+                        --
+                    </div> 
+                </a>
                 </div>
             </div>
 
@@ -667,247 +669,57 @@
 
             <!-- Header Profil -->
             <div class="profile-top">
-                <div class="profile-avatar">DR</div>
+                <div class="profile-avatar" id="user-avatar">--</div>
                 <div class="profile-info">
-                    <div class="profile-name">Dika Ramadan</div>
-                    <div class="profile-major">Fakultas Ilmu Komputer</div>
-                    <span class="profile-badge">Angkatan 2022</span>
+                    <div class="profile-name" id="user-name">Memuat nama...</div>
+                    <div class="profile-major" id="user-email">Memuat email...</div>
+                    <span class="profile-badge">Mahasiswa</span>
+                    
                     <div class="profile-rating">
-                        <span class="stars">★★★★★</span> 4.9 <span class="reviews">· 23 ulasan</span>
+                        <span class="stars">★ ★ ★ ★ ★</span>
+                        <span class="reviews">(5.0 / 5)</span>
                     </div>
                     <div class="profile-bio">
-                        Mahasiswa Fasilkom yang suka berbagi. Senang meminjamkan atau menjual barang untuk membantu sesama mahasiswa — DM untuk respons cepat!
+                        Halo! Selamat datang di profil CampusShare saya. Mari saling berbagi barang untuk kebutuhan perkuliahan.
                     </div>
+                    <button class="btn-message" onclick="window.location.href='form-barang'">+ Tambah Barang</button>
+                    <button class="btn-message" style="background: #2563eb; margin-left: 8px;" onclick="window.location.href='transaksi'">Transaksi</button>
+                    <button class="btn-message" style="background: #dc2626; margin-left: 8px;" onclick="logout()">Keluar</button>
                 </div>
             </div>
 
             <!-- Statistik -->
             <div class="profile-stats">
                 <div class="stat-item">
-                    <span class="stat-value">18</span>
-                    <span class="stat-label">Transaksi selesai</span>
+                    <span class="stat-value" id="total-barang">0</span>
+                    <span class="stat-label">Barang Dipajang</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">98%</span>
-                    <span class="stat-label">Tingkat respons</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">Mar 2024</span>
-                    <span class="stat-label">Anggota sejak</span>
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Transaksi Berhasil</span>
                 </div>
             </div>
 
-            <!-- Tombol Kirim Pesan -->
-            <button class="btn-message" onclick="window.location.href='roomchat'">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                Kirim Pesan
-            </button>
-
             <!-- Tabs -->
             <div class="profile-tabs">
-                <span class="profile-tab active" data-tab="barang">Barang Aktif (8)</span>
-                <span class="profile-tab" data-tab="ulasan">Ulasan (23)</span>
+                <span class="profile-tab active" data-tab="barang">Katalog Saya</span>
+                <span class="profile-tab" data-tab="ulasan">Ulasan</span>
             </div>
 
             <!-- Tab Content: Barang Aktif -->
             <div class="tab-content active" id="tab-barang">
                 <div class="item-filters">
-                    <span class="item-filter active">Disewakan</span>
-                    <span class="item-filter">Tersedia</span>
-                    <span class="item-filter">Dijual</span>
+                    <span class="item-filter active" data-filter="semua">Semua Barang Anda</span>
                 </div>
-
-                <div class="product-grid">
-                    <!-- Produk 1 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">💻</div>
-                        <div class="product-body">
-                            <div class="product-name">Stand Laptop Aluminium</div>
-                            <div class="product-meta">
-                                <span class="product-tag sewa">Disewakan</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 15.000/hari</div>
-                        </div>
-                    </div>
-
-                    <!-- Produk 2 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">📖</div>
-                        <div class="product-body">
-                            <div class="product-name">Kalkulus Stewart Edisi 8</div>
-                            <div class="product-meta">
-                                <span class="product-tag jual">Dijual</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 85.000</div>
-                        </div>
-                    </div>
-
-                    <!-- Produk 3 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">📽️</div>
-                        <div class="product-body">
-                            <div class="product-name">Proyektor Portabel Epson</div>
-                            <div class="product-meta">
-                                <span class="product-tag sewa">Disewakan</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 50.000/hari</div>
-                        </div>
-                    </div>
-
-                    <!-- Produk 4 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">🧮</div>
-                        <div class="product-body">
-                            <div class="product-name">Kalkulator Casio FX-991EX</div>
-                            <div class="product-meta">
-                                <span class="product-tag jual">Dijual</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 120.000</div>
-                        </div>
-                    </div>
-
-                    <!-- Produk 5 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">📘</div>
-                        <div class="product-body">
-                            <div class="product-name">Clean Code oleh R. Martin</div>
-                            <div class="product-meta">
-                                <span class="product-tag jual">Dijual</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 150.000</div>
-                        </div>
-                    </div>
-
-                    <!-- Produk 6 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">🔌</div>
-                        <div class="product-body">
-                            <div class="product-name">USB Hub 7-Port Anker</div>
-                            <div class="product-meta">
-                                <span class="product-tag jual">Dijual</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 75.000</div>
-                        </div>
-                    </div>
-
-                    <!-- Produk 7 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">✏️</div>
-                        <div class="product-body">
-                            <div class="product-name">Tablet Gambar Wacom</div>
-                            <div class="product-meta">
-                                <span class="product-tag sewa">Disewakan</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 35.000/hari</div>
-                        </div>
-                    </div>
-
-                    <!-- Produk 8 -->
-                    <div class="product-card" onclick="window.location.href='detail-barang'">
-                        <div class="product-thumb">🥼</div>
-                        <div class="product-body">
-                            <div class="product-name">Jas Lab Ukuran M</div>
-                            <div class="product-meta">
-                                <span class="product-tag sewa">Disewakan</span>
-                                <span class="product-tag tersedia">Tersedia</span>
-                            </div>
-                            <div class="product-price">Rp 10.000/hari</div>
-                        </div>
-                    </div>
+                
+                <div class="product-grid" id="my-product-grid">
+                    <!-- Akan diisi oleh JavaScript -->
                 </div>
             </div>
 
             <!-- Tab Content: Ulasan -->
             <div class="tab-content" id="tab-ulasan">
-                <div class="review-list">
-                    <div class="review-item">
-                        <div class="review-avatar">FM</div>
-                        <div class="review-body">
-                            <div class="review-name">Farhan Maulana</div>
-                            <div class="review-meta">Angkatan 2023 · 2 minggu yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">MI</div>
-                        <div class="review-body">
-                            <div class="review-name">Maya Indah</div>
-                            <div class="review-meta">Angkatan 2022 · 1 bulan yang lalu</div>
-                            <div class="review-stars">★★★★☆</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">RP</div>
-                        <div class="review-body">
-                            <div class="review-name">Rizky Pratama</div>
-                            <div class="review-meta">Angkatan 2021 · 2 bulan yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">NS</div>
-                        <div class="review-body">
-                            <div class="review-name">Nadhira Salsabila</div>
-                            <div class="review-meta">Angkatan 2023 · 1 bulan yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">IK</div>
-                        <div class="review-body">
-                            <div class="review-name">Intan Kurnia</div>
-                            <div class="review-meta">Angkatan 2022 · 3 bulan yang lalu</div>
-                            <div class="review-stars">★★★★☆</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">NA</div>
-                        <div class="review-body">
-                            <div class="review-name">Nurul Aini</div>
-                            <div class="review-meta">Angkatan 2022 · 3 bulan yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">NA</div>
-                        <div class="review-body">
-                            <div class="review-name">Nurul Aini (2)</div>
-                            <div class="review-meta">Angkatan 2022 · 3 bulan yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">NA</div>
-                        <div class="review-body">
-                            <div class="review-name">Nurul Aini (3)</div>
-                            <div class="review-meta">Angkatan 2022 · 3 bulan yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">NA</div>
-                        <div class="review-body">
-                            <div class="review-name">Nurul Aini</div>
-                            <div class="review-meta">Angkatan 2022 · 3 bulan yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-avatar">NA</div>
-                        <div class="review-body">
-                            <div class="review-name">Nurul Aini</div>
-                            <div class="review-meta">Angkatan 2022 · 3 bulan yang lalu</div>
-                            <div class="review-stars">★★★★★</div>
-                        </div>
-                    </div>
-                </div>
+                <p class="text-gray-500 dark:text-gray-400 py-6 text-center">Belum ada ulasan yang diberikan untuk Anda.</p>
             </div>
 
         </div>
@@ -916,23 +728,23 @@
 
     <!-- ─── BOTTOM NAV (HP) ─── -->
     <div class="bottom-nav md:hidden">
-        <a href="dashboard.html">
+        <a href="dashboard">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>
             <span>Beranda</span>
         </a>
-        <a href="transaksi.html">
+        <a href="transaksi">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
             <span>Transaksi</span>
         </a>
-        <a href="form-barang.html">
+        <a href="form-barang">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <span>Upload</span>
         </a>
-        <a href="notifikasi.html">
+        <a href="notifikasi">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
             <span>Notifikasi</span>
         </a>
-        <a href="profil.html" class="active">
+        <a href="profil" class="active">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             <span>Profil</span>
         </a>
@@ -966,13 +778,13 @@
 
         function updateIcons() {
             if (html.classList.contains('dark')) {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-                if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
+                if(sunIcon) sunIcon.classList.remove('hidden');
+                if(moonIcon) moonIcon.classList.add('hidden');
+                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
             } else {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-                if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
+                if(sunIcon) sunIcon.classList.add('hidden');
+                if(moonIcon) moonIcon.classList.remove('hidden');
+                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
             }
         }
 
@@ -989,10 +801,8 @@
             updateIcons();
         }
 
-        themeToggle.addEventListener('click', toggleTheme);
-        if (themeToggleMobile) {
-            themeToggleMobile.addEventListener('click', toggleTheme);
-        }
+        if(themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
 
         // ── Tab switching ──
         const tabs = document.querySelectorAll('.profile-tab');
@@ -1007,18 +817,113 @@
                 this.classList.add('active');
                 const target = this.dataset.tab;
                 Object.keys(contents).forEach(key => {
-                    contents[key].classList.toggle('active', key === target);
+                    if(contents[key]) contents[key].classList.toggle('active', key === target);
                 });
             });
         });
 
-        // ── Filter switching ──
-        document.querySelectorAll('.item-filter').forEach(filter => {
-            filter.addEventListener('click', function() {
-                document.querySelectorAll('.item-filter').forEach(f => f.classList.remove('active'));
-                this.classList.add('active');
-            });
+        // ── Fungsi Logout ──
+        function logout() {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                localStorage.clear();
+                window.location.href = "login";
+            }
+        }
+
+        // ── INTEGRASI DINAMIS BACKEND ──
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Ambil data user dari LocalStorage
+            const idUser = localStorage.getItem("idUser");
+            const username = localStorage.getItem("username");
+            const userEmail = localStorage.getItem("userEmail");
+
+            // Proteksi halaman
+            if (!idUser) {
+                alert("Sesi berakhir atau Anda belum login!");
+                window.location.href = "login";
+                return;
+            }
+
+            // 2. Suntik data user ke elemen HTML profil
+            document.getElementById("user-name").textContent = username;
+            document.getElementById("user-email").textContent = userEmail;
+
+            // Inisial avatar otomatis
+            const inisial = username ? username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) : "US";
+            document.getElementById("user-avatar").textContent = inisial;
+
+            // 3. Fetch data barang user
+            const gridContainer = document.getElementById("my-product-grid");
+            gridContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400 col-span-2 text-center py-4">Memuat katalog barang Anda...</p>`;
+
+            fetch(`http://localhost:8080/api/barang/user/${idUser}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Gagal mengambil data");
+                    return response.json();
+                })
+                .then(data => {
+                    gridContainer.innerHTML = ""; 
+
+                    const semuaBarang = [];
+                    if (data.barangJual) {
+                        data.barangJual.forEach(b => { b.jenis = "JUAL"; semuaBarang.push(b); });
+                    }
+                    if (data.barangPinjam) {
+                        data.barangPinjam.forEach(b => { b.jenis = "PINJAM"; semuaBarang.push(b); });
+                    }
+
+                    document.getElementById("total-barang").textContent = semuaBarang.length;
+
+                    if (semuaBarang.length === 0) {
+                        gridContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400 col-span-2 text-center py-6">Anda belum pernah mengunggah barang ke katalog.</p>`;
+                        return;
+                    }
+
+                    semuaBarang.forEach(barang => {
+                        const isJual = barang.jenis === "JUAL";
+                        const classTagJenis = isJual ? "jual" : "sewa";
+                        const labelJenis = isJual ? "DIJUAL" : "DIPINJAMKAN";
+                        
+                        const nominalHarga = isJual ? barang.harga : barang.tarifPinjam;
+                        const formatHarga = `Rp ${nominalHarga.toLocaleString('id-ID')}${isJual ? '' : '/hari'}`;
+
+                        const cardHTML = `
+                            <div class="product-card dark:bg-cardbg dark:border-darkborder">
+                                <div class="product-thumb bg-gray-100 dark:bg-neutral-800">
+                                    <img src="${barang.fotoUrl || 'https://via.placeholder.com/300?text=No+Image'}" 
+                                         alt="${barang.namaBarang}" 
+                                         class="w-full h-full object-cover rounded-t-xl">
+                                </div>
+                                <div class="product-body">
+                                    <div class="product-name dark:text-white line-clamp-1">${barang.namaBarang}</div>
+                                    <div class="product-meta">
+                                        <span class="product-tag ${classTagJenis}">${labelJenis}</span>
+                                        <span class="product-tag tersedia">${barang.status}</span>
+                                    </div>
+                                    <div class="product-price dark:text-blue-400">${formatHarga}</div>
+                                </div>
+                            </div>
+                        `;
+                        gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    gridContainer.innerHTML = `<p class="text-red-500 col-span-2 text-center py-4">Gagal terhubung ke server backend.</p>`;
+                });
         });
+
+        // 1. Ambil nama user dari LocalStorage
+            const username = localStorage.getItem("username");
+            
+            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
+            if (username) {
+                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+                const avatarEl = document.getElementById("dashboard-avatar");
+                if (avatarEl) {
+                    avatarEl.textContent = inisial;
+                }
+            }
     </script>
 
 </body>

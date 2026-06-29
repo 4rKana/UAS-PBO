@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
 <head>
+    <script th:src="@{/auth-guard.js}"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>CampusShare - Notifikasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -101,7 +104,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
+<body id="main-body" th:data-user-id="${session.userId}" class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 min-h-screen transition-all duration-300 relative">
 
     <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
     <div class="mobile-nav" id="mobileNav">
@@ -165,16 +168,29 @@
                         <svg id="sun-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
                         <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <button class="p-2 text-primary bg-blue-50 dark:bg-blue-900/20 rounded-full relative">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
-                    </button>
+                    <a href="notifikasi"
+                    class="p-2 text-gray-400 hover:text-primary relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+
+                        <svg class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <span id="notif-bell-dot" class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                    </a>
                     <a href="roomchat" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <span id="notif-chat-dot" class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
                     </a>
-                    <a href="profil" class="inline-block">
-                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
-                    </a>
+                    <a href="profil" class="inline-block"> 
+                    <div id="dashboard-avatar" class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1"> 
+                        --
+                    </div> 
+                </a>
                 </div>
             </div>
         </div>
@@ -188,76 +204,35 @@
         </div>
 
         <div class="space-y-4">
-            
-            <div class="bg-blue-50/40 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-6 transition-all shadow-sm relative">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="flex gap-4">
-                        <div class="w-11 h-11 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-[15px] shrink-0">FM</div>
-                        <div>
-                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Farhan Maulana</h2>
-                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Teknik Informatika · Angkatan 2023</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-medium text-blue-600 dark:text-primary">Baru saja</span>
-                        <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
-                    </div>
-                </div>
-                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed ml-15 pl-15">
-                    mengirimkan pesan dan <span class="font-semibold text-gray-900 dark:text-white">meminta izin untuk meminjam barang Anda</span> (Stand Laptop Aluminium).
-                </p>
+
+            <!-- Tempat daftar notifikasi dari backend -->
+            <div id="notification-list">
+                <!-- Notifikasi akan ditampilkan di sini -->
             </div>
 
-            <div class="bg-blue-50/40 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-6 transition-all shadow-sm relative">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="flex gap-4">
-                        <div class="w-11 h-11 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center font-bold text-[15px] shrink-0">RP</div>
-                        <div>
-                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Rizky Pratama</h2>
-                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Sistem Informasi · Angkatan 2022</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-medium text-blue-600 dark:text-primary">2 jam yang lalu</span>
-                        <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
-                    </div>
-                </div>
-                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
-                    tertarik dengan postingan Anda dan <span class="font-semibold text-gray-900 dark:text-white">meminta izin untuk membeli barang Anda</span> (Kalkulator Ilmiah Casio).
-                </p>
-            </div>
+            <!-- Empty State -->
+            <div id="empty-notification"
+                class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-10 text-center">
 
-            <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 transition-all shadow-sm">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="flex gap-4">
-                        <div class="w-11 h-11 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 flex items-center justify-center font-bold text-[15px] shrink-0">NS</div>
-                        <div>
-                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Nadhira Salsabila</h2>
-                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Kimia · Angkatan 2023</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Kemarin</span>
-                </div>
-                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
-                    Kabar baik! <span class="font-semibold text-green-600 dark:text-green-400">Request diterima</span>. Permintaan Anda untuk meminjam Buku Teks Kimia Organik telah disetujui pemiliknya. Silakan atur lokasi COD via chat.
-                </p>
-            </div>
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1">
+                    </path>
+                </svg>
 
-            <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 transition-all shadow-sm">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="flex gap-4">
-                        <div class="w-11 h-11 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 flex items-center justify-center font-bold text-[15px] shrink-0">MI</div>
-                        <div>
-                            <h2 class="text-[15px] font-bold text-gray-900 dark:text-white">Maya Indah</h2>
-                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">Manajemen · Angkatan 2022</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">3 hari yang lalu</span>
-                </div>
-                <p class="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed">
-                    Mohon maaf, <span class="font-semibold text-red-500 dark:text-red-400">request ditolak</span>. Permintaan penawaran Anda untuk barang Casio FX-991EX tidak dapat diproses karena barang sudah dipesan mahasiswa lain.
+                <h2 class="text-lg font-semibold text-gray-700 dark:text-white">
+                    Belum ada notifikasi
+                </h2>
+
+                <p class="text-sm text-gray-500 mt-2">
+                    Semua aktivitas seperti request, transaksi, pembelian, peminjaman, dan chat akan muncul di sini.
                 </p>
+
             </div>
 
         </div>
@@ -342,6 +317,202 @@
 
         if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
         if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+
+         // 1. Ambil nama user dari LocalStorage
+            const username = localStorage.getItem("username");
+            
+            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
+            if (username) {
+                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+                const avatarEl = document.getElementById("dashboard-avatar");
+                if (avatarEl) {
+                    avatarEl.textContent = inisial;
+                }
+            }
+
+        // ==========================================
+        // LOGIKA NOTIFIKASI (Request, Transaksi, Peminjaman, Pembelian)
+        // Catatan: ini TERPISAH dari notifikasi chat. Notifikasi chat
+        // diindikasikan lewat titik merah pada tombol chat di header,
+        // bukan lewat halaman ini.
+        // ==========================================
+
+        // Mapping jenis notifikasi -> ikon & warna, supaya tampilannya
+        // lebih informatif daripada cuma teks polos.
+        const NOTIF_ICON_MAP = {
+            REQUEST_BARANG: { bg: "bg-blue-50 dark:bg-blue-900/20", color: "text-blue-600 dark:text-blue-400", path: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+            TRANSAKSI_BELI: { bg: "bg-orange-50 dark:bg-orange-900/20", color: "text-orange-600 dark:text-orange-400", path: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" },
+            TRANSAKSI_PINJAM: { bg: "bg-green-50 dark:bg-green-900/20", color: "text-green-600 dark:text-green-400", path: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
+        };
+        const DEFAULT_NOTIF_ICON = { bg: "bg-gray-100 dark:bg-gray-800", color: "text-gray-500 dark:text-gray-400", path: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" };
+
+        // Format waktu relatif sederhana dalam Bahasa Indonesia
+        function formatWaktuRelatif(isoString) {
+            const tanggal = new Date(isoString);
+            const detik = Math.floor((Date.now() - tanggal.getTime()) / 1000);
+
+            if (detik < 60) return "Baru saja";
+            if (detik < 3600) return `${Math.floor(detik / 60)} menit lalu`;
+            if (detik < 86400) return `${Math.floor(detik / 3600)} jam lalu`;
+            if (detik < 604800) return `${Math.floor(detik / 86400)} hari lalu`;
+            return tanggal.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+        }
+
+        async function loadNotifications() {
+            const bodyEl = document.getElementById("main-body");
+            const currentUserId = bodyEl ? bodyEl.getAttribute("data-user-id") : null;
+
+            if (!currentUserId || currentUserId.startsWith("[[")) {
+                console.error("Gagal memuat notifikasi: ID Pengguna tidak valid.");
+                return;
+            }
+
+            const listContainer = document.getElementById("notification-list");
+            const emptyState = document.getElementById("empty-notification");
+
+            try {
+                const response = await fetch(`/api/notifications/${currentUserId}`);
+                if (!response.ok) throw new Error("Gagal mengambil notifikasi");
+
+                const notifications = await response.json();
+
+                if (!notifications || notifications.length === 0) {
+                    listContainer.innerHTML = "";
+                    emptyState.classList.remove("hidden");
+                    return;
+                }
+
+                // Ada notifikasi -> sembunyikan empty state, render daftar
+                emptyState.classList.add("hidden");
+                listContainer.innerHTML = "";
+
+                notifications.forEach(notif => {
+                    const iconInfo = NOTIF_ICON_MAP[notif.type] || DEFAULT_NOTIF_ICON;
+
+                    const item = document.createElement("div");
+                    item.className = `bg-white dark:bg-cardbg border rounded-2xl p-4 flex gap-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-[#2f2f33] ${
+                        notif.read ? "border-gray-200 dark:border-darkborder" : "border-primary/40 dark:border-primary/40"
+                    }`;
+
+                    item.innerHTML = `
+                        <div class="w-11 h-11 rounded-full ${iconInfo.bg} ${iconInfo.color} flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconInfo.path}"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start gap-2">
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                                    ${notif.title}
+                                </h3>
+                                ${!notif.read ? '<span class="w-2 h-2 rounded-full bg-red-500 shrink-0 mt-1"></span>' : ""}
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                ${notif.message ?? ""}
+                            </p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                                ${formatWaktuRelatif(notif.createdAt)}
+                            </p>
+                        </div>
+                    `;
+
+                    // Klik notifikasi -> tandai sebagai sudah dibaca
+                    item.addEventListener("click", () => markNotificationAsRead(notif.id, item));
+
+                    listContainer.appendChild(item);
+                });
+
+            } catch (error) {
+                console.error("Gagal memuat notifikasi:", error);
+            }
+        }
+
+        async function markNotificationAsRead(notificationId, itemEl) {
+            try {
+                await fetch(`/api/notifications/${notificationId}/read`, { method: "PATCH" });
+
+                // Update tampilan tanpa perlu reload seluruh daftar
+                itemEl.classList.remove("border-primary/40", "dark:border-primary/40");
+                itemEl.classList.add("border-gray-200", "dark:border-darkborder");
+                const dot = itemEl.querySelector(".bg-red-500");
+                if (dot) dot.remove();
+            } catch (error) {
+                console.error("Gagal menandai notifikasi sebagai dibaca:", error);
+            }
+        }
+
+        // Muat notifikasi saat halaman pertama kali dibuka
+        window.addEventListener("DOMContentLoaded", loadNotifications);
+
+        // ==========================================
+        // INDIKATOR TITIK MERAH (Notifikasi umum & Chat belum dibaca)
+        // Dua sistem yang TERPISAH:
+        // - Titik merah bel (#notif-bell-dot): dari tabel notifications
+        // - Titik merah chat (#notif-chat-dot): dihitung dari pesan belum dibaca
+        // ==========================================
+        async function updateUnreadIndicators() {
+            const bodyEl = document.getElementById("main-body");
+            const currentUserId = bodyEl ? bodyEl.getAttribute("data-user-id") : null;
+            if (!currentUserId || currentUserId.startsWith("[[")) return;
+
+            // Titik merah notifikasi umum
+            try {
+                const res = await fetch(`/api/notifications/${currentUserId}/unread-count`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const dot = document.getElementById("notif-bell-dot");
+                    if (dot) dot.classList.toggle("hidden", data.unreadCount <= 0);
+                }
+            } catch (error) {
+                console.error("Gagal memuat jumlah notifikasi belum dibaca:", error);
+            }
+
+            // Titik merah chat belum dibaca
+            try {
+                const res = await fetch(`/api/chat/unread-count/${currentUserId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const dot = document.getElementById("notif-chat-dot");
+                    if (dot) dot.classList.toggle("hidden", data.unreadCount <= 0);
+                }
+            } catch (error) {
+                console.error("Gagal memuat jumlah chat belum dibaca:", error);
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", updateUnreadIndicators);
+
+        // ==========================================
+        // WEBSOCKET (STOMP) - UPDATE TITIK MERAH CHAT SECARA REAL-TIME
+        // Halaman ini (notifikasi.html) tidak punya ruang chat sendiri,
+        // tapi tetap perlu tahu kalau status "pesan belum dibaca" berubah
+        // akibat aktivitas di roomchat.html (tab/device lain) atau pesan
+        // baru yang masuk — tanpa harus reload halaman ini.
+        // ==========================================
+        let stompClient = null;
+
+        function connectUnreadWebSocket() {
+            const bodyEl = document.getElementById("main-body");
+            const currentUserId = bodyEl ? bodyEl.getAttribute("data-user-id") : null;
+            if (!currentUserId || currentUserId.startsWith("[[")) return;
+
+            const socket = new SockJS("/ws");
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null; // Matikan log debug bawaan stomp.js
+
+            stompClient.connect({}, () => {
+                stompClient.subscribe(`/topic/unread/${currentUserId}`, (frame) => {
+                    const data = JSON.parse(frame.body);
+                    const dot = document.getElementById("notif-chat-dot");
+                    if (dot) dot.classList.toggle("hidden", data.unreadCount <= 0);
+                });
+            }, (error) => {
+                console.error("WebSocket error (unread indicator), mencoba reconnect dalam 3 detik...", error);
+                setTimeout(connectUnreadWebSocket, 3000);
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", connectUnreadWebSocket);
     </script>
 </body>
 </html>

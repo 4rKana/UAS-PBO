@@ -14,7 +14,33 @@ import java.util.List;
 @RequestMapping("/api/barang")
 @CrossOrigin(origins = "*") // Penting: Agar tidak error CORS saat dihubungkan ke HTML lokal
 public class BarangController {
+    // Endpoint khusus untuk menerima upload file gambar
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFoto(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        try {
+            // 1. Tentukan folder penyimpanan (Kita simpan di dalam folder static/uploads)
+            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/uploads/";
+            java.io.File dir = new java.io.File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Buat foldernya jika belum ada
+            }
 
+            // 2. Buat nama file unik agar tidak bentrok (menggunakan waktu saat ini)
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename().replaceAll("\\s+", "_");
+            java.io.File serverFile = new java.io.File(uploadDir + fileName);
+            
+            // 3. Simpan file ke folder
+            file.transferTo(serverFile);
+
+            // 4. Kembalikan URL yang bisa diakses oleh frontend
+            String fileUrl = "http://localhost:8080/uploads/" + fileName;
+            return ResponseEntity.ok(fileUrl);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Gagal mengupload file: " + e.getMessage());
+        }
+    }
     @Autowired
     private BarangService barangService;
 
@@ -64,4 +90,35 @@ public class BarangController {
         barangService.deleteBarang(id);
         return ResponseEntity.ok("Barang dengan ID " + id + " berhasil dihapus.");
     }
+  // --- TAMBAHKAN KODE INI DI BAWAH CONTROLLER (Ganti yang sebelumnya) ---
+
+    @Autowired
+    private com.PBO2.CampShare.repository.BarangRepository barangRepository;
+
+    @GetMapping("/user/{idUser}")
+    public ResponseEntity<?> getBarangByUser(@PathVariable String idUser) {
+        try {
+            // 1. Ambil semua barang milik user ini sekaligus dari database
+            List<Barang> semuaBarang = barangRepository.findByPemilikIdUser(idUser);
+
+            // 2. Pisahkan mana yang Barang Jual dan mana yang Barang Pinjam untuk dikirim ke HTML
+            List<Barang> jual = semuaBarang.stream()
+                .filter(b -> b instanceof com.PBO2.CampShare.entity.BarangJual)
+                .collect(java.util.stream.Collectors.toList());
+                
+            List<Barang> pinjam = semuaBarang.stream()
+                .filter(b -> b instanceof com.PBO2.CampShare.entity.BarangPinjam)
+                .collect(java.util.stream.Collectors.toList());
+
+            // 3. Masukkan ke format response
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("barangJual", jual);
+            response.put("barangPinjam", pinjam);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+    
 }

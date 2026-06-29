@@ -60,7 +60,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<?> login(
+            @RequestBody Map<String, String> loginRequest, 
+            jakarta.servlet.http.HttpSession session) { // <-- 1. Tambahkan parameter HttpSession di sini
+        
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
@@ -73,6 +76,10 @@ public class AuthController {
         
         // Jika sukses, ambil data User secara lengkap berdasarkan email
         User loggedInUser = userService.findByEmail(email); 
+        
+        // === 2. SIMPAN ID USER KE SESSION DI SINI ===
+        // Sesuaikan 'getIdUser()' dengan nama method Getter ID yang ada di Class User milikmu (misal: getId() atau getIdUser())
+        session.setAttribute("userId", loggedInUser.getIdUser()); 
         
         // Kembalikan objek User (Spring Boot otomatis menjadikannya JSON yang berisi idUser)
         return ResponseEntity.ok(loggedInUser);

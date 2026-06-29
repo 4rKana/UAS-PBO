@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
 <head>
+    <script th:src="@{/auth-guard.js}"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>CampusShare - Permintaan Mahasiswa</title>
@@ -179,29 +180,32 @@
                     <a href="roomchat" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     </a>
-                    <a href="profil" class="inline-block">
-                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1">AK</div>
-                    </a>
+                    <a href="profil" class="inline-block"> 
+                    <div id="dashboard-avatar" class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer ml-1"> 
+                        --
+                    </div> 
+                </a>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- KONTEN UTAMA: PAPAN REQUEST -->
-    <main class="max-w-3xl mx-auto px-4 py-10 w-full">
+   <main class="max-w-3xl mx-auto px-4 py-10 w-full">
         
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 w-full">
             <div>
                 <h1 class="text-[26px] font-bold text-gray-900 dark:text-white">Permintaan Mahasiswa</h1>
                 <p class="text-gray-500 dark:text-gray-400 text-[15px] mt-1">Barang yang sedang dicari mahasiswa untuk disewa atau dibeli</p>
             </div>
-            <button id="btn-buka-permintaan" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors text-[14.5px]">
+            <button id="btn-buka-permintaan" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors text-[14.5px] shrink-0">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                 Buat Permintaan Baru
             </button>
-        <div class="space-y-4" id="list-permintaan">
-            <!-- Nanti JavaScript akan mengisi kartu di sini secara otomatis -->
-        </div>
+        </div> 
+
+        <div class="flex flex-col space-y-4 w-full" id="list-permintaan">
+        </div> 
     </main>
 
     <!-- MODAL PERMINTAAN -->
@@ -214,7 +218,7 @@
             </button>
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Buat Permintaan</h2>
             
-            <form id="form-permintaan" class="space-y-4" onsubmit="submitForm(event)">
+            <form id="form-permintaan" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Barang yang Dibutuhkan</label>
                     <input type="text" id="input-nama-barang" required placeholder="misal: Kalkulator Casio FX-9750" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm focus:ring-2 focus:ring-primary/30 outline-none dark:text-white transition-all">
@@ -264,143 +268,401 @@
     </div>
 
     <!-- SCRIPT LOGIKA -->
-    <script>
-        // Logika Sidebar Mobile
-        function toggleMobileNav() {
-            const nav = document.getElementById('mobileNav');
-            const overlay = document.getElementById('mobileNavOverlay');
-            nav.classList.toggle('open');
-            overlay.classList.toggle('open');
-            document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
-        }
-        function closeMobileNav() {
-            const nav = document.getElementById('mobileNav');
-            const overlay = document.getElementById('mobileNavOverlay');
-            nav.classList.remove('open');
-            overlay.classList.remove('open');
-            document.body.style.overflow = '';
-        }
+<script>
+    // ==========================================
+    // 1. LOGIKA SIDEBAR MOBILE
+    // ==========================================
+    function toggleMobileNav() {
+        const nav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('mobileNavOverlay');
+        nav.classList.toggle('open');
+        overlay.classList.toggle('open');
+        document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    }
 
-        // Logika Modal Pop-up
-        const btnBukaPermintaan = document.getElementById('btn-buka-permintaan');
-        const btnCloseModal = document.getElementById('btn-close-modal');
-        const modalPermintaan = document.getElementById('modal-permintaan');
+    function closeMobileNav() {
+        const nav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('mobileNavOverlay');
+        nav.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
 
+    // ==========================================
+    // 2. LOGIKA MODAL POP-UP
+    // ==========================================
+    const btnBukaPermintaan = document.getElementById('btn-buka-permintaan');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const modalPermintaan = document.getElementById('modal-permintaan');
+
+    if (btnBukaPermintaan) {
         btnBukaPermintaan.addEventListener('click', () => {
             modalPermintaan.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
         });
+    }
 
+    if (btnCloseModal) {
         btnCloseModal.addEventListener('click', () => {
             modalPermintaan.classList.add('hidden');
             document.body.style.overflow = ''; 
         });
+    }
 
+    if (modalPermintaan) {
         modalPermintaan.addEventListener('click', (e) => {
             if (e.target === modalPermintaan) {
                 modalPermintaan.classList.add('hidden');
                 document.body.style.overflow = '';
             }
         });
+    }
 
-        // Logika Dark Mode
-        const html = document.documentElement;
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-        const themeLabelMobile = document.getElementById('theme-label-mobile');
+    // ==========================================
+    // 3. LOGIKA DARK MODE
+    // ==========================================
+    const html = document.documentElement;
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+    const themeLabelMobile = document.getElementById('theme-label-mobile');
 
-        function updateIcons() {
-            if (html.classList.contains('dark')) {
-                if(sunIcon) sunIcon.classList.remove('hidden');
-                if(moonIcon) moonIcon.classList.add('hidden');
-                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
-            } else {
-                if(sunIcon) sunIcon.classList.add('hidden');
-                if(moonIcon) moonIcon.classList.remove('hidden');
-                if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
-            }
-        }
-
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
+    function updateIcons() {
+        if (html.classList.contains('dark')) {
+            if(sunIcon) sunIcon.classList.remove('hidden');
+            if(moonIcon) moonIcon.classList.add('hidden');
+            if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
         } else {
-            html.classList.remove('dark');
+            if(sunIcon) sunIcon.classList.add('hidden');
+            if(moonIcon) moonIcon.classList.remove('hidden');
+            if(themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
         }
+    }
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+    } else {
+        html.classList.remove('dark');
+    }
+    updateIcons();
+
+    function toggleTheme() {
+        html.classList.toggle('dark');
+        localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
         updateIcons();
+    }
 
-        function toggleTheme() {
-            html.classList.toggle('dark');
-            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
-            updateIcons();
+    if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+    if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+
+
+    // ==========================================
+    // 4. LOGIKA CRUD BACKEND (SPRING BOOT API)
+    // ==========================================
+    // PENTING: Endpoint & parameter di bawah ini HARUS sama persis dengan
+    // RequestController.java, RequestRepository.java, RequestBarang.java
+    // yang sudah ada (tidak ada parameter requesterId/penawarId di backend,
+    // dan StatusRequest hanya TERSEDIA & TERPENUHI).
+    // Semua aturan "siapa boleh klik apa" dikerjakan di sini (front-end),
+    // memakai localStorage sebagai penanda sementara di sisi browser.
+
+    const API_BASE = 'http://localhost:8080/api/request';
+
+    // Penanda lokal: siapa yang sudah menekan "Tawarkan Barang Saya" untuk
+    // request tertentu. Backend tidak punya kolom ini, jadi disimpan di
+    // localStorage browser pemilik request sebagai catatan sementara.
+    // Struktur: { "<idRequest>": "<idUserPenawar>" }
+    function getPenawarMap() {
+        try {
+            return JSON.parse(localStorage.getItem('penawarMap') || '{}');
+        } catch (e) {
+            return {};
         }
+    }
+    function setPenawar(idRequest, idUserPenawar) {
+        const map = getPenawarMap();
+        map[idRequest] = idUserPenawar;
+        localStorage.setItem('penawarMap', JSON.stringify(map));
+    }
+    function getPenawar(idRequest) {
+        return getPenawarMap()[idRequest] || null;
+    }
 
-        if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
-        if(themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+    // Template pesan "kosong" yang dipakai ulang (data tidak ada / gagal dimuat)
+    function renderEmptyState(container, { title, message, isError = false } = {}) {
+        const iconColor = isError
+            ? 'text-red-400 dark:text-red-400/80'
+            : 'text-gray-400 dark:text-gray-500';
 
-        // Tambahkan fungsi ini di bawah fungsi submitForm yang sudah ada
-        async function loadRequest() {
-            const container = document.getElementById('list-permintaan');
-            if (!container) return;
+        container.innerHTML = `
+        <div class="flex flex-col items-center justify-center text-center py-16 px-6 bg-white dark:bg-cardbg border border-dashed border-gray-200 dark:border-darkborder rounded-2xl">
+            <svg class="w-12 h-12 mb-4 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="font-semibold text-gray-700 dark:text-gray-200 text-[15px]">${title}</p>
+            <p class="text-gray-500 dark:text-gray-400 text-[13.5px] mt-1 max-w-xs">${message}</p>
+        </div>`;
+    }
 
-            try {
-                const response = await fetch('http://localhost:8080/api/request');
-                const data = await response.json();
-                
-                container.innerHTML = ''; // Kosongkan kontainer
-                
-                data.forEach(item => {
-                    container.innerHTML += `
-                    <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="font-semibold text-[15px] dark:text-white">${item.namaBarang}</span>
-                            <button onclick="hapusRequest('${item.id}')" class="text-red-500 text-[12px]">Hapus</button>
-                        </div>
-                        <p class="text-[14.5px] text-gray-500 mb-2">${item.deskripsi}</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-green-600 font-bold">Rp ${item.anggaran}</span>
-                            <span class="text-[11px] px-2 py-1 bg-gray-100 rounded">${item.statusRequest}</span>
-                        </div>
-                    </div>`;
+    // A. Memuat Data Request dari Backend
+    async function loadRequest() {
+        const container = document.getElementById('list-permintaan');
+        if (!container) return;
+
+        // TAMBAHKAN INI: Pastikan selalu kosong sebelum isi data baru
+        container.innerHTML = '';
+
+        try {
+            const response = await fetch(API_BASE);
+
+            if (!response.ok) {
+                renderEmptyState(container, {
+                    title: 'Gagal memuat permintaan',
+                    message: 'Server tidak merespons dengan benar. Coba muat ulang halaman.',
+                    isError: true
                 });
-            } catch (error) {
-                console.error("Gagal memuat data:", error);
+                return;
             }
-        }
 
-        // Tambahkan juga fungsi hapus agar tidak error
-        async function hapusRequest(id) {
-            if (confirm("Yakin ingin menghapus permintaan ini?")) {
-                await fetch(`http://localhost:8080/api/request/${id}`, { method: 'DELETE' });
-                loadRequest();
+            const data = await response.json();
+
+            // === EMPTY STATE: tidak ada data sama sekali dari backend ===
+            if (!Array.isArray(data) || data.length === 0) {
+                renderEmptyState(container, {
+                    title: 'Belum ada permintaan',
+                    message: 'Jadilah yang pertama membuat permintaan barang lewat tombol "Buat Permintaan Baru" di atas.'
+                });
+                return;
             }
+
+            container.innerHTML = ''; // Kosongkan kontainer lama
+
+            const idUserLogin = localStorage.getItem("idUser");
+
+            data.forEach(item => {
+                // Logika penentuan warna badge status berdasarkan nilainya
+                let statusBadgeClass = '';
+
+                if (item.statusRequest === 'TERSEDIA') {
+                    statusBadgeClass = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 font-semibold';
+                } else if (item.statusRequest === 'TERPENUHI') {
+                    statusBadgeClass = 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400 font-medium';
+                } else {
+                    statusBadgeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+                }
+
+                const isPemilik = idUserLogin && item.userId === idUserLogin;
+                const idPenawar = getPenawar(item.id);
+                const isPenawar = idUserLogin && idPenawar === idUserLogin;
+
+                // --- Sembunyikan Tombol Hapus (poin 1) ---
+                // Hanya muncul jika request ini milik user yang sedang login.
+                const tombolHapus = isPemilik
+                    ? `<button onclick="hapusRequest('${item.id}')" class="text-red-500 hover:text-red-600 text-[12px] font-medium transition-colors">Hapus</button>`
+                    : '';
+
+                // --- Update Status ---
+                let tombolAksi = '';
+                if (item.statusRequest === 'TERSEDIA' && !isPemilik) {
+                    // Tombol untuk penolong
+                    tombolAksi = `<button onclick="terimaRequest('${item.id}', '${item.userId}')" class="px-3 py-1.5 bg-primary hover:bg-blue-600 text-white text-[12.5px] font-semibold rounded-lg shadow-sm transition-colors">Terima Request</button>`;
+                } else if (item.statusRequest === 'TERPENUHI' && isPemilik) {
+                    // Tombol untuk pemilik request agar bisa klik "Selesai"
+                    tombolAksi = `<button onclick="selesaikanRequest('${item.id}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[12.5px] font-semibold rounded-lg shadow-sm transition-colors">Selesai</button>`;
+                }
+
+                container.innerHTML += `
+                <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="font-semibold text-[16px] dark:text-white">${item.namaBarang}</span>
+                        ${tombolHapus}
+                    </div>
+                    <p class="text-[14.5px] text-gray-500 dark:text-gray-400 mb-4">${item.deskripsi}</p>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[15px] text-blue-600 dark:text-blue-400 font-bold">Rp ${item.anggaran.toLocaleString('id-ID')}</span>
+                        <span class="text-[11px] tracking-wide px-2.5 py-1 rounded-lg ${statusBadgeClass}">${item.statusRequest}</span>
+                    </div>
+                    ${tombolAksi ? `<div class="flex justify-end mt-3">${tombolAksi}</div>` : ''}
+                </div>`;
+            });
+        } catch (error) {
+            console.error("Gagal memuat data:", error);
+            renderEmptyState(container, {
+                title: 'Tidak dapat terhubung ke server',
+                message: 'Pastikan server backend (Spring Boot) sedang berjalan, lalu coba lagi.',
+                isError: true
+            });
         }
+    }
 
-        // PENTING: Jalankan fungsi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', loadRequest);
+    let isSubmitting = false;
 
-        async function submitForm(event) {
-        event.preventDefault();
+    // B. Mengirim Data Request Baru ke Backend
+    async function submitForm(event) {
+        event.preventDefault(); // Mencegah halaman reload otomatis
+
+        // 1. Cek gembok: Jika sedang proses pengiriman, langsung hentikan fungsi
+        if (isSubmitting) return;
+
+        // 2. Kunci gembok: Set penanda bahwa proses sedang berjalan
+        isSubmitting = true;
+
+        // Tangkap tombol untuk di-disable secara visual
+        const btnSubmit = event.target.querySelector('button[type="submit"]');
+        const teksAsli = btnSubmit.innerHTML;
         
-        // Sesuaikan nama field dengan Entity di Java
+        // Ubah tampilan tombol jadi "Mengirim..." dan tidak bisa diklik
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = 'Mengirim...';
+        btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+
         const data = {
             namaBarang: document.getElementById('input-nama-barang').value,
             deskripsi: document.getElementById('input-deskripsi').value,
             anggaran: parseInt(document.getElementById('input-anggaran').value),
-            statusRequest: 'TERSEDIA' // Default status dari enum temanmu
+            statusRequest: 'TERSEDIA',
+            userId: localStorage.getItem("idUser")
         };
 
-        await fetch('http://localhost:8080/api/request', { // Sesuaikan URL controller temanmu
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
+        try {
+            const response = await fetch(API_BASE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-        document.getElementById('form-permintaan').reset();
-        document.getElementById('modal-permintaan').classList.add('hidden');
-        loadRequest();
+            if (response.ok) {
+                document.getElementById('form-permintaan').reset(); // Reset isi input form
+                document.getElementById('modal-permintaan').classList.add('hidden'); // Tutup modal
+                document.body.style.overflow = ''; // Kembalikan scrollbar
+                loadRequest(); // Refresh papan request agar data baru langsung muncul
+            } else {
+                // Tampilkan detail error sebenarnya dari server agar mudah didiagnosis
+                let pesanError = `Gagal mengirim permintaan ke server (status ${response.status}).`;
+                try {
+                    const teksError = await response.text();
+                    console.error("Detail error dari server:", teksError);
+                    if (teksError) pesanError += `\n\nDetail: ${teksError}`;
+                } catch (e) {
+                    // tidak ada body error untuk dibaca
+                }
+                alert(pesanError);
+            }
+        } catch (error) {
+            console.error("Error saat mengirim data:", error);
+            alert("Terjadi kesalahan jaringan.");
+        }finally {
+            // 3. Buka gembok kembali: Kembalikan tombol ke keadaan semula (baik sukses maupun gagal)
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = teksAsli;
+        btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+        isSubmitting = false;
+        }
     }
-    </script>
+
+    // C. Menghapus Data Request
+    // Sesuai RequestController asli: DELETE /api/request/{id} (tanpa query param).
+    // Tombolnya saja yang sudah disembunyikan untuk non-pemilik di loadRequest(),
+    // jadi di sini cukup konfirmasi lalu hapus.
+    async function hapusRequest(id) {
+        if (confirm("Yakin ingin menghapus permintaan ini?")) {
+            try {
+                const response = await fetch(`${API_BASE}/${id}`, { 
+                    method: 'DELETE',
+                    headers: {
+                        'userId': localStorage.getItem("idUser")
+                    } 
+                });
+
+                if (!response.ok) {
+                    const errorMsg = await response.text();
+                    alert("Gagal" + errorMsg);
+                    return;
+                }
+                loadRequest();
+            } catch (error) {
+                console.error("Gagal menghapus data:", error);
+                alert("Tidak dapat terhubung ke server.");
+            }
+        }
+    }
+
+    // D. Update Status: Terima Request (Untuk Penolong)
+    async function terimaRequest(id, pemilikId) {
+        const idUserLogin = localStorage.getItem("idUser");
+        if (!idUserLogin) {
+            alert("Anda harus login terlebih dahulu.");
+            return;
+        }
+
+        try {
+            // Tembak API baru buatan Arya
+            const response = await fetch(`${API_BASE}/${id}/terima`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ penolongId: idUserLogin })
+            });
+
+            if (response.ok) {
+                // Langsung arahkan ke chat pemilik request
+                window.location.href = `roomchat?id=${pemilikId}`; 
+            } else {
+                alert("Gagal menerima request! Mungkin sudah diambil orang lain.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Tidak dapat terhubung ke server.");
+        }
+    }
+
+    // E. Update Status: Selesaikan Request (Untuk Pemilik)
+    async function selesaikanRequest(id) {
+        const idUserLogin = localStorage.getItem("idUser");
+        try {
+            // Tembak API selesai buatan Arya
+            const response = await fetch(`${API_BASE}/${id}/selesai`, {
+                method: 'PUT',
+                headers: { 'userId': idUserLogin } // Header khusus yang diminta controller Arya
+            });
+
+            if (response.ok) {
+                alert("Transaksi selesai!");
+                loadRequest(); // Refresh daftar agar tombol hilang
+            } else {
+                alert("Gagal menyelesaikan transaksi.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Tidak dapat terhubung ke server.");
+        }
+    }
+
+    // ==========================================
+    // 5. EVENT LISTENERS UTAMA (INISIALISASI)
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        // Jalankan load data pertama kali saat halaman dibuka
+        loadRequest();
+
+        // PASANG LISTENER FORM DI SINI (Ini kunci perbaikannya!)
+        const formPermintaan = document.getElementById('form-permintaan');
+        if (formPermintaan) {
+            formPermintaan.addEventListener('submit', submitForm);
+        }
+        
+        // 1. Ambil nama user dari LocalStorage
+        const username = localStorage.getItem("username");
+        
+        // 2. Jika ada nama, buat inisial dan masukkan ke avatar
+        if (username) {
+            const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+            const avatarEl = document.getElementById("dashboard-avatar");
+            if (avatarEl) {
+                avatarEl.textContent = inisial;
+            }
+        }
+    });
+</script>
 </body>
 </html>
