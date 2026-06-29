@@ -837,6 +837,23 @@
         html.dark .empty-state p {
             color: #9ca3af;
         }
+
+        /* ── RESPONSIVE UNTUK HP (MAKSIMAL 768px) ── */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr); /* Mengubah dari 3 kolom menjadi 2 kolom */
+                gap: 12px; /* Memperkecil jarak antar card agar tidak terlalu sempit di HP */
+            }
+            .card-body {
+                padding: 12px; /* Menyesuaikan padding dalam card agar lebih proposional di layar HP */
+            }
+            .card-title {
+                font-size: 14px; /* Sedikit memperkecil font judul agar pas dalam 2 kolom */
+            }
+            .price {
+                font-size: 15px; /* Menyesuaikan ukuran font harga */
+            }
+        }
     </style>
 </head>
 
