@@ -637,25 +637,39 @@
             }
         }
 
+        // KODE SESUDAHNYA
+        // 1. Profil: Mengarahkan ke profil spesifik lawan bicara berdasarkan ID percakapan
         document.getElementById("btnViewProfile").addEventListener("click", () => {
-
-            // Sementara simpan nama target chat
-            const namaTarget = document.getElementById("activeChatName").textContent;
-
-            localStorage.setItem("selectedUsername", namaTarget);
-
-            window.location.href = "profil";
+            if (!currentConversation) return;
+            window.location.href = `/profil-pengguna/${currentConversation}`; 
         });
 
-        document.getElementById("btnClearChat").addEventListener("click", () => {
-            if (confirm("Yakin ingin menghapus semua pesan di obrolan ini?")) {
-                alert("Fitur Bersihkan Obrolan akan dihubungkan ke backend.");
+        // 2. Hapus Chat: Mengirim perintah DELETE ke server
+        document.getElementById("btnClearChat").addEventListener("click", async () => {
+            if (!currentConversation || !confirm("Yakin ingin menghapus semua pesan di obrolan ini?")) return;
+            
+            try {
+                const response = await fetch(`/api/chat/clear/${currentConversation}`, { method: 'DELETE' });
+                if (response.ok) {
+                    document.getElementById("chatContainer").innerHTML = ""; // Bersihkan layar secara instan
+                }
+            } catch (error) {
+                alert("Gagal menghapus chat.");
             }
         });
 
-        document.getElementById("btnBlockUser").addEventListener("click", () => {
-            if (confirm("Yakin ingin memblokir pengguna ini?")) {
-                alert("Fitur Blokir Pengguna akan dihubungkan ke backend.");
+        // 3. Blokir: Mengirim perintah POST ke server
+        document.getElementById("btnBlockUser").addEventListener("click", async () => {
+            if (!currentConversation || !confirm("Yakin ingin memblokir pengguna ini?")) return;
+            
+            try {
+                const response = await fetch(`/api/chat/block/${currentConversation}`, { method: 'POST' });
+                if (response.ok) {
+                    alert("Pengguna berhasil diblokir.");
+                    window.location.reload(); // Refresh untuk memperbarui status UI
+                }
+            } catch (error) {
+                alert("Gagal memblokir pengguna.");
             }
         });
 
