@@ -518,17 +518,19 @@
         btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
 
         const data = {
-            namaBarang: document.getElementById('input-nama-barang').value,
-            deskripsi: document.getElementById('input-deskripsi').value,
-            anggaran: parseInt(document.getElementById('input-anggaran').value),
-            statusRequest: 'TERSEDIA',
-            userId: localStorage.getItem("idUser")
+        namaBarang: document.getElementById('input-nama-barang').value,
+        deskripsi: document.getElementById('input-deskripsi').value,
+        anggaran: parseInt(document.getElementById('input-anggaran').value),
+        // userId tidak perlu dikirim di body karena sudah di-set di Controller melalui Header
         };
 
         try {
             const response = await fetch(API_BASE, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'userId': localStorage.getItem("idUser")
+                },
                 body: JSON.stringify(data)
             });
 
@@ -538,28 +540,20 @@
                 document.body.style.overflow = ''; // Kembalikan scrollbar
                 loadRequest(); // Refresh papan request agar data baru langsung muncul
             } else {
-                // Tampilkan detail error sebenarnya dari server agar mudah didiagnosis
-                let pesanError = `Gagal mengirim permintaan ke server (status ${response.status}).`;
-                try {
-                    const teksError = await response.text();
-                    console.error("Detail error dari server:", teksError);
-                    if (teksError) pesanError += `\n\nDetail: ${teksError}`;
-                } catch (e) {
-                    // tidak ada body error untuk dibaca
-                }
-                alert(pesanError);
+                const errorText = await response.text();
+                alert("Gagal mengirim: " + errorText);
             }
         } catch (error) {
-            console.error("Error saat mengirim data:", error);
+            console.error("Error:", error);
             alert("Terjadi kesalahan jaringan.");
         }finally {
             // 3. Buka gembok kembali: Kembalikan tombol ke keadaan semula (baik sukses maupun gagal)
-        btnSubmit.disabled = false;
-        btnSubmit.innerHTML = teksAsli;
-        btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
-        isSubmitting = false;
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = teksAsli;
+            btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+            isSubmitting = false;
+            }
         }
-    }
 
     // C. Menghapus Data Request
     // Sesuai RequestController asli: DELETE /api/request/{id} (tanpa query param).
