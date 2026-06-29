@@ -796,6 +796,18 @@
                             <input type="date" id="return-date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkborder bg-gray-50 dark:bg-darkbg text-sm outline-none dark:text-white" disabled>
                         </div>
                     </div>
+
+                    <div id="rent-calculator" class="hidden mb-6 p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[13px] text-gray-500 dark:text-gray-400">Durasi Peminjaman</span>
+                            <span id="calc-duration" class="text-[13px] font-bold text-gray-900 dark:text-white">0 hari</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[14px] font-medium text-gray-700 dark:text-gray-300">Total Biaya</span>
+                            <span id="calc-total" class="text-[18px] font-extrabold text-blue-600 dark:text-blue-400">Rp 0</span>
+                        </div>
+                    </div>
+
                     <button id="btn-pinjam" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors">Ajukan Peminjaman</button>
                 </div>
             </div>
@@ -984,11 +996,27 @@
                     actionRent.querySelector('.rent-price-display').innerText = formatRupiah(barang.tarifPinjam);
                     actionRent.querySelector('.max-duration-display').innerText = `${barang.durasiMaksimalHari || 7} hari`;
                     
-                    // --- LOGIKA TOMBOL PINJAM (Dengan validasi pemilik & booked) ---
                     if (isPemilik) {
-                        btnPinjam.disabled = true;
-                        btnPinjam.classList.add("opacity-50", "cursor-not-allowed");
-                        btnPinjam.innerText = "Ini Barang Anda";
+                        // Sembunyikan tombol pinjam dan form tanggal agar tidak terlihat pemilik
+                        btnPinjam.style.display = "none";
+                        const dateContainer = document.getElementById("start-date").parentElement.parentElement;
+                        if (dateContainer) dateContainer.style.display = "none";
+
+                        const infoContainer = document.createElement("div");
+                        infoContainer.className = "mt-4 text-center";
+                        
+                        if (barang.status === "booked") {
+                            infoContainer.innerHTML = `
+                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang ini sedang dipesan (Booked).</p>
+                                <button onclick="window.location.href='transaksi'" class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-bold transition-colors">Lihat Halaman Transaksi</button>
+                            `;
+                        } else {
+                            infoContainer.innerHTML = `
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda sewakan.</p>
+                                <button onclick="window.location.href='transaksi'" class="w-full py-3 border border-gray-300 dark:border-darkborder text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg rounded-xl font-bold transition-colors">Kelola di Halaman Transaksi</button>
+                            `;
+                        }
+                        actionRent.appendChild(infoContainer);
                     } else if (barang.status === "booked") {
                         btnPinjam.disabled = false;
                         btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
@@ -1052,11 +1080,25 @@
                     
                     actionSale.querySelector('.sale-price-display').innerText = formatRupiah(barang.harga || 0);
                     
-                    // --- LOGIKA TOMBOL BELI (Dengan validasi pemilik & booked) ---
                     if (isPemilik) {
-                        btnBeli.disabled = true;
-                        btnBeli.classList.add("opacity-50", "cursor-not-allowed");
-                        btnBeli.innerText = "Ini Barang Anda";
+                        // Sembunyikan tombol beli agar tidak terlihat pemilik
+                        btnBeli.style.display = "none";
+
+                        const infoContainer = document.createElement("div");
+                        infoContainer.className = "mt-4 text-center";
+                        
+                        if (barang.status === "booked") {
+                            infoContainer.innerHTML = `
+                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang ini sedang dipesan (Booked).</p>
+                                <button onclick="window.location.href='transaksi'" class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-bold transition-colors">Lihat Halaman Transaksi</button>
+                            `;
+                        } else {
+                            infoContainer.innerHTML = `
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda jual.</p>
+                                <button onclick="window.location.href='transaksi'" class="w-full py-3 border border-gray-300 dark:border-darkborder text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg rounded-xl font-bold transition-colors">Kelola di Halaman Transaksi</button>
+                            `;
+                        }
+                        actionSale.appendChild(infoContainer);
                     } else if (barang.status === "booked") {
                         btnBeli.disabled = false;
                         btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
@@ -1119,11 +1161,40 @@
             errorMessage.querySelector('p').innerText = "Parameter ID barang tidak ditemukan pada URL.";
         }
 
-        // Validasi Tanggal Sewa
+        // Validasi Tanggal Sewa & Kalkulator Biaya
         const startDateInput = document.getElementById('start-date');
         const returnDateInput = document.getElementById('return-date');
+        const rentCalculator = document.getElementById('rent-calculator');
+        const calcDuration = document.getElementById('calc-duration');
+        const calcTotal = document.getElementById('calc-total');
+
         if (startDateInput && returnDateInput) {
             startDateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+            
+            // Fungsi untuk menghitung otomatis saat tanggal dipilih
+            const calculateRentCost = () => {
+                if (startDateInput.value && returnDateInput.value) {
+                    const start = new Date(startDateInput.value);
+                    const end = new Date(returnDateInput.value);
+                    const timeDiff = end.getTime() - start.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+
+                    // Ambil angka dari tampilan harga di HTML
+                    const tarifText = document.querySelector('.rent-price-display').innerText;
+                    const tarifAngka = parseInt(tarifText.replace(/[^0-9]/g, ''), 10);
+
+                    if (daysDiff > 0 && !isNaN(tarifAngka)) {
+                        rentCalculator.classList.remove('hidden');
+                        calcDuration.innerText = `${daysDiff} hari`;
+                        calcTotal.innerText = formatRupiah(daysDiff * tarifAngka);
+                    } else {
+                        rentCalculator.classList.add('hidden');
+                    }
+                } else {
+                    rentCalculator.classList.add('hidden');
+                }
+            };
+
             startDateInput.addEventListener('change', function() {
                 if (this.value) {
                     returnDateInput.disabled = false;
@@ -1134,7 +1205,10 @@
                     returnDateInput.disabled = true;
                     returnDateInput.value = '';
                 }
+                calculateRentCost(); // Panggil fungsi saat tanggal mulai berubah
             });
+
+            returnDateInput.addEventListener('change', calculateRentCost); // Panggil fungsi saat tanggal kembali berubah
         }
     });
 
