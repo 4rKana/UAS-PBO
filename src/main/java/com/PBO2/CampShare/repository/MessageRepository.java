@@ -11,8 +11,16 @@ import com.PBO2.CampShare.entity.Message;
 public interface MessageRepository
         extends JpaRepository<Message, Integer> {
 
-    List<Message> findByConversationIdOrderByCreatedAtAsc(
-            Integer conversationId);
+    List<Message> findByConversationIdOrderByCreatedAtAsc(Integer conversationId);
+            // Fungsi untuk Soft Delete (menyembunyikan pesan tua)
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE Message m SET m.isDeleted = true WHERE m.createdAt < :threshold")
+    int softDeleteOldMessages(@org.springframework.data.repository.query.Param("threshold") java.time.LocalDateTime threshold);
+
+    // Fungsi untuk Hard Delete (menghapus pesan secara permanen berdasarkan ID Obrolan)
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM Message m WHERE m.conversationId = :conversationId")
+    void deleteByConversationId(@org.springframework.data.repository.query.Param("conversationId") Integer conversationId);
 
     /**
      * Menghitung jumlah pesan BELUM DIBACA milik seorang user, dihitung

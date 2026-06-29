@@ -2,9 +2,11 @@ package com.PBO2.CampShare.repository;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import com.PBO2.CampShare.entity.Conversation;
 
 public interface ConversationRepository extends JpaRepository<Conversation, Integer> {
@@ -28,4 +30,8 @@ public interface ConversationRepository extends JpaRepository<Conversation, Inte
     //    bukan id_user secara langsung.
     @Query(value = "SELECT id_user FROM users WHERE username = :username", nativeQuery = true)
     String findUserIdByUsername(@Param("username") String username);
+
+    // Fungsi untuk mencari semua obrolan yang usianya melebihi batas waktu retensi
+    @Query("SELECT c FROM Conversation c WHERE c.createdAt < :expiryDate")
+    List<Conversation> findExpiredConversations(@Param("expiryDate") java.time.LocalDateTime expiryDate);
 }
