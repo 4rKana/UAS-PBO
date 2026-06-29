@@ -35,25 +35,22 @@ public class RequestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody RequestBarang request) {
-        
-        // Cukup panggil satu fungsi saja agar tidak double save
-        try {
-            RequestBarang savedRequest = requestService.buatRequest(request);
-            return ResponseEntity.ok(savedRequest);
-        } catch (IllegalArgumentException e) {
-        // Ini akan mengirim pesan error ke frontend
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        public ResponseEntity<RequestBarang> create(@RequestBody RequestBarang request, @RequestHeader("userId") String userId) {
+            request.setUserId(userId);
+            return ResponseEntity.ok(requestService.buatRequest(request));
     }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, 
-                                                        @RequestParam StatusRequest status,
+                                                        @RequestParam String status,
                                                         @RequestHeader("userId") String userIdLogin) {
-        try {
-            RequestBarang updateRequest = requestService.ubahStatus(id, status, userIdLogin);
+         try {
+            StatusRequest statusEnum = StatusRequest.valueOf(status.toString().toUpperCase()); 
+            RequestBarang updateRequest = requestService.ubahStatus(id, statusEnum, userIdLogin);
             return ResponseEntity.ok(updateRequest);
+        } catch (IllegalArgumentException e) {
+            // Menangani jika status string tidak cocok dengan Enum
+            return ResponseEntity.badRequest().body("Status tidak valid!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
@@ -66,6 +63,28 @@ public class RequestController {
             return ResponseEntity.ok("Data berhasil dihapus");
         } catch (RuntimeException e) {
             return ResponseEntity.status(403).body(e.getMessage());
+        }
+
+    }
+
+    @PutMapping("/{id}/terima")
+    public ResponseEntity<?> terimaRequest(@PathVariable Long id, @RequestBody java.util.Map<String, String> body) {
+        try {
+            String penolongId = body.get("penolongId");
+            requestService.terimaRequest(id, penolongId);
+            return ResponseEntity.ok("Request berhasil diterima!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/selesai")
+    public ResponseEntity<?> selesaikanRequest(@PathVariable Long id, @RequestHeader("userId") String userIdLogin) {
+        try {
+            requestService.selesaikanRequest(id, userIdLogin);
+            return ResponseEntity.ok("Transaksi selesai!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 }

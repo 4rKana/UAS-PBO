@@ -64,14 +64,44 @@ public class RequestService {
         return requestRepository.save(request);
     }
 
+    public void terimaRequest(Long id, String penolongId) {
+        RequestBarang request = requestRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Request dengan ID " + id + " tidak ditemukan"));
+
+        if(request.getUserId().equals(penolongId)) {
+            throw new RuntimeException("Anda tidak bisa menerima request milik anda sendiri!");
+        }
+        if(request.getStatusRequest() != StatusRequest.TERSEDIA) {
+            throw new RuntimeException("Barang tidak tersedia!");
+        }
+
+        request.setStatusRequest(StatusRequest.TERPENUHI);
+        request.setAcceptedByUserId(penolongId);
+        requestRepository.save(request);
+    }
+    // 2. Fungsi untuk pemilik request menyelesaikan transaksi
+    public void selesaikanRequest(Long id, String userIdLogin) {
+        RequestBarang request = requestRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Request dengan ID " + id + " tidak ditemukan"));
+        
+        // Validasi: Hanya pemilik request yang bisa menyelesaikan
+        if (!request.getUserId().equals(userIdLogin)) {
+            throw new RuntimeException("Hanya pemilik request yang bisa menyelesaikan transaksi!");
+        }
+
+        request.setStatusRequest(StatusRequest.SELESAI);
+        requestRepository.save(request);
+    }
+
     public void hapusRequest(Long id, String userIdLogin) {
         RequestBarang requestBarang = requestRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Request dengan ID " + id + " tidak ditemukan"));
-
+        
+        // TAMBAHKAN VALIDASI INI:
         if (!requestBarang.getUserId().equals(userIdLogin)) {
-            throw new RuntimeException("Anda tidak dapat memiliki izin untuk menghapus data ini!");
+            throw new RuntimeException("Anda tidak berhak menghapus request milik orang lain!");
         }
-
+        
         requestRepository.delete(requestBarang);
     }
 } 
