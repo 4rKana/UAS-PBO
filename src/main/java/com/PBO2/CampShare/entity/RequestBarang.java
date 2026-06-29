@@ -21,9 +21,13 @@ public class RequestBarang {
 
     private String namaBarang;
     private String deskripsi;
+    private String userId;
     
     @Column(name = "anggaran")
     private Integer anggaran;
+
+    @Column(name = "accepted_by_user_id")
+    private String acceptedByUserId;
 
     @Enumerated(EnumType.STRING)
     private StatusRequest statusRequest;
@@ -32,11 +36,15 @@ public class RequestBarang {
     public RequestBarang() {}
 
     // Constructor dengan Parameter
-    public RequestBarang(String namaBarang, String deskripsi, StatusRequest statusRequest) {
+
+    public RequestBarang(String namaBarang, String deskripsi, Integer anggaran, StatusRequest statusRequest, String userId, String acceptedByUserId) {
+
         this.namaBarang = namaBarang;
         this.deskripsi = deskripsi;
         this.statusRequest = statusRequest;
         this.anggaran = anggaran;
+        this.userId = userId;
+        this.acceptedByUserId = acceptedByUserId;
     }
 
     // Getter dan Setter
@@ -54,4 +62,11 @@ public class RequestBarang {
 
     public StatusRequest getStatusRequest() { return statusRequest; }
     public void setStatusRequest(StatusRequest statusRequest) { this.statusRequest = statusRequest; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+
+    public String getAcceptedByUserId() { return acceptedByUserId; }
+    public void setAcceptedByUserId(String acceptedByUserId) { this.acceptedByUserId = acceptedByUserId; }
+
 }
