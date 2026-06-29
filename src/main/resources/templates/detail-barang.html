@@ -930,6 +930,11 @@
 
                 // --- TAMBAHAN REVISI ARYA: Pengecekan Status Barang ---
                 // Berdasarkan enum di backend: available, sold, booked, archived
+                // 1. Cek siapa yang sedang buka halaman ini
+                const userIdLogin = localStorage.getItem("idUser");
+                const isPemilik = barang.pemilik && barang.pemilik.idUser === userIdLogin;
+
+                // --- Pengecekan Status Barang ---
                 const statusTag = document.createElement("span");
                 statusTag.className = "ml-3 px-2.5 py-1 rounded-full text-[12px] font-bold";
 
@@ -939,20 +944,9 @@
                 } else if (barang.status === "booked") {
                     statusTag.classList.add("bg-yellow-100", "text-yellow-700");
                     statusTag.innerText = "Telah di-Booked";
-                    btnBeli.disabled = true;
-                    btnBeli.classList.add("opacity-50", "cursor-not-allowed");
-                    btnBeli.innerText = "Barang Sedang Dipesan";
-                    
-                    btnPinjam.disabled = true;
-                    btnPinjam.classList.add("opacity-50", "cursor-not-allowed");
-                    btnPinjam.innerText = "Barang Sedang Dipesan";
                 } else {
                     statusTag.classList.add("bg-red-100", "text-red-700");
                     statusTag.innerText = "Tidak Tersedia";
-                    btnBeli.disabled = true;
-                    btnBeli.classList.add("opacity-50", "cursor-not-allowed");
-                    btnPinjam.disabled = true;
-                    btnPinjam.classList.add("opacity-50", "cursor-not-allowed");
                 }
                 document.getElementById("item-title").appendChild(statusTag);
 
@@ -972,7 +966,7 @@
 
                 if (barang.pemilik) {
                     btnOwnerProfile.onclick = () => {
-                        window.location.href = `profil?id=${barang.pemilik.idUser}`; // <--- Ubah jadi .idUser
+                        window.location.href = `profil?id=${barang.pemilik.idUser}`; 
                     };
                     ownerName.innerText = barang.pemilik.username || 'Anonim';
                     ownerBatch.innerText = `Angkatan ${barang.pemilik.angkatan || '-'}`;
@@ -990,47 +984,64 @@
                     actionRent.querySelector('.rent-price-display').innerText = formatRupiah(barang.tarifPinjam);
                     actionRent.querySelector('.max-duration-display').innerText = `${barang.durasiMaksimalHari || 7} hari`;
                     
-                    // --- LOGIKA TOMBOL PINJAM BARU ---
-                    btnPinjam.onclick = async () => {
-                        const mulai = document.getElementById("start-date").value;
-                        const kembali = document.getElementById("return-date").value;
-
-                        if (!mulai || !kembali) {
-                            alert("Pilih tanggal peminjaman terlebih dahulu.");
-                            return;
-                        }
-
+                    // --- LOGIKA TOMBOL PINJAM (Dengan validasi pemilik & booked) ---
+                    if (isPemilik) {
                         btnPinjam.disabled = true;
-                        btnPinjam.innerText = "Memproses...";
+                        btnPinjam.classList.add("opacity-50", "cursor-not-allowed");
+                        btnPinjam.innerText = "Ini Barang Anda";
+                    } else if (barang.status === "booked") {
+                        btnPinjam.disabled = false;
+                        btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                        btnPinjam.classList.add("bg-green-600", "hover:bg-green-700");
+                        btnPinjam.innerText = "Hubungi Pemilik (Chat)";
+                        btnPinjam.onclick = () => {
+                            window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                        };
+                    } else if (barang.status !== "available") {
+                        btnPinjam.disabled = true;
+                        btnPinjam.classList.add("opacity-50", "cursor-not-allowed");
+                        btnPinjam.innerText = "Tidak Tersedia";
+                    } else {
+                        // Normal, bisa dipinjam
+                        btnPinjam.onclick = async () => {
+                            const mulai = document.getElementById("start-date").value;
+                            const kembali = document.getElementById("return-date").value;
 
-                        try {
-                            const userId = localStorage.getItem("idUser"); // Pastikan ini string UUID dari backend
-                            
-                            const response = await fetch(`http://localhost:8080/api/pinjam`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    barang: { id: barang.id },
-                                    peminjam: { idUser: userId },
-                                    tanggalMulai: mulai,
-                                    tanggalKembali: kembali
-                                })
-                            });
+                            if (!mulai || !kembali) {
+                                alert("Pilih tanggal peminjaman terlebih dahulu.");
+                                return;
+                            }
 
-                            if (response.ok) {
-                                window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
-                            } else {
-                                alert("Gagal mengajukan pinjaman. Cek kembali ketersediaan barang.");
+                            btnPinjam.disabled = true;
+                            btnPinjam.innerText = "Memproses...";
+
+                            try {
+                                const response = await fetch(`http://localhost:8080/api/pinjam`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        barang: { id: barang.id },
+                                        peminjam: { idUser: userIdLogin },
+                                        tanggalMulai: mulai,
+                                        tanggalKembali: kembali
+                                    })
+                                });
+
+                                if (response.ok) {
+                                    window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                                } else {
+                                    alert("Gagal mengajukan pinjaman. Cek kembali ketersediaan barang.");
+                                    btnPinjam.disabled = false;
+                                    btnPinjam.innerText = "Ajukan Peminjaman";
+                                }
+                            } catch (error) {
+                                console.error("Fetch error:", error);
+                                alert("Terjadi gangguan saat menghubungi server.");
                                 btnPinjam.disabled = false;
                                 btnPinjam.innerText = "Ajukan Peminjaman";
                             }
-                        } catch (error) {
-                            console.error("Fetch error:", error);
-                            alert("Terjadi gangguan saat menghubungi server.");
-                            btnPinjam.disabled = false;
-                            btnPinjam.innerText = "Ajukan Peminjaman";
-                        }
-                    };
+                        };
+                    }
                 } else {
                     // --- SETUP UI UNTUK BARANG JUAL ---
                     badgeType.innerText = 'Dijual';
@@ -1041,45 +1052,60 @@
                     
                     actionSale.querySelector('.sale-price-display').innerText = formatRupiah(barang.harga || 0);
                     
-                    // --- LOGIKA TOMBOL BELI BARU ---
-                    btnBeli.onclick = async () => {
+                    // --- LOGIKA TOMBOL BELI (Dengan validasi pemilik & booked) ---
+                    if (isPemilik) {
                         btnBeli.disabled = true;
-                        btnBeli.innerText = "Memproses...";
+                        btnBeli.classList.add("opacity-50", "cursor-not-allowed");
+                        btnBeli.innerText = "Ini Barang Anda";
+                    } else if (barang.status === "booked") {
+                        btnBeli.disabled = false;
+                        btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                        btnBeli.classList.add("bg-green-600", "hover:bg-green-700");
+                        btnBeli.innerText = "Hubungi Penjual (Chat)";
+                        btnBeli.onclick = () => {
+                            window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                        };
+                    } else if (barang.status !== "available") {
+                        btnBeli.disabled = true;
+                        btnBeli.classList.add("opacity-50", "cursor-not-allowed");
+                        btnBeli.innerText = "Tidak Tersedia";
+                    } else {
+                        // Normal, bisa dibeli
+                        btnBeli.onclick = async () => {
+                            btnBeli.disabled = true;
+                            btnBeli.innerText = "Memproses...";
 
-                        try {
-                            const userId = localStorage.getItem("idUser"); 
-                            
-                            const responseBuat = await fetch(`http://localhost:8080/api/transaksi-beli/buat`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    barang: { id: barang.id },
-                                    pembeli: { idUser: userId }
-                                })
-                            });
-
-                            if (responseBuat.ok) {
-                                const dataTransaksi = await responseBuat.json();
-                                
-                                // 2. Tembak API Bawaan Athar untuk BOOKING (ngunci barang)
-                                await fetch(`http://localhost:8080/api/transaksi-beli/${dataTransaksi.idTransaksi}/booking`, {
-                                    method: 'POST'
+                            try {
+                                const responseBuat = await fetch(`http://localhost:8080/api/transaksi-beli/buat`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        barang: { id: barang.id },
+                                        pembeli: { idUser: userIdLogin }
+                                    })
                                 });
-                                
-                                // Jika sukses, arahkan ke chat
-                                window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
-                            } else {
-                                alert("Gagal memproses pesanan. Barang mungkin sudah di-booked.");
+
+                                if (responseBuat.ok) {
+                                    const dataTransaksi = await responseBuat.json();
+                                    
+                                    await fetch(`http://localhost:8080/api/transaksi-beli/${dataTransaksi.idTransaksi}/booking`, {
+                                        method: 'POST'
+                                    });
+                                    
+                                    window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                                } else {
+                                    alert("Gagal memproses pesanan. Barang mungkin sudah di-booked.");
+                                    btnBeli.disabled = false;
+                                    btnBeli.innerText = "Beli & Pesan Barang";
+                                }
+                            } catch (error) {
+                                console.error("Fetch error:", error);
+                                alert("Terjadi gangguan saat menghubungi server.");
                                 btnBeli.disabled = false;
                                 btnBeli.innerText = "Beli & Pesan Barang";
                             }
-                        } catch (error) {
-                            console.error("Fetch error:", error);
-                            alert("Terjadi gangguan saat menghubungi server.");
-                            btnBeli.disabled = false;
-                            btnBeli.innerText = "Beli & Pesan Barang";
-                        }
-                    };
+                        };
+                    }
                 }
 
             } catch (error) {
