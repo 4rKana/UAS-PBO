@@ -462,16 +462,14 @@
                     ? `<button onclick="hapusRequest('${item.id}')" class="text-red-500 hover:text-red-600 text-[12px] font-medium transition-colors">Hapus</button>`
                     : '';
 
-                // --- Update Status / Tombol Aksi (poin 2) ---
-                // Dibatasi berdasarkan status barang & siapa yang sedang login:
-                //  - Status TERSEDIA & bukan pemilik -> boleh "Tawarkan Barang Saya"
-                //  - Status TERSEDIA & pemilik       -> tidak ada aksi (tunggu penawar)
-                //  - Status TERPENUHI                -> tidak ada aksi sama sekali (sudah final)
+                // --- Update Status ---
                 let tombolAksi = '';
-                if (item.statusRequest === 'TERSEDIA') {
-                    if (!isPemilik) {
-                        tombolAksi = `<button onclick="tawarkanBarang('${item.id}')" class="px-3 py-1.5 bg-primary hover:bg-blue-600 text-white text-[12.5px] font-semibold rounded-lg transition-colors">Tawarkan Barang Saya</button>`;
-                    }
+                if (item.statusRequest === 'TERSEDIA' && !isPemilik) {
+                    // Tombol untuk penolong
+                    tombolAksi = `<button onclick="terimaRequest('${item.id}', '${item.userId}')" class="px-3 py-1.5 bg-primary hover:bg-blue-600 text-white text-[12.5px] font-semibold rounded-lg shadow-sm transition-colors">Terima Request</button>`;
+                } else if (item.statusRequest === 'TERPENUHI' && isPemilik) {
+                    // Tombol untuk pemilik request agar bisa klik "Selesai"
+                    tombolAksi = `<button onclick="selesaikanRequest('${item.id}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[12.5px] font-semibold rounded-lg shadow-sm transition-colors">Selesai</button>`;
                 }
 
                 container.innerHTML += `
@@ -590,46 +588,52 @@
         }
     }
 
-    // D. Update Status (poin 2) — dipakai untuk "Tawarkan Barang Saya"
-    // Sesuai RequestController asli: PUT /api/request/{id}/status?status=...
-    async function updateStatus(id, statusBaru) {
-        const response = await fetch(`${API_BASE}/${id}/status?status=${encodeURIComponent(statusBaru)}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'userId': localStorage.getItem("idUser")
-            }
-        });
-        return response;
-    }
-
-    // Dipanggil saat kakak tingkat menekan "Tawarkan Barang Saya".
-    // Karena StatusRequest hanya TERSEDIA/TERPENUHI (tidak ada status tengah),
-    // begitu ditawarkan, status langsung berubah jadi TERPENUHI agar barang
-    // tidak bisa diajukan oleh orang lain lagi (poin 3: Fitur Transaksi Selesai).
-    async function tawarkanBarang(id) {
+    // D. Update Status: Terima Request (Untuk Penolong)
+    async function terimaRequest(id, pemilikId) {
         const idUserLogin = localStorage.getItem("idUser");
         if (!idUserLogin) {
-            alert("Anda harus login terlebih dahulu untuk menawarkan barang.");
-            return;
-        }
-
-        if (!confirm("Tawarkan barang Anda untuk permintaan ini? Setelah ditawarkan, permintaan akan ditandai selesai.")) {
+            alert("Anda harus login terlebih dahulu.");
             return;
         }
 
         try {
-            const response = await updateStatus(id, 'TERPENUHI');
-            if (!response.ok) {
-                alert("Gagal menawarkan barang. Coba lagi.");
-                return;
+            // Tembak API baru buatan Arya
+            const response = await fetch(`${API_BASE}/${id}/terima`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ penolongId: idUserLogin })
+            });
+
+            if (response.ok) {
+                // Langsung arahkan ke chat pemilik request
+                window.location.href = `roomchat?id=${pemilikId}`; 
+            } else {
+                alert("Gagal menerima request! Mungkin sudah diambil orang lain.");
             }
-            // Simpan catatan lokal siapa penawarnya (backend tidak punya kolom ini)
-            setPenawar(id, idUserLogin);
-            alert("Barang Anda berhasil ditawarkan! Permintaan ini sudah ditandai selesai.");
-            loadRequest();
         } catch (error) {
-            console.error("Gagal menawarkan barang:", error);
+            console.error("Error:", error);
+            alert("Tidak dapat terhubung ke server.");
+        }
+    }
+
+    // E. Update Status: Selesaikan Request (Untuk Pemilik)
+    async function selesaikanRequest(id) {
+        const idUserLogin = localStorage.getItem("idUser");
+        try {
+            // Tembak API selesai buatan Arya
+            const response = await fetch(`${API_BASE}/${id}/selesai`, {
+                method: 'PUT',
+                headers: { 'userId': idUserLogin } // Header khusus yang diminta controller Arya
+            });
+
+            if (response.ok) {
+                alert("Transaksi selesai!");
+                loadRequest(); // Refresh daftar agar tombol hilang
+            } else {
+                alert("Gagal menyelesaikan transaksi.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
             alert("Tidak dapat terhubung ke server.");
         }
     }
