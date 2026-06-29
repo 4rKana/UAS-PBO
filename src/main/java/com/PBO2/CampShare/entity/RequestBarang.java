@@ -44,7 +44,6 @@ public class RequestBarang {
         this.deskripsi = deskripsi;
         this.anggaran = anggaran;
         this.statusRequest = statusRequest;
-        this.anggaran = anggaran;
         this.userId = userId;
         this.acceptedByUserId = acceptedByUserId;
     }
