@@ -1004,14 +1004,14 @@
                         btnPinjam.innerText = "Memproses...";
 
                         try {
-                            const userId = localStorage.getItem("userId"); // Pastikan ini string UUID dari backend
+                            const userId = localStorage.getItem("idUser"); // Pastikan ini string UUID dari backend
                             
-                            const response = await fetch(`http://localhost:8080/api/transaksi-pinjam/pesan`, {
+                            const response = await fetch(`http://localhost:8080/api/pinjam`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    idBarang: barang.id,
-                                    idPeminjam: userId,
+                                    barang: { id: barang.id },
+                                    peminjam: { idUser: userId },
                                     tanggalMulai: mulai,
                                     tanggalKembali: kembali
                                 })
@@ -1047,18 +1047,26 @@
                         btnBeli.innerText = "Memproses...";
 
                         try {
-                            const userId = localStorage.getItem("userId"); 
+                            const userId = localStorage.getItem("idUser"); 
                             
-                            const response = await fetch(`http://localhost:8080/api/transaksi-beli/pesan`, {
+                            const responseBuat = await fetch(`http://localhost:8080/api/transaksi-beli/buat`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    idBarang: barang.id,
-                                    idPembeli: userId
+                                    barang: { id: barang.id },
+                                    pembeli: { idUser: userId }
                                 })
                             });
 
-                            if (response.ok) {
+                            if (responseBuat.ok) {
+                                const dataTransaksi = await responseBuat.json();
+                                
+                                // 2. Tembak API Bawaan Athar untuk BOOKING (ngunci barang)
+                                await fetch(`http://localhost:8080/api/transaksi-beli/${dataTransaksi.idTransaksi}/booking`, {
+                                    method: 'POST'
+                                });
+                                
+                                // Jika sukses, arahkan ke chat
                                 window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
                             } else {
                                 alert("Gagal memproses pesanan. Barang mungkin sudah di-booked.");
