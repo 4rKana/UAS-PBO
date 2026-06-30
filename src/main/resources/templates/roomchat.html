@@ -468,9 +468,54 @@
             // ini bahkan tidak terpanggil sama sekali untuk kasus tersebut).
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
-            loadChatList();
+       window.addEventListener("DOMContentLoaded", async () => {
+            // 1. Muat daftar chat bawaan dan sambungkan WebSocket
+            await loadChatList();
             connectWebSocket();
+
+            // 2. Baca parameter pintar dari URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUser = urlParams.get('targetUser');
+            const autoMsg = urlParams.get('autoMsg');
+
+            // 3. Jika URL mengandung targetUser (User datang dari halaman barang)
+            if (targetUser) {
+                const currentUserId = document.body.getAttribute("data-user-id");
+                
+                try {
+                    // Tembak API untuk membuat atau membuka obrolan dengan penjual ini
+                    const response = await fetch(`/api/chat/start?currentUserId=${currentUserId}&targetUsername=${encodeURIComponent(targetUser)}`, {
+                        method: "POST"
+                    });
+
+                    if (response.ok) {
+                        const chatDto = await response.json();
+                        
+                        // Refresh daftar chat sebelah kiri (false = jangan auto-buka yang pertama)
+                        await loadChatList(false); 
+                        
+                        // BUKA ROOM CHAT YANG TEPAT!
+                        loadConversation(chatDto.id, chatDto.nama);
+
+                        // 4. Masukkan pesan otomatis ke dalam kotak teks
+                        if (autoMsg) {
+                            setTimeout(() => {
+                                const inputChatBox = document.getElementById("messageInput");
+                                if (inputChatBox) {
+                                    inputChatBox.value = autoMsg;
+                                    
+                                    // 💡 OPTIONAL: 
+                                    // Jika ingin pesannya LANGSUNG TERKIRIM tanpa perlu diklik manual, 
+                                    // hapus tanda dua garis miring '//' di depan kode di bawah ini:
+                                    // sendMessage();
+                                }
+                            }, 500); // Beri jeda 0.5 detik agar chatbox selesai dimuat
+                        }
+                    }
+                } catch (error) {
+                    console.error("Gagal membuka obrolan otomatis:", error);
+                }
+            }
         });
 
         const username = localStorage.getItem("username");

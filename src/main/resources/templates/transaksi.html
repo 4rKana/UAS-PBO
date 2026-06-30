@@ -307,7 +307,7 @@
 
     <!-- ─── JAVASCRIPT ─── -->
     <script>
-        // ── BUKA/TUTUP SIDEBAR ──
+   // ── BUKA/TUTUP SIDEBAR ──
         function toggleMobileNav() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('mobileNavOverlay');
@@ -359,26 +359,41 @@
         if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
         if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
 
+
+        // =========================================================
+        // ── LOGIKA TRANSAKSI DINAMIS ──
+        // =========================================================
+        
+        // Simpan HTML sementara agar bisa pindah tab dengan mulus
+        window.buyContentHTML = `<p class="text-center text-gray-500 py-10">Memuat riwayat pembelian...</p>`;
+        window.sellContentHTML = `<p class="text-center text-gray-500 py-10">Memuat riwayat penjualan...</p>`;
+
         // ── INISIALISASI HALAMAN ──
         document.addEventListener('DOMContentLoaded', () => {
-
-            // 2. Tampilkan inisial nama di avatar
+            const username = localStorage.getItem("username");
+            const idUser = localStorage.getItem("idUser"); // Ambil ID User dari lokal
+            
+            // Tampilkan inisial nama di avatar
             if (username) {
                 const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
-                document.getElementById("nav-avatar").textContent = inisial;
+                const avatarEl = document.getElementById("dashboard-avatar");
+                if (avatarEl) avatarEl.textContent = inisial;
             }
 
-            // 3. Langsung panggil data dari backend untuk tab "Membeli/Meminjam"
-            fetchDataMembeliMeminjam(idUser);
+            if (idUser) {
+                // Langsung jalankan 2 fungsi untuk menarik data pembeli & penjual
+                fetchDataMembeliMeminjam(idUser);
+                fetchDataMenjualMenyewakan(idUser);
+            } else {
+                document.getElementById('transaction-list').innerHTML = 
+                    `<p class="text-center text-red-500 py-10">Silakan login terlebih dahulu untuk melihat transaksi.</p>`;
+            }
         });
 
-        // ── FUNGSI MENGAMBIL DATA TRANSAKSI DARI BACKEND ──
+// ── FUNGSI 1: MENGAMBIL DATA PEMBELIAN & PEMINJAMAN ──
         function fetchDataMembeliMeminjam(idUser) {
-            const container = document.getElementById('transaction-list');
-            container.innerHTML = `<p class="text-center text-gray-500 py-10">Mengambil data transaksi dari server...</p>`;
-
-            const fetchBeli = fetch(`http://localhost:8080/api/transaksi-beli/user/${idUser}`).then(res => res.ok ? res.json() : []);
-            const fetchPinjam = fetch(`http://localhost:8080/api/pinjam/user/${idUser}`).then(res => res.ok ? res.json() : []);
+            const fetchBeli = fetch(`/api/transaksi-beli/user/${idUser}`).then(res => res.ok ? res.json() : []);
+            const fetchPinjam = fetch(`/api/pinjam/user/${idUser}`).then(res => res.ok ? res.json() : []);
 
             Promise.all([fetchBeli, fetchPinjam])
                 .then(([dataBeli, dataPinjam]) => {
@@ -392,53 +407,228 @@
                     }
 
                     if (semuaTransaksi.length === 0) {
-                        container.innerHTML = `
+                        window.buyContentHTML = `
                             <div class="text-center py-10 bg-white dark:bg-cardbg rounded-xl shadow-sm">
                                 <p class="text-gray-500 dark:text-gray-400">Anda belum pernah melakukan pembelian atau penyewaan.</p>
-                                <a href="dashboard.html" class="inline-block mt-4 text-blue-500 font-semibold hover:underline">Mulai Cari Barang</a>
+                                <a href="dashboard" class="inline-block mt-4 text-primary font-semibold hover:underline">Mulai Cari Barang</a>
                             </div>`;
-                        return;
+                    } else {
+                        let htmlContent = "";
+                        semuaTransaksi.forEach(trx => {
+                            const namaBarang = trx.barang?.namaBarang || 'Barang Tidak Diketahui';
+                            
+                            // Perbaikan pengambilan Harga: Jika totalHarga kosong, ambil dari hargaBarang milik objek barang
+                            const harga = trx.totalHarga || trx.hargaTotal || trx.barang?.hargaBarang || 0;
+                            const formatHarga = `Rp ${harga.toLocaleString('id-ID')}`;
+                            
+                            const status = (trx.status || 'PROSES').toUpperCase();
+                            const idTrx = trx.id || trx.idTransaksi || '-';
+                            
+                            const labelBg = trx.tipeOrder === 'BELI' ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600' : 'bg-green-50 dark:bg-green-900/20 text-green-600';
+                            
+                            let statusText = status;
+                            let statusColor = "text-primary";
+                            if (status === "SELESAI") { statusColor = "text-green-600 dark:text-green-400"; statusText = "Transaksi Selesai"; }
+                            else if (status === "DIAJUKAN" || status === "BOOKED" || status === "PROSES") { statusColor = "text-yellow-600 dark:text-yellow-400"; statusText = "Sedang Booked / Proses"; }
+
+                            htmlContent += `
+                                <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm transition-colors mb-4 hover:shadow-md">
+                                    <div class="flex flex-wrap items-start justify-between gap-4">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">${namaBarang}</h3>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">ID Transaksi: <span class="font-mono text-gray-700 dark:text-gray-300">${idTrx}</span></p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-lg font-bold text-primary">${formatHarga}</span>
+                                            <span class="block text-sm font-semibold ${labelBg} px-3 py-0.5 rounded-full mt-1">${trx.tipeOrder}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
+                                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Status Saat Ini: <span class="${statusColor}">${statusText}</span></p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        window.buyContentHTML = htmlContent;
                     }
 
-                    let htmlContent = "";
-                    semuaTransaksi.forEach(trx => {
-                        const namaBarang = trx.barang?.namaBarang || 'Barang Tidak Diketahui';
-                        const harga = trx.totalHarga || trx.hargaTotal || 0;
-                        const formatHarga = `Rp ${harga.toLocaleString('id-ID')}`;
-                        const status = trx.status || 'PROSES';
-                        
-                        const labelBg = trx.tipeOrder === 'BELI' ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600' : 'bg-green-50 dark:bg-green-900/20 text-green-600';
-                        
-                        let statusText = status;
-                        let statusColor = "text-primary";
-                        if (status === "SELESAI") { statusColor = "text-green-600 dark:text-green-400"; statusText = "Transaksi Selesai"; }
-                        else if (status === "DIAJUKAN") { statusColor = "text-yellow-600 dark:text-yellow-400"; statusText = "Menunggu Persetujuan Penjual"; }
-
-                        htmlContent += `
-                            <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm transition-colors mb-4">
-                                <div class="flex flex-wrap items-start justify-between gap-4">
-                                    <div>
-                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">${namaBarang}</h3>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">ID Transaksi: ${trx.id || trx.idTransaksi || '-'}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="text-lg font-bold text-primary">${formatHarga}</span>
-                                        <span class="block text-sm font-semibold ${labelBg} px-3 py-0.5 rounded-full mt-1">${trx.tipeOrder}</span>
-                                    </div>
-                                </div>
-                                <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
-                                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Status Saat Ini: <span class="${statusColor}">${statusText}</span></p>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    window.buyContentHTML = htmlContent;
-                    container.innerHTML = htmlContent;
+                    if(document.getElementById('tab-buy').classList.contains('bg-primary')) {
+                        document.getElementById('transaction-list').innerHTML = window.buyContentHTML;
+                    }
                 })
                 .catch(error => {
-                    container.innerHTML = `<p class="text-center text-red-500 py-10">Gagal mengambil riwayat transaksi dari server.</p>`;
+                    console.error("Error:", error);
+                    window.buyContentHTML = `<p class="text-center text-red-500 py-10">Gagal memuat riwayat pembelian.</p>`;
                 });
+        }
+
+// ── FUNGSI 2: MENGAMBIL DATA PENJUALAN & PENYEWAAN ──
+        function fetchDataMenjualMenyewakan(idUser) {
+            const fetchBeliAll = fetch(`/api/transaksi-beli`).then(res => res.ok ? res.json() : []);
+            const fetchPinjamAll = fetch(`/api/pinjam`).then(res => res.ok ? res.json() : []);
+
+            Promise.all([fetchBeliAll, fetchPinjamAll])
+                .then(([dataBeli, dataPinjam]) => {
+                    let semuaPenjualan = [];
+                    
+                    if (dataBeli.length > 0) {
+                        const filterBeli = dataBeli.filter(trx => 
+                            trx.barang?.pemilik?.idUser && 
+                            String(trx.barang.pemilik.idUser) === String(idUser)
+                        );
+                        filterBeli.forEach(trx => { trx.tipeOrder = 'DIJUAL'; semuaPenjualan.push(trx); });
+                    }
+                    if (dataPinjam.length > 0) {
+                        const filterPinjam = dataPinjam.filter(trx => 
+                            trx.barang?.pemilik?.idUser && 
+                            String(trx.barang.pemilik.idUser) === String(idUser)
+                        );
+                        filterPinjam.forEach(trx => { trx.tipeOrder = 'DISEWAKAN'; semuaPenjualan.push(trx); });
+                    }
+
+                    if (semuaPenjualan.length === 0) {
+                        window.sellContentHTML = `
+                            <div class="text-center py-10 bg-white dark:bg-cardbg rounded-xl shadow-sm border border-gray-200 dark:border-darkborder">
+                                <p class="text-gray-500 dark:text-gray-400">Belum ada pesanan masuk untuk barang yang Anda iklankan.</p>
+                            </div>`;
+                    } else {
+                        let htmlContent = "";
+                        semuaPenjualan.forEach(trx => {
+                            const namaBarang = trx.barang?.namaBarang || 'Barang Tidak Diketahui';
+                            const namaPembeli = trx.pembeli?.username || trx.peminjam?.username || 'Seseorang';
+                            const harga = trx.totalHarga || trx.hargaTotal || trx.barang?.hargaBarang || 0;
+                            const formatHarga = `Rp ${harga.toLocaleString('id-ID')}`;
+                            const status = (trx.status || 'PROSES').toUpperCase();
+                            const idTrx = trx.id || trx.idTransaksi || '';
+                            
+                            const labelBg = trx.tipeOrder === 'DIJUAL' ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600' : 'bg-green-50 dark:bg-green-900/20 text-green-600';
+                            
+                            let statusColor = "text-primary";
+                            let statusText = status;
+                            let actionButton = "";
+
+                            // Logika Tombol Aksi otomatis menggunakan idTrx
+                            if (status === "SELESAI") { 
+                                statusColor = "text-green-600 dark:text-green-400"; 
+                                statusText = "Transaksi Selesai"; 
+                            } else if (status === "DIAJUKAN" || status === "PROSES" || status === "PENDING") { 
+                                statusColor = "text-yellow-600 dark:text-yellow-400"; 
+                                statusText = "Menunggu Konfirmasi Anda"; 
+                                
+                                if (trx.tipeOrder === 'DIJUAL') {
+                                    actionButton = `<button onclick="konfirmasiBeli('${idTrx}', 'booking')" class="mt-4 w-full bg-primary hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shadow-sm">Terima Pesanan</button>`;
+                                } else {
+                                    actionButton = `<button onclick="konfirmasiPinjam('${idTrx}', 'BOOKED')" class="mt-4 w-full bg-primary hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shadow-sm">Terima Sewaan</button>`;
+                                }
+                            } else if (status === "BOOKED" || status === "DISETUJUI") {
+                                statusColor = "text-blue-600 dark:text-blue-400"; 
+                                statusText = "Barang Sedang Di-booking/Disewa"; 
+
+                                if (trx.tipeOrder === 'DIJUAL') {
+                                    actionButton = `<button onclick="konfirmasiBeli('${idTrx}', 'selesai')" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shadow-sm">Tandai Selesai</button>`;
+                                } else {
+                                    actionButton = `<button onclick="konfirmasiPinjam('${idTrx}', 'SELESAI')" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shadow-sm">Tandai Selesai</button>`;
+                                }
+                            }
+
+                            htmlContent += `
+                                <div class="bg-white dark:bg-cardbg rounded-2xl p-5 border border-gray-200 dark:border-darkborder shadow-sm mb-4 hover:shadow-md transition-shadow">
+                                    <div class="flex flex-wrap items-start justify-between gap-4">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">${namaBarang}</h3>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Dipesan oleh: <span class="font-bold text-gray-700 dark:text-gray-300">${namaPembeli}</span></p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">ID Transaksi: <span class="font-mono text-gray-600 dark:text-gray-400">${idTrx}</span></p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-lg font-bold text-primary">${formatHarga}</span>
+                                            <span class="block text-sm font-semibold ${labelBg} px-3 py-0.5 rounded-full mt-1">${trx.tipeOrder}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-darkborder/50">
+                                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex justify-between items-center">
+                                            <span>Status: <span class="${statusColor}">${statusText}</span></span>
+                                        </p>
+                                        ${actionButton}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        window.sellContentHTML = htmlContent;
+                    }
+
+                    if(document.getElementById('tab-sell').classList.contains('bg-primary')) {
+                        document.getElementById('transaction-list').innerHTML = window.sellContentHTML;
+                    }
+                })
+                .catch(error => console.error("Error fetching sell data:", error));
+        }
+        // ── FUNGSI AKSI KONFIRMASI (BELI & PINJAM) ──
+        async function konfirmasiBeli(expectedId, aksi) {
+            // 1. Munculkan kotak isian (prompt) seperti di detail-barang
+            const inputId = prompt("Masukkan ID Transaksi Beli untuk konfirmasi (Bisa disalin dari teks di atas):");
+            
+            // Jika user menekan Cancel atau membiarkan kosong
+            if (!inputId) return; 
+
+            // 2. Validasi Keamanan: Pastikan ID yang diketik COCOK dengan ID pesanan ini
+            if (inputId.trim() !== String(expectedId)) {
+                alert("GAGAL: ID Transaksi yang Anda masukkan salah atau tidak cocok!");
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/transaksi-beli/${inputId.trim()}/${aksi}`, { method: 'POST' });
+                
+                if (response.ok) {
+                    alert("Status transaksi berhasil diperbarui!");
+                    window.location.reload(); // Memuat ulang halaman agar status berubah
+                } else {
+                    const errorText = await response.text();
+                    alert(`Gagal memperbarui status transaksi.\nAlasan Server: ${errorText || 'Ditolak oleh backend'}`);
+                }
+            } catch (error) {
+                console.error("Error jaringan:", error);
+                alert("Terjadi kesalahan jaringan atau server mati.");
+            }
+        }
+
+        async function konfirmasiPinjam(expectedId, statusBaru) {
+            // 1. Munculkan kotak isian (prompt)
+            const inputId = prompt("Masukkan ID Transaksi Sewa untuk konfirmasi (Bisa disalin dari teks di atas):");
+            
+            // Jika user menekan Cancel atau membiarkan kosong
+            if (!inputId) return;
+
+            // 2. Validasi Keamanan: Pastikan ID yang diketik COCOK
+            if (inputId.trim() !== String(expectedId)) {
+                alert("GAGAL: ID Transaksi yang Anda masukkan salah atau tidak cocok!");
+                return;
+            }
+            
+            try {
+                const getRes = await fetch(`/api/pinjam/${inputId.trim()}`);
+                if (!getRes.ok) throw new Error("Gagal mengambil data transaksi lama dari server");
+                
+                const data = await getRes.json();
+                data.status = statusBaru;
+
+                const putRes = await fetch(`/api/pinjam/${inputId.trim()}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (putRes.ok) {
+                    alert("Status transaksi berhasil diperbarui!");
+                    window.location.reload(); // Memuat ulang halaman
+                } else {
+                    const errorText = await putRes.text();
+                    alert(`Gagal memperbarui status transaksi.\nAlasan Server: ${errorText || 'Ditolak oleh backend'}`);
+                }
+            } catch (error) {
+                console.error("Error jaringan:", error);
+                alert(`Terjadi kesalahan: ${error.message}`);
+            }
         }
 
         // ── TAB SWITCHER ──
@@ -446,36 +636,17 @@
         const tabSell = document.getElementById('tab-sell');
         const transactionList = document.getElementById('transaction-list');
 
-        const sellContentHTML = `
-            <div class="text-center py-10 bg-white dark:bg-cardbg rounded-xl shadow-sm border border-gray-200 dark:border-darkborder">
-                <p class="text-gray-500 dark:text-gray-400">Belum ada pesanan masuk untuk barang yang Anda iklankan.</p>
-                <p class="text-sm text-gray-400 mt-2">(Fitur riwayat penjualan sedang dalam pengembangan)</p>
-            </div>
-        `;
-
         tabBuy.addEventListener('click', () => {
             tabBuy.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all bg-primary text-white shadow-sm";
             tabSell.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
-            transactionList.innerHTML = window.buyContentHTML || "<p class='text-center'>Memuat...</p>";
+            transactionList.innerHTML = window.buyContentHTML;
         });
 
         tabSell.addEventListener('click', () => {
             tabSell.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all bg-primary text-white shadow-sm";
             tabBuy.className = "px-5 py-2.5 rounded-lg text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
-            transactionList.innerHTML = sellContentHTML;
+            transactionList.innerHTML = window.sellContentHTML;
         });
-
-        // 1. Ambil nama user dari LocalStorage
-            const username = localStorage.getItem("username");
-            
-            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
-            if (username) {
-                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
-                const avatarEl = document.getElementById("dashboard-avatar");
-                if (avatarEl) {
-                    avatarEl.textContent = inisial;
-                }
-            }
     </script>
 
 </body>

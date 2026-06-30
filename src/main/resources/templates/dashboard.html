@@ -1397,50 +1397,59 @@
             itemCount.textContent = `${items.length} barang`;
         }
 
-        // ── FETCH DATA ──
-        async function fetchDanTampilkanBarang() {
-            grid.innerHTML = '<p class="text-center col-span-3">Memuat data barang...</p>';
+       // ── FETCH DATA ──
+async function fetchDanTampilkanBarang() {
+    grid.innerHTML = '<p class="text-center col-span-3">Memuat data barang...</p>';
 
-            try {
-                const response = await fetch("http://localhost:8080/api/barang");
-                if (!response.ok) throw new Error("Gagal mengambil data dari server");
+    try {
+        // 1. UBAH URL: Buang http://localhost:8080 agar dinamis
+        const response = await fetch("/api/barang");
+        if (!response.ok) throw new Error("Gagal mengambil data dari server");
 
-                const data = await response.json();
-                allItems = data;
+        const data = await response.json();
+        
+        // 2. FILTERING: Singkirkan barang yang sudah laku/selesai/booked
+        // Hanya simpan barang yang statusnya 'available' atau masih kosong (belum diset)
+        const dataTersedia = data.filter(barang => 
+            !barang.status || barang.status === 'available'
+        );
 
-                // Reset filters
-                activeCategory = 'SEMUA';
-                activeCategoryFilter = 'SEMUA';
-                activeType = 'SEMUA';
-                activeStatus = 'SEMUA';
-                document.getElementById('priceMin').value = '';
-                document.getElementById('priceMax').value = '';
-                document.getElementById('filterDate').value = '';
+        // 3. Masukkan data yang SUDAH DISARING ke dalam variabel allItems
+        allItems = dataTersedia;
 
-                // Reset tabs
-                document.querySelectorAll('#categoryTabs .tab').forEach(tab => {
-                    tab.classList.toggle('active', tab.dataset.category === 'SEMUA');
-                });
+        // Reset filters
+        activeCategory = 'SEMUA';
+        activeCategoryFilter = 'SEMUA';
+        activeType = 'SEMUA';
+        activeStatus = 'SEMUA';
+        document.getElementById('priceMin').value = '';
+        document.getElementById('priceMax').value = '';
+        document.getElementById('filterDate').value = '';
 
-                // Reset filter sidebar
-                document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.cat === 'SEMUA');
-                });
-                document.querySelectorAll('#filterTypeOptions .opt-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.type === 'SEMUA');
-                });
-                document.querySelectorAll('#filterStatusOptions .opt-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.status === 'SEMUA');
-                });
+        // Reset tabs
+        document.querySelectorAll('#categoryTabs .tab').forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.category === 'SEMUA');
+        });
 
-                filterAndRender('SEMUA', 'SEMUA', 'SEMUA', 0, Infinity, '');
+        // Reset filter sidebar
+        document.querySelectorAll('#filterCategoryOptions .opt-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.cat === 'SEMUA');
+        });
+        document.querySelectorAll('#filterTypeOptions .opt-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.type === 'SEMUA');
+        });
+        document.querySelectorAll('#filterStatusOptions .opt-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.status === 'SEMUA');
+        });
 
-            } catch (error) {
-                console.error("Error:", error);
-                grid.innerHTML =
-                    `<p class="text-center col-span-3 text-red-500">Gagal memuat barang. Pastikan Backend berjalan.</p>`;
-            }
-        }
+        filterAndRender('SEMUA', 'SEMUA', 'SEMUA', 0, Infinity, '');
+
+    } catch (error) {
+        console.error("Error:", error);
+        grid.innerHTML =
+            `<p class="text-center col-span-3 text-red-500">Gagal memuat barang. Pastikan Backend berjalan.</p>`;
+    }
+}
 
         // ── DARK MODE ──
         const themeToggleBtn = document.getElementById('theme-toggle');
