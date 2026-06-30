@@ -10,39 +10,48 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// --- 1. TAMBAHAN IMPORT UNTUK CLOUDINARY ---
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/barang")
-@CrossOrigin(origins = "*") // Penting: Agar tidak error CORS saat dihubungkan ke HTML lokal
+@CrossOrigin(origins = "*") 
 public class BarangController {
-    // Endpoint khusus untuk menerima upload file gambar
+
+    // --- 2. TAMBAHAN INJECT BEAN CLOUDINARY ---
+    @Autowired
+    private Cloudinary cloudinary;
+
+    @Autowired
+    private BarangService barangService;
+
+    @Autowired
+    private com.PBO2.CampShare.repository.BarangRepository barangRepository;
+
+    // --- 3. UBAH METHOD UPLOAD FOTO (MENGGUNAKAN CLOUDINARY) ---
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFoto(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File tidak boleh kosong");
+        }
+        
         try {
-            // 1. Tentukan folder penyimpanan (Kita simpan di dalam folder static/uploads)
-            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/uploads/";
-            java.io.File dir = new java.io.File(uploadDir);
-            if (!dir.exists()) {
-                dir.mkdirs(); // Buat foldernya jika belum ada
-            }
-
-            // 2. Buat nama file unik agar tidak bentrok (menggunakan waktu saat ini)
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename().replaceAll("\\s+", "_");
-            java.io.File serverFile = new java.io.File(uploadDir + fileName);
+            // Mengirim file ke Cloudinary dalam bentuk byte array
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
             
-            // 3. Simpan file ke folder
-            file.transferTo(serverFile);
-
-            // 4. Kembalikan URL yang bisa diakses oleh frontend
-            String fileUrl = "http://localhost:8080/uploads/" + fileName;
+            // Mengambil URL aman (https://res.cloudinary.com/...) yang dihasilkan Cloudinary
+            String fileUrl = uploadResult.get("secure_url").toString();
+            
+            // Kembalikan URL internet ini ke frontend HTML kamu
             return ResponseEntity.ok(fileUrl);
             
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Gagal mengupload file: " + e.getMessage());
+            return ResponseEntity.status(500).body("Gagal mengupload file ke Cloudinary: " + e.getMessage());
         }
     }
-    @Autowired
-    private BarangService barangService;
 
     // Endpoint untuk memajang barang JUAL
     @PostMapping("/jual")
@@ -90,18 +99,13 @@ public class BarangController {
         barangService.deleteBarang(id);
         return ResponseEntity.ok("Barang dengan ID " + id + " berhasil dihapus.");
     }
-  // --- TAMBAHKAN KODE INI DI BAWAH CONTROLLER (Ganti yang sebelumnya) ---
 
-    @Autowired
-    private com.PBO2.CampShare.repository.BarangRepository barangRepository;
-
+    // Endpoint untuk mengambil barang berdasarkan User ID Pemilik
     @GetMapping("/user/{idUser}")
     public ResponseEntity<?> getBarangByUser(@PathVariable String idUser) {
         try {
-            // 1. Ambil semua barang milik user ini sekaligus dari database
             List<Barang> semuaBarang = barangRepository.findByPemilikIdUser(idUser);
 
-            // 2. Pisahkan mana yang Barang Jual dan mana yang Barang Pinjam untuk dikirim ke HTML
             List<Barang> jual = semuaBarang.stream()
                 .filter(b -> b instanceof com.PBO2.CampShare.entity.BarangJual)
                 .collect(java.util.stream.Collectors.toList());
@@ -110,7 +114,6 @@ public class BarangController {
                 .filter(b -> b instanceof com.PBO2.CampShare.entity.BarangPinjam)
                 .collect(java.util.stream.Collectors.toList());
 
-            // 3. Masukkan ke format response
             java.util.Map<String, Object> response = new java.util.HashMap<>();
             response.put("barangJual", jual);
             response.put("barangPinjam", pinjam);
@@ -120,5 +123,4 @@ public class BarangController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-    
 }
