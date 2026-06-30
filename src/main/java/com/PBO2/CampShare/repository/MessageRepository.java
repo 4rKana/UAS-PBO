@@ -11,7 +11,7 @@ import com.PBO2.CampShare.entity.Message;
 public interface MessageRepository
         extends JpaRepository<Message, Integer> {
 
-    List<Message> findByConversationIdOrderByCreatedAtAsc(Integer conversationId);
+    List<Message> findByConversationIdAndIsDeletedFalseOrderByCreatedAtAsc(Integer conversationId);
             // Fungsi untuk Soft Delete (menyembunyikan pesan tua)
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query("UPDATE Message m SET m.isDeleted = true WHERE m.createdAt < :threshold")

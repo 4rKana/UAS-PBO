@@ -21,9 +21,8 @@ import com.PBO2.CampShare.entity.User;
 import com.PBO2.CampShare.repository.ConversationReadStatusRepository;
 import com.PBO2.CampShare.repository.ConversationRepository;
 import com.PBO2.CampShare.repository.MessageRepository;
-import com.PBO2.CampShare.util.CryptoUtil;
-// import com.PBO2.CampShare.repository.UserRepository; // Pastikan diimport jika ada
 import com.PBO2.CampShare.repository.UserRepository;
+import com.PBO2.CampShare.util.CryptoUtil;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -63,7 +62,7 @@ public class ChatServiceImpl implements ChatService {
             }
 
             // 3. Ambil pesan terakhir (beserta waktunya, untuk timestamp ala WhatsApp)
-            List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conv.getId());
+            List<Message> messages = messageRepository.findByConversationIdAndIsDeletedFalseOrderByCreatedAtAsc(conv.getId());
             String pesanTerakhir;
             LocalDateTime waktuPesanTerakhir = null;
 
@@ -98,7 +97,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Message> getMessages(Integer conversationId) {
-        List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
+        List<Message> messages = messageRepository.findByConversationIdAndIsDeletedFalseOrderByCreatedAtAsc(conversationId);
 
         // Dekripsi setiap pesan sebelum dikembalikan ke controller/frontend.
         // Catatan: ini memodifikasi objek Message hasil query (bukan menulis
@@ -211,7 +210,7 @@ public class ChatServiceImpl implements ChatService {
         }
 
         // 4. Ambil pesan terakhir (kosong jika obrolan baru)
-        List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conv.getId());
+        List<Message> messages = messageRepository.findByConversationIdAndIsDeletedFalseOrderByCreatedAtAsc(conv.getId());
         String lastMsg;
         LocalDateTime lastMsgAt = null;
 

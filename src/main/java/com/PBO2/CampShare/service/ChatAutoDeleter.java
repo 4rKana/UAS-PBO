@@ -16,7 +16,7 @@ import com.PBO2.CampShare.repository.MessageRepository;
 @Service
 public class ChatAutoDeleter {
     private static final Logger logger = LoggerFactory.getLogger(ChatAutoDeleter.class);
-    private final int retentionDays = 90;
+    private final int retentionDays = 1;
 
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
@@ -27,13 +27,14 @@ public class ChatAutoDeleter {
     }
 
     // Ini Cron Job P2P
-    @Scheduled(cron = "0 0 0 * * ?")
-    // @Scheduled(fixedRate = 60000)
+    // @Scheduled(cron = "0 0 0 * * ?") // ini tiap jam 12 malam atau 1 harilh
+    @Scheduled(fixedRate = 60000) // ini tiap 1 menit
     @Transactional
     public void runMidnightCleanup() {
         logger.info("Memulai Cron Job: Pembersihan Chat P2P Usang (> {} hari)...", retentionDays);
         
-        LocalDateTime thresholdDate = LocalDateTime.now().minusDays(retentionDays);
+        // LocalDateTime thresholdDate = LocalDateTime.now().minusDays(retentionDays); // ini tiap 1 hari
+        LocalDateTime thresholdDate = LocalDateTime.now().minusMinutes(retentionDays); // ini tiap 1 menit
 
         int hiddenMessagesCount = messageRepository.softDeleteOldMessages(thresholdDate);
         logger.info("Soft Delete: Berhasil menyembunyikan {} pesan tua.", hiddenMessagesCount);
