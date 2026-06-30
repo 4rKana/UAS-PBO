@@ -2,9 +2,20 @@ package com.PBO2.CampShare.controller;
 
 import com.PBO2.CampShare.entity.User;
 import com.PBO2.CampShare.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.Map;
 import org.mindrot.jbcrypt.BCrypt;
 import com.PBO2.CampShare.service.OtpService;
@@ -60,28 +71,42 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestBody Map<String, String> loginRequest, 
-            jakarta.servlet.http.HttpSession session) { // <-- 1. Tambahkan parameter HttpSession di sini
-        
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest,
+                                    HttpServletRequest request,
+                                    HttpServletResponse httpResponse) {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
         String result = userService.login(email, password);
-        
         if (result.startsWith("Gagal")) {
-            // Ubah balasan error jadi format JSON {"message": "Gagal: Password salah!"}
             return ResponseEntity.status(401).body(Map.of("message", result));
         }
-        
-        // Jika sukses, ambil data User secara lengkap berdasarkan email
-        User loggedInUser = userService.findByEmail(email); 
-        
-        // === 2. SIMPAN ID USER KE SESSION DI SINI ===
-        // Sesuaikan 'getIdUser()' dengan nama method Getter ID yang ada di Class User milikmu (misal: getId() atau getIdUser())
-        session.setAttribute("userId", loggedInUser.getIdUser()); 
-        
-        // Kembalikan objek User (Spring Boot otomatis menjadikannya JSON yang berisi idUser)
-        return ResponseEntity.ok(loggedInUser);
+
+        User loggedInUser = userService.findByEmail(email);
+
+        // 1. Buat objek Authentication
+        UsernamePasswordAuthenticationToken authToken =
+            new UsernamePasswordAuthenticationToken(
+                loggedInUser.getEmail(), null,
+                // kalau belum pakai roles, bisa kosongkan list authorities
+                java.util.Collections.emptyList()
+            );
+
+        // 2. Set ke SecurityContext
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authToken);
+        SecurityContextHolder.setContext(context);
+
+        // 3. Simpan context ke session (ini kunci agar request berikutnya dianggap login)
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+        session.setAttribute("userId", loggedInUser.getIdUser());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("idUser", loggedInUser.getIdUser());
+        response.put("username", loggedInUser.getUsername());
+        response.put("email", loggedInUser.getEmail());
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -5,12 +5,21 @@ import com.PBO2.CampShare.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/notifications")
 public class NotificationController {
+    @GetMapping("/notification")
+    public String viewNotification(Authentication authentication, Model model) {
+        model.addAttribute("username", authentication.getName());
+        return "notification";
+    }
 
     private final NotificationService notificationService;
 

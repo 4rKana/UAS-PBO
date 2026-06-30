@@ -13,9 +13,20 @@ import com.PBO2.CampShare.entity.Conversation;
 import com.PBO2.CampShare.entity.Message;
 import com.PBO2.CampShare.service.ChatService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
+
+    @GetMapping("/roomchat")
+    public String viewDashboard(Authentication authentication, Model model) {
+        model.addAttribute("username", authentication.getName());
+        return "roomchat";
+    }
 
     private final ChatService chatService;
 

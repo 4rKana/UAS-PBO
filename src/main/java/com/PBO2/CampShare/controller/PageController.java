@@ -11,21 +11,6 @@ public class PageController {
         return "login";
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard";
-    }
-
-    @GetMapping("/detail-barang")
-    public String detailBarang() {
-        return "detail-barang";
-    }
-
-    @GetMapping("/form-barang")
-    public String formBarang() {
-        return "form-barang";
-    }
-
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -39,25 +24,5 @@ public class PageController {
     @GetMapping("/notifikasi")
     public String notifikasi() {
         return "notifikasi";
-    }
-
-    @GetMapping("/papan-request")
-    public String papanRequest() {
-        return "papan-request";
-    }
-
-    @GetMapping("/profil")
-    public String profil() {
-        return "profil";
-    }
-
-    @GetMapping("/roomchat")
-    public String roomchat() {
-        return "roomchat";
-    }
-
-    @GetMapping("/transaksi")
-    public String transaksi() {
-        return "transaksi";
     }
 }

@@ -370,15 +370,6 @@
 
         // ── INISIALISASI HALAMAN ──
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Cek Login
-            const idUser = localStorage.getItem("idUser");
-            const username = localStorage.getItem("username");
-
-            if (!idUser) {
-                alert("Akses ditolak! Anda harus login terlebih dahulu.");
-                window.location.href = "login";
-                return;
-            }
 
             // 2. Tampilkan inisial nama di avatar
             if (username) {

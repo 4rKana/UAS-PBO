@@ -604,17 +604,6 @@
         }
 
         window.addEventListener("DOMContentLoaded", () => {
-            // 1. Cek sesi login
-            const bodyEl = document.getElementById("main-body");
-            const currentUserId = bodyEl ? bodyEl.getAttribute("data-user-id") : null;
-
-            // Jika user ID kosong, undefined, atau string kosong, arahkan ke login
-            if (!currentUserId || currentUserId === "" || currentUserId === "null") {
-                window.location.href = "/login";
-                return; // Hentikan eksekusi script selanjutnya
-            }
-
-            // 2. Jika sudah login, baru muat data
             loadChatList();
             connectWebSocket();
             updateNotifBellIndicator(currentUserId);
