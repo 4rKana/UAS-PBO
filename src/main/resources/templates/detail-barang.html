@@ -822,8 +822,8 @@
         </a>
     </div>
 
-<script>
-           // ── BUKA/TUTUP SIDEBAR ──
+    <script>
+        // ── BUKA/TUTUP SIDEBAR ──
         function toggleMobileNav() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('mobileNavOverlay');
@@ -839,450 +839,492 @@
             document.body.style.overflow = '';
         }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        // ── Dark Mode ──
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-        const themeLabelMobile = document.getElementById('theme-label-mobile');
-        const html = document.documentElement;
+        document.addEventListener('DOMContentLoaded', async () => {
+            // ── Dark Mode ──
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+            const themeLabelMobile = document.getElementById('theme-label-mobile');
+            const html = document.documentElement;
 
-        function updateIcons() {
-            if (html.classList.contains('dark')) {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-                if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
-            } else {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-                if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
-            }
-        }
-
-        // restore preferensi dari localStorage
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-        } else {
-            html.classList.remove('dark');
-        }
-        updateIcons();
-
-        function toggleTheme() {
-            html.classList.toggle('dark');
-            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
-            updateIcons();
-        }
-
-        themeToggleBtn.addEventListener('click', toggleTheme);
-        if (themeToggleMobile) {
-            themeToggleMobile.addEventListener('click', toggleTheme);
-        }
-
-        // ── Tab switching ──
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-            });
-        });
-
-        // Backend Integration
-        const urlParams = new URLSearchParams(window.location.search);
-        const idBarang = urlParams.get('id');
-
-        const detailContainer = document.getElementById('detail-container');
-        const errorMessage = document.getElementById('error-message');
-        const mainImageBox = document.getElementById('main-image-box');
-        const mainImage = document.getElementById('main-image');
-        const placeholderIcon = document.getElementById('img-placeholder-icon');
-
-        const title = document.getElementById('item-title');
-        const desc = document.getElementById('item-desc');
-        const badgeType = document.getElementById('badge-type');
-        const badgeCategory = document.getElementById('badge-category');
-        const ownerName = document.getElementById('owner-name');
-        const ownerAvatar = document.getElementById('owner-avatar');
-        const ownerBatch = document.getElementById('owner-batch');
-        
-        const actionSale = document.getElementById('action-sale');
-        const btnBeli = document.getElementById("btn-beli");
-        const actionRent = document.getElementById('action-rent');
-        const btnPinjam = document.getElementById("btn-pinjam");
-
-        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-
-        if (idBarang) {
-            try {
-                const response = await fetch(`http://localhost:8080/api/barang/${idBarang}`);
-                if (!response.ok) throw new Error("Gagal terhubung ke backend server.");
-                
-                const barang = await response.json();
-
-                title.innerText = barang.namaBarang;
-                desc.innerText = barang.deskripsi;
-                badgeCategory.innerText = barang.kategori || 'LAINNYA';
-
-                // Berdasarkan enum di backend: available, sold, booked, archived
-                // 1. Cek siapa yang sedang buka halaman ini
-                const userIdLogin = localStorage.getItem("idUser");
-                const isPemilik = barang.pemilik && barang.pemilik.idUser === userIdLogin;
-
-                // --- Pengecekan Status Barang ---
-                const statusTag = document.createElement("span");
-                statusTag.className = "ml-3 px-2.5 py-1 rounded-full text-[12px] font-bold";
-
-                if (barang.status === "available") {
-                    statusTag.classList.add("bg-green-100", "text-green-700");
-                    statusTag.innerText = "Tersedia";
-                } else if (barang.status === "booked") {
-                    statusTag.classList.add("bg-yellow-100", "text-yellow-700");
-                    statusTag.innerText = "Telah di-Booked";
+            function updateIcons() {
+                if (html.classList.contains('dark')) {
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                    if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Terang';
                 } else {
-                    statusTag.classList.add("bg-red-100", "text-red-700");
-                    statusTag.innerText = "Tidak Tersedia";
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                    if (themeLabelMobile) themeLabelMobile.textContent = 'Mode Gelap';
                 }
-                document.getElementById("item-title").appendChild(statusTag);
+            }
 
-                // Fungsi untuk langsung update tampilan ke status "booked"
-                // tanpa perlu menunggu reload halaman (dipanggil setelah klik Beli/Pinjam berhasil)
-                function setUiBooked() {
-                    statusTag.className = "ml-3 px-2.5 py-1 rounded-full text-[12px] font-bold bg-yellow-100 text-yellow-700";
-                    statusTag.innerText = "Telah di-Booked";
+            // restore preferensi dari localStorage
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            updateIcons();
 
-                    if (actionSale && !actionSale.classList.contains('hidden')) {
-                        btnBeli.disabled = true;
-                        btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
-                        btnBeli.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
-                        btnBeli.innerText = "Barang Telah di-Booked";
-                    }
-                    if (actionRent && !actionRent.classList.contains('hidden')) {
-                        btnPinjam.disabled = true;
-                        btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
-                        btnPinjam.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
-                        btnPinjam.innerText = "Barang Telah di-Booked";
-                    }
-                }
+            function toggleTheme() {
+                html.classList.toggle('dark');
+                localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+                updateIcons();
+            }
 
-                if (barang.fotoUrl) {
-                    mainImage.src = barang.fotoUrl;
-                    const thumb = document.getElementById("thumb-image");
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            if (themeToggleMobile) {
+                themeToggleMobile.addEventListener('click', toggleTheme);
+            }
 
-                    thumb.src = barang.fotoUrl;
-                    thumb.classList.remove("hidden");
-                    thumb.onclick = () => {
-                        mainImage.src = thumb.src;
-                    };
-                    mainImage.classList.remove('hidden');
-                    placeholderIcon.classList.add('hidden');
-                    mainImageBox.classList.remove('bg-gray-200');
-                }
+            // ── Tab switching ──
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
 
-                if (barang.tarifPinjam != null) {
-                    // --- SETUP UI UNTUK BARANG SEWA ---
-                    badgeType.innerText = 'Disewakan';
-                    badgeType.className = "px-2.5 py-1 rounded-full border border-green-200 bg-green-50 text-green-600 text-[12px] font-semibold dark:border-green-800/50 dark:bg-[#064e3b]/30 dark:text-[#4ade80]";
+            // Backend Integration
+            const urlParams = new URLSearchParams(window.location.search);
+            const idBarang = urlParams.get('id');
+
+            const detailContainer = document.getElementById('detail-container');
+            const errorMessage = document.getElementById('error-message');
+            const mainImageBox = document.getElementById('main-image-box');
+            const mainImage = document.getElementById('main-image');
+            const placeholderIcon = document.getElementById('img-placeholder-icon');
+
+            const title = document.getElementById('item-title');
+            const desc = document.getElementById('item-desc');
+            const badgeType = document.getElementById('badge-type');
+            const badgeCategory = document.getElementById('badge-category');
+            const ownerName = document.getElementById('owner-name');
+            const ownerAvatar = document.getElementById('owner-avatar');
+            const ownerBatch = document.getElementById('owner-batch');
+            
+            const actionSale = document.getElementById('action-sale');
+            const btnBeli = document.getElementById("btn-beli");
+            const actionRent = document.getElementById('action-rent');
+            const btnPinjam = document.getElementById("btn-pinjam");
+
+            const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+
+            if (idBarang) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/barang/${idBarang}`);
+                    if (!response.ok) throw new Error("Gagal terhubung ke backend server.");
                     
-                    actionSale.classList.add('hidden');
-                    actionRent.classList.remove('hidden');
-                    
-                    actionRent.querySelector('.rent-price-display').innerText = formatRupiah(barang.tarifPinjam);
-                    actionRent.querySelector('.max-duration-display').innerText = `${barang.durasiMaksimalHari || 7} hari`;
-                    
-                    if (isPemilik) {
-                        // 1. Sembunyikan tombol pinjam bawaan dan form tanggal agar tidak dilihat pemilik
-                        btnPinjam.style.display = "none";
-                        const dateContainer = document.getElementById("start-date").parentElement.parentElement;
-                        if (dateContainer) dateContainer.style.display = "none";
+                    const barang = await response.json();
 
-                        const infoContainer = document.createElement("div");
-                        infoContainer.className = "mt-4 text-center";
-                        
-                        if (barang.status === "booked") {
-                            // 2. Arahkan ke halaman Transaksi untuk konfirmasi (tanpa prompt manual ID)
-                            infoContainer.innerHTML = `
-                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh peminjam!</p>
-                                <a id="btn-konfirmasi-sewa" href="transaksi?barang=${barang.id}" class="block w-full py-3.5 bg-green-600 hover:bg-green-700 text-white text-center rounded-xl font-bold transition-colors">Lihat & Konfirmasi di Transaksi</a>
-                            `;
-                            actionRent.appendChild(infoContainer);
-                        } else {
-                            infoContainer.innerHTML = `
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda sewakan.</p>
-                            `;
-                            actionRent.appendChild(infoContainer);
-                        }
+                    title.innerText = barang.namaBarang;
+                    desc.innerText = barang.deskripsi;
+                    badgeCategory.innerText = barang.kategori || 'LAINNYA';
+
+                    // Berdasarkan enum di backend: available, sold, booked, archived
+                    // 1. Cek siapa yang sedang buka halaman ini
+                    const userIdLogin = localStorage.getItem("idUser");
+                    const isPemilik = barang.pemilik && String(barang.pemilik.idUser) === String(userIdLogin);
+
+                    // --- Pengecekan Status Barang ---
+                    const statusTag = document.createElement("span");
+                    statusTag.className = "ml-3 px-2.5 py-1 rounded-full text-[12px] font-bold";
+
+                    if (barang.status === "available") {
+                        statusTag.classList.add("bg-green-100", "text-green-700");
+                        statusTag.innerText = "Tersedia";
                     } else if (barang.status === "booked") {
-                        // Kunci tombol jika barang sudah dibooking orang lain
-                        btnPinjam.disabled = true;
-                        btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
-                        btnPinjam.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
-                        btnPinjam.innerText = "Barang Telah di-Booked";
-                    } else if (barang.status !== "available") {
-                        // Kunci tombol jika transaksi sudah selesai / barang tidak tersedia
-                        btnPinjam.disabled = true;
-                        btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
-                        btnPinjam.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
-                        btnPinjam.innerText = "Transaksi Selesai / Tidak Tersedia";
+                        statusTag.classList.add("bg-yellow-100", "text-yellow-700");
+                        statusTag.innerText = "Telah di-Booked";
                     } else {
-                        // Normal, bisa dipinjam
-                        btnPinjam.onclick = async () => {
-                            const mulai = document.getElementById("start-date").value;
-                            const kembali = document.getElementById("return-date").value;
+                        statusTag.classList.add("bg-red-100", "text-red-700");
+                        statusTag.innerText = "Tidak Tersedia";
+                    }
+                    document.getElementById("item-title").appendChild(statusTag);
 
-                            if (!mulai || !kembali) {
-                                alert("Pilih tanggal peminjaman terlebih dahulu.");
-                                return;
-                            }
+                    // Fungsi untuk langsung update tampilan ke status "booked"
+                    // tanpa perlu menunggu reload halaman (dipanggil setelah klik Beli/Pinjam berhasil)
+                    function setUiBooked() {
+                        statusTag.className = "ml-3 px-2.5 py-1 rounded-full text-[12px] font-bold bg-yellow-100 text-yellow-700";
+                        statusTag.innerText = "Telah di-Booked";
 
+                        if (actionSale && !actionSale.classList.contains('hidden')) {
+                            btnBeli.disabled = true;
+                            btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                            btnBeli.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
+                            btnBeli.innerText = "Barang Telah di-Booked";
+                        }
+                        if (actionRent && !actionRent.classList.contains('hidden')) {
                             btnPinjam.disabled = true;
-                            btnPinjam.innerText = "Memproses...";
+                            btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                            btnPinjam.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
+                            btnPinjam.innerText = "Barang Telah di-Booked";
+                        }
+                    }
 
-                            try {
-                                const response = await fetch(`http://localhost:8080/api/pinjam`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        barang: { id: barang.id },
-                                        peminjam: { idUser: userIdLogin },
-                                        tanggalMulai: mulai,
-                                        tanggalKembali: kembali
-                                    })
-                                });
+                    if (barang.fotoUrl) {
+                        mainImage.src = barang.fotoUrl;
+                        const thumb = document.getElementById("thumb-image");
 
-                                if (response.ok) {
-                                    const dataTransaksi = await response.json();
-                                    const idTrx = dataTransaksi.id || dataTransaksi.idTransaksi;
+                        thumb.src = barang.fotoUrl;
+                        thumb.classList.remove("hidden");
+                        thumb.onclick = () => {
+                            mainImage.src = thumb.src;
+                        };
+                        mainImage.classList.remove('hidden');
+                        placeholderIcon.classList.add('hidden');
+                        mainImageBox.classList.remove('bg-gray-200');
+                    }
 
-                                    // (Opsional) Memastikan backend mengubah status barang pinjam. 
-                                    // Jika endpoint POST belum otomatis mengubah status barang, kita trigger manual ke endpoint PUT
+                    if (barang.tarifPinjam != null) {
+                        // --- SETUP UI UNTUK BARANG SEWA ---
+                        badgeType.innerText = 'Disewakan';
+                        badgeType.className = "px-2.5 py-1 rounded-full border border-green-200 bg-green-50 text-green-600 text-[12px] font-semibold dark:border-green-800/50 dark:bg-[#064e3b]/30 dark:text-[#4ade80]";
+                        
+                        actionSale.classList.add('hidden');
+                        actionRent.classList.remove('hidden');
+                        
+                        actionRent.querySelector('.rent-price-display').innerText = formatRupiah(barang.tarifPinjam);
+                        actionRent.querySelector('.max-duration-display').innerText = `${barang.durasiMaksimalHari || 7} hari`;
+                        
+                        if (isPemilik) {
+                            // 1. Sembunyikan tombol pinjam bawaan dan form tanggal agar tidak dilihat pemilik
+                            btnPinjam.style.display = "none";
+                            const dateContainer = document.getElementById("start-date").parentElement.parentElement;
+                            if (dateContainer) dateContainer.style.display = "none";
+
+                            const infoContainer = document.createElement("div");
+                            infoContainer.className = "mt-4 text-center";
+                            
+                            if (barang.status === "booked") {
+                                // 2. Tombol Konfirmasi Sewa (Khusus Pemilik) - Versi Tanpa Prompt
+                                infoContainer.innerHTML = `
+                                    <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh peminjam!</p>
+                                    <button id="btn-konfirmasi-sewa" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors">Barang Telah Dikembalikan (Selesai)</button>
+                                `;
+                                actionRent.appendChild(infoContainer);
+
+                                document.getElementById("btn-konfirmasi-sewa").onclick = async () => {
+                                    const konfirmasi = confirm("Apakah Anda yakin peminjam sudah mengembalikan barang dengan utuh dan transaksi selesai?");
+                                    if (!konfirmasi) return;
+
                                     try {
-                                        await fetch(`http://localhost:8080/api/pinjam/${idTrx}`, {
+                                        // Update status barang kembali jadi "available" 
+                                        const res = await fetch(`http://localhost:8080/api/barang/update-status/${barang.id}`, {
                                             method: 'PUT',
                                             headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ status: "BOOKED" }) 
+                                            body: JSON.stringify({ status: "available" }) 
                                         });
-                                    } catch (e) {
-                                        console.log("Abaikan jika status sudah otomatis berubah dari backend");
+
+                                        if (res.ok) {
+                                            alert("Transaksi Selesai! Barang kembali tersedia di katalog.");
+                                            window.location.reload();
+                                        } else {
+                                            alert("Gagal mengkonfirmasi penyelesaian.");
+                                        }
+                                    } catch (error) {
+                                        alert("Terjadi gangguan server.");
                                     }
-
-                                    // Langsung update tampilan jadi "booked" tanpa nunggu reload
-                                    setUiBooked();
-
-                                    // Munculkan notifikasi agar browser menunggu status tersimpan
-                                    alert("Barang berhasil di-booked untuk dipinjam! Silakan diskusikan lokasi COD di chat.");
-                                    window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
-                                } else {
-                                    alert("Gagal mengajukan pinjaman. Cek kembali ketersediaan barang.");
-                                    btnPinjam.disabled = false;
-                                    btnPinjam.innerText = "Ajukan Peminjaman";
-                                }
-                            } catch (error) {
-                                console.error("Fetch error:", error);
-                                alert("Terjadi gangguan saat menghubungi server.");
-                                btnPinjam.disabled = false;
-                                btnPinjam.innerText = "Ajukan Peminjaman";
+                                };
+                            } else {
+                                infoContainer.innerHTML = `
+                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda sewakan.</p>
+                                `;
+                                actionRent.appendChild(infoContainer);
                             }
-                        };
-                    }
-                } else {
-                    // --- SETUP UI UNTUK BARANG JUAL ---
-                    badgeType.innerText = 'Dijual';
-                    badgeType.className = "px-2.5 py-1 rounded-full border border-orange-200 bg-orange-50 text-orange-600 text-[12px] font-semibold dark:border-orange-800/50 dark:bg-[#2c1f16] dark:text-orange-400";
-                    
-                    actionRent.classList.add('hidden');
-                    actionSale.classList.remove('hidden');
-                    
-                    actionSale.querySelector('.sale-price-display').innerText = formatRupiah(barang.harga || 0);
-                    
-                    if (isPemilik) {
-                        // 1. Sembunyikan tombol beli bawaan agar tidak dilihat pemilik
-                        btnBeli.style.display = "none";
-
-                        const infoContainer = document.createElement("div");
-                        infoContainer.className = "mt-4 text-center";
-                        
-                        if (barang.status === "booked") {
-                            // 2. Arahkan ke halaman Transaksi untuk konfirmasi (tanpa prompt manual ID)
-                            infoContainer.innerHTML = `
-                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh pembeli!</p>
-                                <a id="btn-konfirmasi-jual" href="transaksi?barang=${barang.id}" class="block w-full py-3.5 bg-green-600 hover:bg-green-700 text-white text-center rounded-xl font-bold transition-colors">Lihat & Konfirmasi di Transaksi</a>
-                            `;
-                            actionSale.appendChild(infoContainer);
+                        } else if (barang.status === "booked") {
+                            // Kunci tombol jika barang sudah dibooking orang lain
+                            btnPinjam.disabled = true;
+                            btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                            btnPinjam.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
+                            btnPinjam.innerText = "Barang Telah di-Booked";
+                        } else if (barang.status !== "available") {
+                            // Kunci tombol jika transaksi sudah selesai / barang tidak tersedia
+                            btnPinjam.disabled = true;
+                            btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                            btnPinjam.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
+                            btnPinjam.innerText = "Transaksi Selesai / Tidak Tersedia";
                         } else {
-                            infoContainer.innerHTML = `
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda jual.</p>
-                            `;
-                            actionSale.appendChild(infoContainer);
-                        }
-                    } else if (barang.status === "booked") {
-                        // Kunci tombol jika barang sudah dibooking orang lain
-                        btnBeli.disabled = true;
-                        btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
-                        btnBeli.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
-                        btnBeli.innerText = "Barang Telah di-Booked";
-                    } else if (barang.status !== "available") {
-                        // Kunci tombol jika transaksi sudah selesai / barang tidak tersedia
-                        btnBeli.disabled = true;
-                        btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
-                        btnBeli.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
-                        btnBeli.innerText = "Transaksi Selesai / Tidak Tersedia";
-                    } else {
-                        // Normal, bisa dibeli
-                        btnBeli.onclick = async () => {
-                            btnBeli.disabled = true;
-                            btnBeli.innerText = "Memproses...";
+                            // Normal, bisa dipinjam
+                            btnPinjam.onclick = async () => {
+                                const mulai = document.getElementById("start-date").value;
+                                const kembali = document.getElementById("return-date").value;
 
-                            try {
-                                const responseBuat = await fetch(`http://localhost:8080/api/transaksi-beli/buat`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        barang: { id: barang.id },
-                                        pembeli: { idUser: userIdLogin }
-                                    })
-                                });
+                                if (!mulai || !kembali) {
+                                    alert("Pilih tanggal peminjaman terlebih dahulu.");
+                                    return;
+                                }
 
-                                if (responseBuat.ok) {
-                                    const dataTransaksi = await responseBuat.json();
-                                    
-                                    // 1. Ambil ID dengan benar (mengakomodasi kemungkinan nama field 'id' atau 'idTransaksi')
-                                    const idTrx = dataTransaksi.id || dataTransaksi.idTransaksi;
-                                    
-                                    // 2. Tunggu proses booking benar-benar selesai di server
-                                    const bookingRes = await fetch(`http://localhost:8080/api/transaksi-beli/${idTrx}/booking`, {
-                                        method: 'POST'
+                                btnPinjam.disabled = true;
+                                btnPinjam.innerText = "Memproses...";
+
+                                try {
+                                    const response = await fetch(`http://localhost:8080/api/pinjam`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            barang: { id: barang.id },
+                                            peminjam: { idUser: userIdLogin },
+                                            tanggalMulai: mulai,
+                                            tanggalKembali: kembali
+                                        })
                                     });
-                                    
-                                    if (bookingRes.ok) {
+
+                                    if (response.ok) {
+                                        const dataTransaksi = await response.json();
+                                        const idTrx = dataTransaksi.id || dataTransaksi.idTransaksi;
+
+                                        // Trigger update status barang jadi booked
+                                        try {
+                                            await fetch(`http://localhost:8080/api/barang/update-status/${barang.id}`, {
+                                                method: 'PUT',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ status: "booked" }) 
+                                            });
+                                        } catch (e) {
+                                            console.log("Abaikan jika status gagal diubah");
+                                        }
+
                                         // Langsung update tampilan jadi "booked" tanpa nunggu reload
                                         setUiBooked();
 
-                                        // 3. Munculkan notifikasi sukses agar browser tidak pindah sebelum status di-save
+                                        // Munculkan notifikasi agar browser menunggu status tersimpan
+                                        alert("Barang berhasil di-booked untuk dipinjam! Silakan diskusikan lokasi COD di chat.");
+                                        window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
+                                    } else {
+                                        alert("Gagal mengajukan pinjaman. Cek kembali ketersediaan barang.");
+                                        btnPinjam.disabled = false;
+                                        btnPinjam.innerText = "Ajukan Peminjaman";
+                                    }
+                                } catch (error) {
+                                    console.error("Fetch error:", error);
+                                    alert("Terjadi gangguan saat menghubungi server.");
+                                    btnPinjam.disabled = false;
+                                    btnPinjam.innerText = "Ajukan Peminjaman";
+                                }
+                            };
+                        }
+                    } else {
+                        // --- SETUP UI UNTUK BARANG JUAL ---
+                        badgeType.innerText = 'Dijual';
+                        badgeType.className = "px-2.5 py-1 rounded-full border border-orange-200 bg-orange-50 text-orange-600 text-[12px] font-semibold dark:border-orange-800/50 dark:bg-[#2c1f16] dark:text-orange-400";
+                        
+                        actionRent.classList.add('hidden');
+                        actionSale.classList.remove('hidden');
+                        
+                        actionSale.querySelector('.sale-price-display').innerText = formatRupiah(barang.harga || 0);
+                        
+                        if (isPemilik) {
+                            // 1. Sembunyikan tombol beli bawaan agar tidak dilihat pemilik
+                            btnBeli.style.display = "none";
+
+                            const infoContainer = document.createElement("div");
+                            infoContainer.className = "mt-4 text-center";
+                            
+                            if (barang.status === "booked") {
+                                // 2. Tombol Konfirmasi Jual (Khusus Pemilik) - Versi Tanpa Prompt
+                                infoContainer.innerHTML = `
+                                    <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh pembeli!</p>
+                                    <button id="btn-konfirmasi-jual" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors">Konfirmasi Barang Terjual</button>
+                                `;
+                                actionSale.appendChild(infoContainer);
+
+                                document.getElementById("btn-konfirmasi-jual").onclick = async () => {
+                                    const konfirmasi = confirm("Apakah Anda yakin barang sudah diserahkan kepada pembeli dan transaksi selesai?");
+                                    if (!konfirmasi) return;
+
+                                    try {
+                                        // Update status barang jadi "sold" pakai ID Barang
+                                        const res = await fetch(`http://localhost:8080/api/barang/update-status/${barang.id}`, {
+                                            method: 'PUT',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ status: "sold" }) 
+                                        });
+
+                                        if (res.ok) {
+                                            alert("Mantap! Transaksi Selesai. Barang resmi terjual.");
+                                            window.location.reload();
+                                        } else {
+                                            alert("Gagal mengkonfirmasi penjualan.");
+                                        }
+                                    } catch (error) {
+                                        alert("Terjadi gangguan server.");
+                                    }
+                                };
+                            } else {
+                                infoContainer.innerHTML = `
+                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda jual.</p>
+                                `;
+                                actionSale.appendChild(infoContainer);
+                            }
+                        } else if (barang.status === "booked") {
+                            // Kunci tombol jika barang sudah dibooking orang lain
+                            btnBeli.disabled = true;
+                            btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                            btnBeli.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
+                            btnBeli.innerText = "Barang Telah di-Booked";
+                        } else if (barang.status !== "available") {
+                            // Kunci tombol jika transaksi sudah selesai / barang tidak tersedia
+                            btnBeli.disabled = true;
+                            btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
+                            btnBeli.classList.add("bg-gray-500", "opacity-50", "cursor-not-allowed");
+                            btnBeli.innerText = "Transaksi Selesai / Tidak Tersedia";
+                        } else {
+                            // Normal, bisa dibeli
+                            btnBeli.onclick = async () => {
+                                btnBeli.disabled = true;
+                                btnBeli.innerText = "Memproses...";
+
+                                try {
+                                    const responseBuat = await fetch(`http://localhost:8080/api/transaksi-beli/buat`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            barang: { id: barang.id },
+                                            pembeli: { idUser: userIdLogin }
+                                        })
+                                    });
+
+                                    if (responseBuat.ok) {
+                                        const dataTransaksi = await responseBuat.json();
+                                        const idTrx = dataTransaksi.id || dataTransaksi.idTransaksi;
+                                        
+                                        // Trigger update status barang jadi booked
+                                        try {
+                                            await fetch(`http://localhost:8080/api/barang/update-status/${barang.id}`, {
+                                                method: 'PUT',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ status: "booked" }) 
+                                            });
+                                        } catch (e) {
+                                            console.log("Abaikan jika status gagal diubah");
+                                        }
+                                        
+                                        // Langsung update tampilan jadi "booked" tanpa nunggu reload
+                                        setUiBooked();
+
+                                        // Munculkan notifikasi sukses agar browser tidak pindah sebelum status di-save
                                         alert("Barang berhasil di-booked! Silakan diskusikan lokasi COD di chat.");
                                         window.location.href = `roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}`;
                                     } else {
-                                        alert("Transaksi terbuat, tapi gagal mengunci (booking) barang.");
+                                        alert("Gagal memproses pesanan. Barang mungkin sudah di-booked.");
                                         btnBeli.disabled = false;
                                         btnBeli.innerText = "Beli & Pesan Barang";
                                     }
-                                } else {
-                                    alert("Gagal memproses pesanan. Barang mungkin sudah di-booked.");
+                                } catch (error) {
+                                    console.error("Fetch error:", error);
+                                    alert("Terjadi gangguan saat menghubungi server.");
                                     btnBeli.disabled = false;
                                     btnBeli.innerText = "Beli & Pesan Barang";
                                 }
-                            } catch (error) {
-                                console.error("Fetch error:", error);
-                                alert("Terjadi gangguan saat menghubungi server.");
-                                btnBeli.disabled = false;
-                                btnBeli.innerText = "Beli & Pesan Barang";
-                            }
-                        };
+                            };
+                        }
                     }
-                }
 
-            } catch (error) {
-                console.error(error);
+                } catch (error) {
+                    console.error(error);
+                    detailContainer.classList.add('hidden');
+                    errorMessage.classList.remove('hidden');
+                }
+            } else {
                 detailContainer.classList.add('hidden');
                 errorMessage.classList.remove('hidden');
+                errorMessage.querySelector('p').innerText = "Parameter ID barang tidak ditemukan pada URL.";
             }
-        } else {
-            detailContainer.classList.add('hidden');
-            errorMessage.classList.remove('hidden');
-            errorMessage.querySelector('p').innerText = "Parameter ID barang tidak ditemukan pada URL.";
-        }
 
-        // 1. Definisikan variabel elemen HTML yang dibutuhkan
-        const startDateInput = document.getElementById('start-date');
-        const returnDateInput = document.getElementById('return-date');
-        const rentCalculator = document.getElementById('rent-calculator');
-        const calcDuration = document.getElementById('calc-duration');
-        const calcTotal = document.getElementById('calc-total');
+            // 1. Definisikan variabel elemen HTML yang dibutuhkan
+            const startDateInput = document.getElementById('start-date');
+            const returnDateInput = document.getElementById('return-date');
+            const rentCalculator = document.getElementById('rent-calculator');
+            const calcDuration = document.getElementById('calc-duration');
+            const calcTotal = document.getElementById('calc-total');
 
-        if (startDateInput && returnDateInput) {
-            // Batasi tanggal mulai minimal adalah hari ini
-            startDateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
-            
-            // 2. Fungsi hitung biaya sewa + validasi durasi maksimal
-            const calculateRentCost = () => {
-                if (startDateInput.value && returnDateInput.value) {
-                    const start = new Date(startDateInput.value);
-                    const end = new Date(returnDateInput.value);
-                    
-                    // Hitung selisih waktu dalam milidetik lalu ubah menjadi satuan hari
-                    const timeDiff = end.getTime() - start.getTime();
-                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+            if (startDateInput && returnDateInput) {
+                // Batasi tanggal mulai minimal adalah hari ini
+                startDateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+                
+                // 2. Fungsi hitung biaya sewa + validasi durasi maksimal
+                const calculateRentCost = () => {
+                    if (startDateInput.value && returnDateInput.value) {
+                        const start = new Date(startDateInput.value);
+                        const end = new Date(returnDateInput.value);
+                        
+                        // Hitung selisih waktu dalam milidetik lalu ubah menjadi satuan hari
+                        const timeDiff = end.getTime() - start.getTime();
+                        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
 
-                    // Ambil batas hari secara dinamis dari teks UI (misal: "6 hari" -> diambil angka 6)
-                    const maxDurationText = actionRent.querySelector('.max-duration-display').innerText;
-                    const maxDuration = parseInt(maxDurationText.replace(/[^0-9]/g, ''), 10) || 7;
+                        // Ambil batas hari secara dinamis dari teks UI (misal: "6 hari" -> diambil angka 6)
+                        const maxDurationText = actionRent.querySelector('.max-duration-display').innerText;
+                        const maxDuration = parseInt(maxDurationText.replace(/[^0-9]/g, ''), 10) || 7;
 
-                    // Ambil angka tarif per hari dari teks harga
-                    const tarifText = document.querySelector('.rent-price-display').innerText;
-                    const tarifAngka = parseInt(tarifText.replace(/[^0-9]/g, ''), 10);
+                        // Ambil angka tarif per hari dari teks harga
+                        const tarifText = document.querySelector('.rent-price-display').innerText;
+                        const tarifAngka = parseInt(tarifText.replace(/[^0-9]/g, ''), 10);
 
-                    if (daysDiff > 0 && !isNaN(tarifAngka)) {
-                        // Jika user memaksa input melewati batas hari, munculkan alert dan reset
-                        if (daysDiff > maxDuration) {
-                            alert(`Maaf, peminjaman maksimal hanya ${maxDuration} hari.`);
-                            returnDateInput.value = ''; 
+                        if (daysDiff > 0 && !isNaN(tarifAngka)) {
+                            // Jika user memaksa input melewati batas hari, munculkan alert dan reset
+                            if (daysDiff > maxDuration) {
+                                alert(`Maaf, peminjaman maksimal hanya ${maxDuration} hari.`);
+                                returnDateInput.value = ''; 
+                                rentCalculator.classList.add('hidden');
+                                return;
+                            }
+
+                            // Jika valid, tampilkan kotak info perhitungan biaya
+                            rentCalculator.classList.remove('hidden');
+                            calcDuration.innerText = `${daysDiff} hari`;
+                            calcTotal.innerText = formatRupiah(daysDiff * tarifAngka);
+                        } else {
                             rentCalculator.classList.add('hidden');
-                            return;
                         }
-
-                        // Jika valid, tampilkan kotak info perhitungan biaya
-                        rentCalculator.classList.remove('hidden');
-                        calcDuration.innerText = `${daysDiff} hari`;
-                        calcTotal.innerText = formatRupiah(daysDiff * tarifAngka);
                     } else {
                         rentCalculator.classList.add('hidden');
                     }
-                } else {
-                    rentCalculator.classList.add('hidden');
-                }
-            };
+                };
 
-            // 3. Listener ketika Tanggal Mulai berubah
-            startDateInput.addEventListener('change', function() {
-                if (this.value) {
-                    returnDateInput.disabled = false;
-                    
-                    // Set minimal tanggal kembali (H+1 dari tanggal mulai)
-                    const minReturn = new Date(this.value);
-                    minReturn.setDate(minReturn.getDate() + 1);
-                    returnDateInput.setAttribute('min', minReturn.toISOString().split('T')[0]);
-                    
-                    // Ambil durasi maksimal untuk mengunci kalender ke-2 agar tidak bisa diklik lewat batas
-                    const maxDurationText = actionRent.querySelector('.max-duration-display').innerText;
-                    const maxDuration = parseInt(maxDurationText.replace(/[^0-9]/g, ''), 10) || 7;
-                    
-                    const maxReturn = new Date(this.value);
-                    maxReturn.setDate(maxReturn.getDate() + maxDuration);
-                    returnDateInput.setAttribute('max', maxReturn.toISOString().split('T')[0]);
-                } else {
-                    returnDateInput.disabled = true;
-                    returnDateInput.value = '';
-                }
-                calculateRentCost(); 
-            });
+                // 3. Listener ketika Tanggal Mulai berubah
+                startDateInput.addEventListener('change', function() {
+                    if (this.value) {
+                        returnDateInput.disabled = false;
+                        
+                        // Set minimal tanggal kembali (H+1 dari tanggal mulai)
+                        const minReturn = new Date(this.value);
+                        minReturn.setDate(minReturn.getDate() + 1);
+                        returnDateInput.setAttribute('min', minReturn.toISOString().split('T')[0]);
+                        
+                        // Ambil durasi maksimal untuk mengunci kalender ke-2 agar tidak bisa diklik lewat batas
+                        const maxDurationText = actionRent.querySelector('.max-duration-display').innerText;
+                        const maxDuration = parseInt(maxDurationText.replace(/[^0-9]/g, ''), 10) || 7;
+                        
+                        const maxReturn = new Date(this.value);
+                        maxReturn.setDate(maxReturn.getDate() + maxDuration);
+                        returnDateInput.setAttribute('max', maxReturn.toISOString().split('T')[0]);
+                    } else {
+                        returnDateInput.disabled = true;
+                        returnDateInput.value = '';
+                    }
+                    calculateRentCost(); 
+                });
 
-            // 4. Listener ketika Tanggal Kembali berubah
-            returnDateInput.addEventListener('change', calculateRentCost); 
-        }
-    });
-
-    // 1. Ambil nama user dari LocalStorage
-            const username = localStorage.getItem("username");
-            const userId = localStorage.getItem("idUser"); // Ambil ID User untuk API
-            
-            // 2. Jika ada nama, buat inisial dan masukkan ke avatar
-            if (username) {
-                const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
-                const avatarEl = document.getElementById("dashboard-avatar");
-                if (avatarEl) {
-                    avatarEl.textContent = inisial;
-                }
+                // 4. Listener ketika Tanggal Kembali berubah
+                returnDateInput.addEventListener('change', calculateRentCost); 
             }
+        });
 
-</script>
+        // 1. Ambil nama user dari LocalStorage
+        const username = localStorage.getItem("username");
+        const userId = localStorage.getItem("idUser"); // Ambil ID User untuk API
+        
+        // 2. Jika ada nama, buat inisial dan masukkan ke avatar
+        if (username) {
+            const inisial = username.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+            const avatarEl = document.getElementById("dashboard-avatar");
+            if (avatarEl) {
+                avatarEl.textContent = inisial;
+            }
+        }
+    </script>
 </body>
 </html>
