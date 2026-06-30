@@ -217,69 +217,14 @@
                 </div>
         </section>
 
-        <section id="ruang-chat"
-            class="hidden md:flex flex-1 flex-col h-full relative overflow-hidden">
-            
+        <section id="ruang-chat" class="hidden md:flex flex-1 flex-col h-full relative overflow-hidden">
             <div class="px-4 md:px-6 py-3 bg-white dark:bg-darkbg border-b border-gray-200 dark:border-darkborder/50 flex items-center justify-between shrink-0 z-20">
                 <div class="flex items-center gap-3">
                     <button onclick="kembaliKeDaftar()" class="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white rounded-full transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </button>
-                        <div
-                        id="chatAvatar"
-                        class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                        --
-                        </div>
-
-                        <div>
-                            <h2
-                            id="activeChatName"
-                            class="text-sm font-semibold text-gray-900 dark:text-white">
-                                Pilih Obrolan
-                            </h2>
-                        </div>
-                </div>
-                
-                <div class="relative">
-                    <button id="btn-chat-options"
-                        class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
-                            </path>
-                        </svg>
-                    </button>
-
-                    <div id="dropdown-chat-options"
-                        class="hidden absolute right-0 top-full mt-1 w-48 bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl shadow-xl py-2 z-50 animate-fade-in">
-
-                        <!-- Bersihkan Obrolan -->
-                        <button id="btnClearChat"
-                            class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                            Bersihkan Obrolan
-                        </button>
-
-                        <div class="h-px bg-gray-200 dark:bg-darkborder my-1"></div>
-
-                        <!-- Blokir Pengguna -->
-                        <button id="btnBlockUser"
-                            class="w-full px-4 py-2.5 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
-                                </path>
-                            </svg>
-                            Blokir Pengguna
-                        </button>
-
-                    </div>
+                    <div id="chatAvatar" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">--</div>
+                    <div><h2 id="activeChatName" class="text-sm font-semibold text-gray-900 dark:text-white">Pilih Obrolan</h2></div>
                 </div>
             </div>
 
@@ -288,71 +233,10 @@
                 <span>Pesan menghilang setelah 24 jam untuk privasi Anda.</span>
             </div>
 
-            <div
-            id="chatContainer"
-            class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 invisible-scrollbar bg-gray-50 dark:bg-[#111113]">
-            </div>
+            <div id="chatContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 invisible-scrollbar bg-gray-50 dark:bg-[#111113]"></div>
 
-            <div
-            class="sticky bottom-0 p-3 md:p-4 bg-white dark:bg-darkbg border-t border-gray-200 dark:border-darkborder/50 flex items-center gap-3 z-50">
-                <div class="relative">
-                    <button id="btn-attach"
-                        class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-cardbg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
-                            </path>
-                        </svg>
-                    </button>
-
-                    <div id="popover-attach"
-                        class="hidden absolute bottom-14 left-0 bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl shadow-xl py-2 w-40 z-50 animate-fade-in">
-
-                        <!-- Kamera -->
-                        <button id="cameraBtn"
-                            class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
-                            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
-                                </path>
-                            </svg>
-                            Kamera
-                        </button>
-
-                        <!-- Galeri -->
-                        <button id="galleryBtn"
-                            class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
-                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                            Galeri Foto
-                        </button>
-
-                    </div>
-
-                    <!-- Input Kamera -->
-                    <input
-                        type="file"
-                        id="cameraInput"
-                        accept="image/*"
-                        capture="environment"
-                        hidden>
-
-                    <!-- Input Galeri -->
-                    <input
-                        type="file"
-                        id="galleryInput"
-                        accept="image/*"
-                        hidden>
-
-                </div>
-
+            <div class="sticky bottom-0 p-3 md:p-4 bg-white dark:bg-darkbg border-t border-gray-200 dark:border-darkborder/50 flex items-center gap-3 z-50">
                 <input id="messageInput" type="text" class="flex-1 px-4 py-2.5 text-[15px] bg-gray-100 dark:bg-cardbg border-none rounded-full placeholder-gray-400 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary/30 transition-all" placeholder="Ketik pesan...">
-                
                 <button id="sendBtn" class="p-3 bg-primary text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm shrink-0">
                     <svg class="w-5 h-5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                 </button>
@@ -614,69 +498,6 @@
                 console.error("Gagal memuat jumlah notifikasi belum dibaca:", error);
             }
         }
-
-        // 2. Hapus Chat: Mengirim perintah DELETE ke server
-        document.getElementById("btnClearChat").addEventListener("click", async () => {
-            if (!currentConversation || !confirm("Yakin ingin menghapus semua pesan di obrolan ini?")) return;
-            
-            try {
-                const response = await fetch(`/api/chat/clear/${currentConversation}`, { method: 'DELETE' });
-                if (response.ok) {
-                    document.getElementById("chatContainer").innerHTML = ""; // Bersihkan layar secara instan
-                }
-            } catch (error) {
-                alert("Gagal menghapus chat.");
-            }
-        });
-
-        // 3. Blokir: Mengirim perintah POST ke server
-        document.getElementById("btnBlockUser").addEventListener("click", async () => {
-            if (!currentConversation || !confirm("Yakin ingin memblokir pengguna ini?")) return;
-            
-            try {
-                const response = await fetch(`/api/chat/block/${currentConversation}`, { method: 'POST' });
-                if (response.ok) {
-                    alert("Pengguna berhasil diblokir.");
-                    window.location.reload(); // Refresh untuk memperbarui status UI
-                }
-            } catch (error) {
-                alert("Gagal memblokir pengguna.");
-            }
-        });
-
-        // Kamera
-        document.getElementById("cameraBtn").addEventListener("click", () => {
-            document.getElementById("cameraInput").click();
-        });
-
-        // Galeri
-        document.getElementById("galleryBtn").addEventListener("click", () => {
-            document.getElementById("galleryInput").click();
-        });
-
-        // Setelah memilih foto dari kamera
-        document.getElementById("cameraInput").addEventListener("change", (e) => {
-            const file = e.target.files[0];
-
-            if (file) {
-                alert("Foto dari kamera dipilih: " + file.name);
-
-                // Nanti upload ke backend
-                // uploadImage(file);
-            }
-        });
-
-        // Setelah memilih foto dari galeri
-        document.getElementById("galleryInput").addEventListener("change", (e) => {
-            const file = e.target.files[0];
-
-            if (file) {
-                alert("Foto dari galeri dipilih: " + file.name);
-
-                // Nanti upload ke backend
-                // uploadImage(file);
-            }
-        });
 
         const username = localStorage.getItem("username");
 
@@ -1003,35 +824,6 @@
         function scrollChatToBottom() {
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-
-        // ==========================================
-        // 3. LOGIKA TOGGLE DROPDOWN & POPOVER
-        // ==========================================
-        const btnOptions = document.getElementById('btn-chat-options');
-        const dropdownOptions = document.getElementById('dropdown-chat-options');
-        const btnAttach = document.getElementById('btn-attach');
-        const popoverAttach = document.getElementById('popover-attach');
-
-        // Toggle opsi chat (titik tiga)
-        btnOptions.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownOptions.classList.toggle('hidden');
-            popoverAttach.classList.add('hidden'); // tutup popover sebelah jika terbuka
-        });
-
-        // Toggle popover attachment (klip kertas)
-        btnAttach.addEventListener('click', (e) => {
-            e.stopPropagation();
-            popoverAttach.classList.toggle('hidden');
-            dropdownOptions.classList.add('hidden'); // tutup dropdown sebelah jika terbuka
-        });
-
-        // Tutup semua popover/dropdown saat klik di luar area bebas
-        document.addEventListener('click', () => {
-            dropdownOptions.classList.add('hidden');
-            popoverAttach.classList.add('hidden');
-        });
-
 
         // ==========================================
         // 4. LOGIKA DARK / LIGHT MODE SWITCHER
