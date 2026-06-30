@@ -681,12 +681,6 @@
                         </svg>
                     </button>
 
-                    <!-- NOTIFIKASI -->
-                    <a href="notifikasi" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                        <span id="notif-badge" class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
-                    </a>
-
                     <!-- Chat -->
                     <a href="roomchat" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -821,10 +815,6 @@
         <a href="form-barang">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <span>Upload</span>
-        </a>
-        <a href="notifikasi">
-            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-            <span>Notifikasi</span>
         </a>
         <a href="profil">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
@@ -1009,34 +999,12 @@
                         infoContainer.className = "mt-4 text-center";
                         
                         if (barang.status === "booked") {
-                            // 2. Buat tombol konfirmasi pesanan sewa jika status booked
+                            // 2. Arahkan ke halaman Transaksi untuk konfirmasi (tanpa prompt manual ID)
                             infoContainer.innerHTML = `
                                 <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh peminjam!</p>
-                                <button id="btn-konfirmasi-sewa" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors">Konfirmasi Pesanan Selesai</button>
+                                <a id="btn-konfirmasi-sewa" href="transaksi?barang=${barang.id}" class="block w-full py-3.5 bg-green-600 hover:bg-green-700 text-white text-center rounded-xl font-bold transition-colors">Lihat & Konfirmasi di Transaksi</a>
                             `;
                             actionRent.appendChild(infoContainer);
-
-                            // 3. Tambahkan logika klik tombol konfirmasi sewa (Menembak PUT /api/pinjam/{id})
-                            document.getElementById("btn-konfirmasi-sewa").onclick = async () => {
-                                const idTransaksi = prompt("Masukkan ID Transaksi Sewa untuk konfirmasi (Bisa dilihat di halaman Transaksi/Chat):");
-                                if (!idTransaksi) return;
-
-                                try {
-                                    const res = await fetch(`http://localhost:8080/api/pinjam/${idTransaksi}`, {
-                                        method: 'PUT',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ status: "SELESAI" }) // Menyesuaikan metode update status temanmu
-                                    });
-                                    if (res.ok) {
-                                        alert("Peminjaman berhasil dikonfirmasi selesai!");
-                                        window.location.reload();
-                                    } else {
-                                        alert("Gagal mengkonfirmasi. Pastikan ID Transaksi benar.");
-                                    }
-                                } catch (error) {
-                                    alert("Terjadi gangguan server.");
-                                }
-                            };
                         } else {
                             infoContainer.innerHTML = `
                                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda sewakan.</p>
@@ -1134,32 +1102,12 @@
                         infoContainer.className = "mt-4 text-center";
                         
                         if (barang.status === "booked") {
-                            // 2. Buat tombol konfirmasi pesanan jual jika status booked
+                            // 2. Arahkan ke halaman Transaksi untuk konfirmasi (tanpa prompt manual ID)
                             infoContainer.innerHTML = `
                                 <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh pembeli!</p>
-                                <button id="btn-konfirmasi-jual" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors">Konfirmasi Barang Terjual</button>
+                                <a id="btn-konfirmasi-jual" href="transaksi?barang=${barang.id}" class="block w-full py-3.5 bg-green-600 hover:bg-green-700 text-white text-center rounded-xl font-bold transition-colors">Lihat & Konfirmasi di Transaksi</a>
                             `;
                             actionSale.appendChild(infoContainer);
-
-                            // 3. Tambahkan logika klik tombol konfirmasi jual (Menembak POST /api/transaksi-beli/{id}/selesai)
-                            document.getElementById("btn-konfirmasi-jual").onclick = async () => {
-                                const idTransaksi = prompt("Masukkan ID Transaksi Beli untuk konfirmasi (Bisa dilihat di halaman Transaksi/Chat):");
-                                if (!idTransaksi) return;
-
-                                try {
-                                    const res = await fetch(`http://localhost:8080/api/transaksi-beli/${idTransaksi}/selesai`, {
-                                        method: 'POST'
-                                    });
-                                    if (res.ok) {
-                                        alert("Penjualan barang berhasil dikonfirmasi selesai!");
-                                        window.location.reload();
-                                    } else {
-                                        alert("Gagal mengkonfirmasi. Pastikan ID Transaksi benar.");
-                                    }
-                                } catch (error) {
-                                    alert("Terjadi gangguan server.");
-                                }
-                            };
                         } else {
                             infoContainer.innerHTML = `
                                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda jual.</p>
@@ -1335,31 +1283,6 @@
                 }
             }
 
-            // 3. FUNGSI BARU: Mengecek notifikasi yang belum dibaca dari backend
-            async function cekNotifikasi() {
-                if (!userId) return;
-                
-                try {
-                    // CATATAN: Minta teman backend-mu untuk membuat endpoint ini jika belum ada,
-                    // yang mereturn { "unreadCount": 2 } atau boolean { "hasUnread": true }
-                    const response = await fetch(`http://localhost:8080/api/notifikasi/unread/${userId}`);
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        const notifBadge = document.getElementById("notif-badge");
-                        
-                        // Jika ada notifikasi (sesuaikan dengan format JSON dari backend temanmu)
-                        if ((data.unreadCount && data.unreadCount > 0) || data.hasUnread === true) {
-                            notifBadge.classList.remove("hidden"); // Munculkan titik merah!
-                        }
-                    }
-                } catch (error) {
-                    console.log("Pengecekan notifikasi diabaikan/gagal:", error);
-                }
-            }
-            
-            // Jalankan fungsi saat halaman dimuat
-            cekNotifikasi();
 </script>
 </body>
 </html>
