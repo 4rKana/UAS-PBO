@@ -940,7 +940,6 @@
                 desc.innerText = barang.deskripsi;
                 badgeCategory.innerText = barang.kategori || 'LAINNYA';
 
-                // --- TAMBAHAN REVISI ARYA: Pengecekan Status Barang ---
                 // Berdasarkan enum di backend: available, sold, booked, archived
                 // 1. Cek siapa yang sedang buka halaman ini
                 const userIdLogin = localStorage.getItem("idUser");
@@ -1161,7 +1160,7 @@
             errorMessage.querySelector('p').innerText = "Parameter ID barang tidak ditemukan pada URL.";
         }
 
-        // Validasi Tanggal Sewa & Kalkulator Biaya
+        // 1. Definisikan variabel elemen HTML yang dibutuhkan
         const startDateInput = document.getElementById('start-date');
         const returnDateInput = document.getElementById('return-date');
         const rentCalculator = document.getElementById('rent-calculator');
@@ -1169,21 +1168,37 @@
         const calcTotal = document.getElementById('calc-total');
 
         if (startDateInput && returnDateInput) {
+            // Batasi tanggal mulai minimal adalah hari ini
             startDateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
             
-            // Fungsi untuk menghitung otomatis saat tanggal dipilih
+            // 2. Fungsi hitung biaya sewa + validasi durasi maksimal
             const calculateRentCost = () => {
                 if (startDateInput.value && returnDateInput.value) {
                     const start = new Date(startDateInput.value);
                     const end = new Date(returnDateInput.value);
+                    
+                    // Hitung selisih waktu dalam milidetik lalu ubah menjadi satuan hari
                     const timeDiff = end.getTime() - start.getTime();
                     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
 
-                    // Ambil angka dari tampilan harga di HTML
+                    // Ambil batas hari secara dinamis dari teks UI (misal: "6 hari" -> diambil angka 6)
+                    const maxDurationText = actionRent.querySelector('.max-duration-display').innerText;
+                    const maxDuration = parseInt(maxDurationText.replace(/[^0-9]/g, ''), 10) || 7;
+
+                    // Ambil angka tarif per hari dari teks harga
                     const tarifText = document.querySelector('.rent-price-display').innerText;
                     const tarifAngka = parseInt(tarifText.replace(/[^0-9]/g, ''), 10);
 
                     if (daysDiff > 0 && !isNaN(tarifAngka)) {
+                        // Jika user memaksa input melewati batas hari, munculkan alert dan reset
+                        if (daysDiff > maxDuration) {
+                            alert(`Maaf, peminjaman maksimal hanya ${maxDuration} hari.`);
+                            returnDateInput.value = ''; 
+                            rentCalculator.classList.add('hidden');
+                            return;
+                        }
+
+                        // Jika valid, tampilkan kotak info perhitungan biaya
                         rentCalculator.classList.remove('hidden');
                         calcDuration.innerText = `${daysDiff} hari`;
                         calcTotal.innerText = formatRupiah(daysDiff * tarifAngka);
@@ -1195,20 +1210,32 @@
                 }
             };
 
+            // 3. Listener ketika Tanggal Mulai berubah
             startDateInput.addEventListener('change', function() {
                 if (this.value) {
                     returnDateInput.disabled = false;
+                    
+                    // Set minimal tanggal kembali (H+1 dari tanggal mulai)
                     const minReturn = new Date(this.value);
                     minReturn.setDate(minReturn.getDate() + 1);
                     returnDateInput.setAttribute('min', minReturn.toISOString().split('T')[0]);
+                    
+                    // Ambil durasi maksimal untuk mengunci kalender ke-2 agar tidak bisa diklik lewat batas
+                    const maxDurationText = actionRent.querySelector('.max-duration-display').innerText;
+                    const maxDuration = parseInt(maxDurationText.replace(/[^0-9]/g, ''), 10) || 7;
+                    
+                    const maxReturn = new Date(this.value);
+                    maxReturn.setDate(maxReturn.getDate() + maxDuration);
+                    returnDateInput.setAttribute('max', maxReturn.toISOString().split('T')[0]);
                 } else {
                     returnDateInput.disabled = true;
                     returnDateInput.value = '';
                 }
-                calculateRentCost(); // Panggil fungsi saat tanggal mulai berubah
+                calculateRentCost(); 
             });
 
-            returnDateInput.addEventListener('change', calculateRentCost); // Panggil fungsi saat tanggal kembali berubah
+            // 4. Listener ketika Tanggal Kembali berubah
+            returnDateInput.addEventListener('change', calculateRentCost); 
         }
     });
 
