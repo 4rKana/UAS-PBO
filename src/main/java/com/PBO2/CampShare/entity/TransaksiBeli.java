@@ -2,13 +2,21 @@ package com.PBO2.CampShare.entity;
 
 import com.PBO2.CampShare.entity.enumeration.StatusBarang;
 import com.PBO2.CampShare.entity.enumeration.StatusTransaksiBeli;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
-import com.PBO2.CampShare.service.DeletableContext;
 
 @Entity
 @Data
-public class TransaksiBeli implements DeletableContext {
+public class TransaksiBeli {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,6 +33,9 @@ public class TransaksiBeli implements DeletableContext {
     @Enumerated(EnumType.STRING)
     private StatusTransaksiBeli status;
 
+    @Column(name = "waktu_selesai")
+    private java.time.LocalDateTime waktuSelesai;
+
    public void prosesBooking() {
         this.status = StatusTransaksiBeli.DISETUJUI;
         if(this.barang != null) {
@@ -35,14 +46,9 @@ public class TransaksiBeli implements DeletableContext {
 
     public void konfirmasiSelesai() {
         this.status = StatusTransaksiBeli.SELESAI;
+        this.waktuSelesai = java.time.LocalDateTime.now();
         if(this.barang != null) {
-            // Ganti ubahStatus menjadi setStatus
             this.barang.setStatus(StatusBarang.sold);
         }
-    }
-
-    @Override
-    public boolean isReadyToDelete() {
-        return this.status == StatusTransaksiBeli.SELESAI;
     }
 }

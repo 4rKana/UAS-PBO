@@ -5,13 +5,19 @@ import java.time.temporal.ChronoUnit;
 
 import com.PBO2.CampShare.entity.enumeration.StatusTransaksiPinjam;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class TransaksiPinjam {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // 👈 TAMBAHKAN BARIS INI
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String idTransaksi;
 
     @ManyToOne
@@ -40,10 +46,6 @@ public class TransaksiPinjam {
 
     public void konfirmasiPengembalian() {
         this.status = StatusTransaksiPinjam.SELESAI;
-    }
-
-    public boolean isReadyToDelete() {
-        return status == StatusTransaksiPinjam.SELESAI;
     }
 
     public String getIdTransaksi() {

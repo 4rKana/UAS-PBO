@@ -12,7 +12,12 @@ public interface MessageRepository
         extends JpaRepository<Message, Integer> {
 
     List<Message> findByConversationIdAndIsDeletedFalseOrderByCreatedAtAsc(Integer conversationId);
-            // Fungsi hapus pesan
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE Message m SET m.isDeleted = true WHERE m.conversationId = :convId AND m.isDeleted = false")
+    int softDeleteByConversationId(@org.springframework.data.repository.query.Param("convId") Integer convId);
+
+    // Fungsi hapus pesan
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query("UPDATE Message m SET m.isDeleted = true WHERE m.createdAt < :threshold")
     int softDeleteOldMessages(@org.springframework.data.repository.query.Param("threshold") java.time.LocalDateTime threshold);
