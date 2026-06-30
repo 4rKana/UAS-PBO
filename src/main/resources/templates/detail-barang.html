@@ -681,6 +681,12 @@
                         </svg>
                     </button>
 
+                    <!-- NOTIFIKASI -->
+                    <a href="notifikasi" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span id="notif-badge" class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkbg"></span>
+                    </a>
+
                     <!-- Chat -->
                     <a href="roomchat" class="p-2 text-gray-400 hover:text-gray-500 relative flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-cardbg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -736,21 +742,17 @@
                 <h1 id="item-title" class="text-3xl font-extrabold text-gray-900 dark:text-white mb-3"></h1>
                 <p id="item-desc" class="text-[15px] text-gray-500 dark:text-gray-400 mb-8 leading-relaxed"></p>
 
-                <div class="flex items-center justify-between p-4 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg mb-4">
+                <div class="flex items-center p-4 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg mb-4">
                     <div class="flex items-center gap-4">
                         <div id="owner-avatar" class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">...</div>
-                    <div>
+                        <div>
                             <h4 id="owner-name" class="font-bold text-gray-900 dark:text-white text-[15px]">Loading Owner...</h4>
                             <div class="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 mt-0.5">
                                 <span id="owner-batch">-</span>
                             </div>
                         </div>
                     </div>
-                    <button
-                        id="btn-owner-profile"
-                        class="px-4 py-1.5 border border-gray-200 dark:border-darkborder text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-darkbg transition-colors">
-                        Profil
-                    </button>
+                    <!-- Tombol Profil telah dihapus -->
                 </div>
 
                 <div class="flex items-start gap-3 p-4 rounded-2xl border border-yellow-100 bg-yellow-50/70 text-amber-800 text-[14px] mb-6 dark:bg-amber-950/20 dark:border-amber-900/40 dark:text-amber-300">
@@ -819,6 +821,10 @@
         <a href="form-barang">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <span>Upload</span>
+        </a>
+        <a href="notifikasi">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <span>Notifikasi</span>
         </a>
         <a href="profil">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
@@ -908,7 +914,6 @@
         const ownerName = document.getElementById('owner-name');
         const ownerAvatar = document.getElementById('owner-avatar');
         const ownerBatch = document.getElementById('owner-batch');
-        const btnOwnerProfile = document.getElementById("btn-owner-profile");
         
         const actionSale = document.getElementById('action-sale');
         const btnBeli = document.getElementById("btn-beli");
@@ -964,9 +969,6 @@
                 }
 
                 if (barang.pemilik) {
-                    btnOwnerProfile.onclick = () => {
-                        window.location.href = `profil?id=${barang.pemilik.idUser}`; 
-                    };
                     ownerName.innerText = barang.pemilik.username || 'Anonim';
                     ownerBatch.innerText = `Angkatan ${barang.pemilik.angkatan || '-'}`;
                     ownerAvatar.innerText = (barang.pemilik.username || 'U').substring(0, 2).toUpperCase();
@@ -1318,6 +1320,8 @@
                 if (!userId) return;
                 
                 try {
+                    // CATATAN: Minta teman backend-mu untuk membuat endpoint ini jika belum ada,
+                    // yang mereturn { "unreadCount": 2 } atau boolean { "hasUnread": true }
                     const response = await fetch(`http://localhost:8080/api/notifikasi/unread/${userId}`);
                     
                     if (response.ok) {
