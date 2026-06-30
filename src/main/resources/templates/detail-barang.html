@@ -745,12 +745,10 @@
                 <div class="flex items-center justify-between p-4 rounded-2xl border border-gray-200 dark:border-darkborder bg-white dark:bg-cardbg mb-4">
                     <div class="flex items-center gap-4">
                         <div id="owner-avatar" class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">...</div>
-                        <div>
+                    <div>
                             <h4 id="owner-name" class="font-bold text-gray-900 dark:text-white text-[15px]">Loading Owner...</h4>
                             <div class="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 mt-0.5">
                                 <span id="owner-batch">-</span>
-                                <span>·</span>
-                                <span class="flex items-center text-yellow-500">⭐ 5.0</span>
                             </div>
                         </div>
                     </div>
@@ -996,7 +994,7 @@
                     actionRent.querySelector('.max-duration-display').innerText = `${barang.durasiMaksimalHari || 7} hari`;
                     
                     if (isPemilik) {
-                        // Sembunyikan tombol pinjam dan form tanggal agar tidak terlihat pemilik
+                        // 1. Sembunyikan tombol pinjam bawaan dan form tanggal agar tidak dilihat pemilik
                         btnPinjam.style.display = "none";
                         const dateContainer = document.getElementById("start-date").parentElement.parentElement;
                         if (dateContainer) dateContainer.style.display = "none";
@@ -1005,17 +1003,40 @@
                         infoContainer.className = "mt-4 text-center";
                         
                         if (barang.status === "booked") {
+                            // 2. Buat tombol konfirmasi pesanan sewa jika status booked
                             infoContainer.innerHTML = `
-                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang ini sedang dipesan (Booked).</p>
-                                <button onclick="window.location.href='transaksi'" class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-bold transition-colors">Lihat Halaman Transaksi</button>
+                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh peminjam!</p>
+                                <button id="btn-konfirmasi-sewa" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors">Konfirmasi Pesanan Selesai</button>
                             `;
+                            actionRent.appendChild(infoContainer);
+
+                            // 3. Tambahkan logika klik tombol konfirmasi sewa (Menembak PUT /api/pinjam/{id})
+                            document.getElementById("btn-konfirmasi-sewa").onclick = async () => {
+                                const idTransaksi = prompt("Masukkan ID Transaksi Sewa untuk konfirmasi (Bisa dilihat di halaman Transaksi/Chat):");
+                                if (!idTransaksi) return;
+
+                                try {
+                                    const res = await fetch(`http://localhost:8080/api/pinjam/${idTransaksi}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ status: "SELESAI" }) // Menyesuaikan metode update status temanmu
+                                    });
+                                    if (res.ok) {
+                                        alert("Peminjaman berhasil dikonfirmasi selesai!");
+                                        window.location.reload();
+                                    } else {
+                                        alert("Gagal mengkonfirmasi. Pastikan ID Transaksi benar.");
+                                    }
+                                } catch (error) {
+                                    alert("Terjadi gangguan server.");
+                                }
+                            };
                         } else {
                             infoContainer.innerHTML = `
                                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda sewakan.</p>
-                                <button onclick="window.location.href='transaksi'" class="w-full py-3 border border-gray-300 dark:border-darkborder text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg rounded-xl font-bold transition-colors">Kelola di Halaman Transaksi</button>
                             `;
+                            actionRent.appendChild(infoContainer);
                         }
-                        actionRent.appendChild(infoContainer);
                     } else if (barang.status === "booked") {
                         btnPinjam.disabled = false;
                         btnPinjam.classList.remove("bg-blue-600", "hover:bg-blue-700");
@@ -1080,24 +1101,45 @@
                     actionSale.querySelector('.sale-price-display').innerText = formatRupiah(barang.harga || 0);
                     
                     if (isPemilik) {
-                        // Sembunyikan tombol beli agar tidak terlihat pemilik
+                        // 1. Sembunyikan tombol beli bawaan agar tidak dilihat pemilik
                         btnBeli.style.display = "none";
 
                         const infoContainer = document.createElement("div");
                         infoContainer.className = "mt-4 text-center";
                         
                         if (barang.status === "booked") {
+                            // 2. Buat tombol konfirmasi pesanan jual jika status booked
                             infoContainer.innerHTML = `
-                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang ini sedang dipesan (Booked).</p>
-                                <button onclick="window.location.href='transaksi'" class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-bold transition-colors">Lihat Halaman Transaksi</button>
+                                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-500 mb-3">Barang Anda telah di-booked oleh pembeli!</p>
+                                <button id="btn-konfirmasi-jual" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors">Konfirmasi Barang Terjual</button>
                             `;
+                            actionSale.appendChild(infoContainer);
+
+                            // 3. Tambahkan logika klik tombol konfirmasi jual (Menembak POST /api/transaksi-beli/{id}/selesai)
+                            document.getElementById("btn-konfirmasi-jual").onclick = async () => {
+                                const idTransaksi = prompt("Masukkan ID Transaksi Beli untuk konfirmasi (Bisa dilihat di halaman Transaksi/Chat):");
+                                if (!idTransaksi) return;
+
+                                try {
+                                    const res = await fetch(`http://localhost:8080/api/transaksi-beli/${idTransaksi}/selesai`, {
+                                        method: 'POST'
+                                    });
+                                    if (res.ok) {
+                                        alert("Penjualan barang berhasil dikonfirmasi selesai!");
+                                        window.location.reload();
+                                    } else {
+                                        alert("Gagal mengkonfirmasi. Pastikan ID Transaksi benar.");
+                                    }
+                                } catch (error) {
+                                    alert("Terjadi gangguan server.");
+                                }
+                            };
                         } else {
                             infoContainer.innerHTML = `
                                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Ini adalah barang yang Anda jual.</p>
-                                <button onclick="window.location.href='transaksi'" class="w-full py-3 border border-gray-300 dark:border-darkborder text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-darkbg rounded-xl font-bold transition-colors">Kelola di Halaman Transaksi</button>
                             `;
+                            actionSale.appendChild(infoContainer);
                         }
-                        actionSale.appendChild(infoContainer);
                     } else if (barang.status === "booked") {
                         btnBeli.disabled = false;
                         btnBeli.classList.remove("bg-blue-600", "hover:bg-blue-700");
