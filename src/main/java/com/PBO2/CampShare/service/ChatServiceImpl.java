@@ -232,30 +232,37 @@ public class ChatServiceImpl implements ChatService {
         return messageRepository.countUnreadMessages(userId);
     }
 
-    @Override
+@Override
     public void markConversationAsRead(Integer conversationId, String userId) {
-        ConversationReadStatus status = conversationReadStatusRepository
-                .findByConversationIdAndUserId(conversationId, userId)
-                .orElseGet(() -> {
-                    ConversationReadStatus newStatus = new ConversationReadStatus();
-                    newStatus.setConversationId(conversationId);
-                    newStatus.setUserId(userId);
-                    return newStatus;
-                });
+        try {
+            ConversationReadStatus status = conversationReadStatusRepository
+                    .findByConversationIdAndUserId(conversationId, userId)
+                    .orElseGet(() -> {
+                        ConversationReadStatus newStatus = new ConversationReadStatus();
+                        newStatus.setConversationId(conversationId);
+                        newStatus.setUserId(userId);
+                        return newStatus;
+                    });
 
-        status.setLastReadAt(LocalDateTime.now());
-        conversationReadStatusRepository.save(status);
+            status.setLastReadAt(LocalDateTime.now());
+            conversationReadStatusRepository.save(status);
 
-        // Beritahu user ini (lewat semua tab/halaman yang sedang terbuka dan
-        // subscribe) bahwa jumlah pesan belum dibacanya sudah berubah —
-        // supaya titik merah di halaman lain (misal notifikasi.html) langsung
-        // hilang secara real-time, tanpa perlu reload halaman tersebut.
-        long unreadCountTerbaru = messageRepository.countUnreadMessages(userId);
+            // Beritahu user ini bahwa jumlah pesan belum dibacanya sudah berubah
+            long unreadCountTerbaru = messageRepository.countUnreadMessages(userId);
 
-        messagingTemplate.convertAndSend(
-                "/topic/unread/" + userId,
-                new UnreadCountEvent(unreadCountTerbaru)
-        );
+            messagingTemplate.convertAndSend(
+                    "/topic/unread/" + userId,
+                    new UnreadCountEvent(unreadCountTerbaru)
+            );
+        } catch (Exception e) {
+            // JIKA DATABASE ERROR/CRASH, PRINT KE TERMINAL IDE AGAR KITA TAHU KENAPA:
+            System.err.println("=== LOG WARNING: Gagal menandai pesan terbaca di DB ===");
+            e.printStackTrace();
+            
+            // PENTING: Sengaja di-catch tanpa melempar Error 500,
+            // agar API di browser tetap mendapat status 200 OK.
+            // Dengan begitu, JavaScript tidak macet & WebSocket langsung tersambung otomatis!
+        }
     }
 
     public User findByUsername(String username) {
