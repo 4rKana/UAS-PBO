@@ -31,7 +31,8 @@ public interface ConversationRepository extends JpaRepository<Conversation, Inte
     @Query(value = "SELECT id_user FROM users WHERE username = :username", nativeQuery = true)
     String findUserIdByUsername(@Param("username") String username);
 
-    // Fungsi untuk mencari semua obrolan yang usianya melebihi batas waktu retensi
-    @Query("SELECT c FROM Conversation c WHERE c.createdAt < :expiryDate")
-    List<Conversation> findExpiredConversations(@Param("expiryDate") java.time.LocalDateTime expiryDate);
+    // Hapus conversation kosong
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM Conversation c WHERE c.id NOT IN (SELECT m.conversationId FROM Message m)")
+    int deleteEmptyConversations();
 }

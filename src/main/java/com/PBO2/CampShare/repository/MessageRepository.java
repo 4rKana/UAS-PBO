@@ -12,15 +12,20 @@ public interface MessageRepository
         extends JpaRepository<Message, Integer> {
 
     List<Message> findByConversationIdAndIsDeletedFalseOrderByCreatedAtAsc(Integer conversationId);
-            // Fungsi untuk Soft Delete (menyembunyikan pesan tua)
+            // Fungsi hapus pesan
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query("UPDATE Message m SET m.isDeleted = true WHERE m.createdAt < :threshold")
     int softDeleteOldMessages(@org.springframework.data.repository.query.Param("threshold") java.time.LocalDateTime threshold);
 
-    // Fungsi untuk Hard Delete (menghapus pesan secara permanen berdasarkan ID Obrolan)
+    // Fungsi hapus conversation
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query("DELETE FROM Message m WHERE m.conversationId = :conversationId")
     void deleteByConversationId(@org.springframework.data.repository.query.Param("conversationId") Integer conversationId);
+
+    // Fungsi hard delete
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM Message m WHERE m.createdAt < :threshold")
+    int hardDeleteMessagesOlderThan(@org.springframework.data.repository.query.Param("threshold") java.time.LocalDateTime threshold);
 
     /**
      * Menghitung jumlah pesan BELUM DIBACA milik seorang user, dihitung
