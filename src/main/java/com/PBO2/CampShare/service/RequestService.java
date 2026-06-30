@@ -79,6 +79,23 @@ public class RequestService {
         request.setAcceptedByUserId(penolongId);
         requestRepository.save(request);
     }
+
+    public void batalkanPilihan(Long id, String userIdLogin) {
+        RequestBarang request = requestRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Request dengan ID " + id + " tidak ditemukan"));
+            
+        if(!request.getUserId().equals(userIdLogin)) {
+            throw new RuntimeException("Hanya pemilik request yang dapat membatalkan pilihan ini");
+        }
+
+        if(request.getStatusRequest() != StatusRequest.TERPENUHI) {
+            throw new RuntimeException("Request tidak sedang dalam status TERPENUHI, tidak dapat dibatalkan");
+        }
+
+        request.setStatusRequest(StatusRequest.TERSEDIA);
+        request.setAcceptedByUserId(null);
+        requestRepository.save(request);
+    }
     // 2. Fungsi untuk pemilik request menyelesaikan transaksi
     public void selesaikanRequest(Long id, String userIdLogin) {
         RequestBarang request = requestRepository.findById(id)

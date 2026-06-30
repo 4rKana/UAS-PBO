@@ -102,4 +102,14 @@ public class RequestController {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
+    @PutMapping("/{id}/batal-pilih")
+    public ResponseEntity<?> batalPilih(@PathVariable Long id, @RequestHeader("userId") String userIdLogin) {
+        try {
+            requestService.batalkanPilihan(id, userIdLogin);
+            return ResponseEntity.ok("Berhasil membatalkan pilihan penolong");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
