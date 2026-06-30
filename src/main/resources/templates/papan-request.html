@@ -426,8 +426,6 @@
                 return;
             }
 
-            container.innerHTML = ''; // Kosongkan kontainer lama
-
             const idUserLogin = localStorage.getItem("idUser");
 
             data.forEach(item => {
@@ -442,28 +440,37 @@
                     statusBadgeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
                 }
 
-                const isPemilik = idUserLogin && item.userId === idUserLogin;
-                const idPenawar = getPenawar(item.id);
-                const isPenawar = idUserLogin && idPenawar === idUserLogin;
+                const isPemilik = idUserLogin && String(item.userId) === String(idUserLogin);
 
                 // --- Sembunyikan Tombol Hapus (poin 1) ---
                 // Hanya muncul jika request ini milik user yang sedang login.
-                const tombolHapus = isPemilik
+                const tombolHapus = (isPemilik && item.statusRequest === 'TERSEDIA')
                     ? `<button onclick="hapusRequest('${item.id}')" class="text-red-500 hover:text-red-600 text-[12px] font-medium transition-colors">Hapus</button>`
                     : '';
 
                 // --- Update Status ---
                 let tombolAksi = '';
                 if (item.statusRequest === 'TERSEDIA' && !isPemilik) {
-                    // Tombol untuk penolong
-                    tombolAksi = `<button onclick="terimaRequest('${item.id}', '${item.userId}')" class="px-3 py-1.5 bg-primary hover:bg-blue-600 text-white text-[12.5px] font-semibold rounded-lg shadow-sm transition-colors">Terima Request</button>`;
+                // TAMPILAN PENOLONG (Belum diambil)
+                    tombolAksi = `
+                        <div class="flex items-center gap-2">
+                            <a href="roomchat?targetUser=${item.userId}" class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-cardbg dark:text-gray-200 dark:border dark:border-darkborder text-[12.5px] font-semibold rounded-xl transition-colors">Tanya Pemilik</a>
+                            <button onclick="terimaRequest('${item.id}')" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-[12.5px] font-semibold rounded-xl shadow-sm transition-colors">Ambil Request</button>
+                        </div>`;
                 } else if (item.statusRequest === 'TERPENUHI' && isPemilik) {
-                    // Tombol untuk pemilik request agar bisa klik "Selesai"
-                    tombolAksi = `<button onclick="selesaikanRequest('${item.id}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[12.5px] font-semibold rounded-lg shadow-sm transition-colors">Selesai</button>`;
+                    // TAMPILAN PEMILIK REQUEST (Ada yang ngambil)
+                    tombolAksi = `
+                        <div class="flex items-center gap-2">
+                            <button onclick="batalPilih('${item.id}')" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-950/30 dark:border dark:border-red-900/50 dark:text-red-400 text-[12.5px] font-semibold rounded-xl transition-colors">Batalkan Penolong</button>
+                            <button onclick="selesaikanRequest('${item.id}')" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-[12.5px] font-semibold rounded-xl shadow-sm transition-colors">Tandai Selesai</button>
+                        </div>`;
+                } else if (item.statusRequest === 'TERPENUHI' && !isPemilik) {
+                    // TAMPILAN ORANG LAIN (Sudah diambil)
+                    tombolAksi = `<span class="text-[12.5px] font-medium text-gray-400 dark:text-gray-500 italic">Telah diambil orang lain</span>`;
                 }
 
                 container.innerHTML += `
-                <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm">
+            <div class="bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl p-6 shadow-sm">
                     <div class="flex justify-between items-start mb-3">
                         <span class="font-semibold text-[16px] dark:text-white">${item.namaBarang}</span>
                         ${tombolHapus}
@@ -473,7 +480,7 @@
                         <span class="text-[15px] text-blue-600 dark:text-blue-400 font-bold">Rp ${item.anggaran.toLocaleString('id-ID')}</span>
                         <span class="text-[11px] tracking-wide px-2.5 py-1 rounded-lg ${statusBadgeClass}">${item.statusRequest}</span>
                     </div>
-                    ${tombolAksi ? `<div class="flex justify-end mt-3">${tombolAksi}</div>` : ''}
+                    ${tombolAksi ? `<div class="flex justify-end mt-4 border-t border-gray-100 dark:border-darkborder/50 pt-4">${tombolAksi}</div>` : ''}
                 </div>`;
             });
         } catch (error) {
@@ -483,6 +490,57 @@
                 message: 'Pastikan server backend (Spring Boot) sedang berjalan, lalu coba lagi.',
                 isError: true
             });
+        }
+    }
+
+    // D. Update Status: Ambil Request (Untuk Penolong)
+    async function terimaRequest(id) {
+        const idUserLogin = localStorage.getItem("idUser");
+        if (!idUserLogin) return alert("Harap login terlebih dahulu.");
+
+        if(confirm("Yakin ingin mengambil request ini dan membantu pemilik? Pastikan Anda sudah berdiskusi di obrolan.")) {
+            try {
+                // Sesuai API Backend: PUT /{id}/terima dengan body penolongId
+                const response = await fetch(`${API_BASE}/${id}/terima`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ penolongId: idUserLogin })
+                });
+
+                if (response.ok) {
+                    alert("Berhasil! Request sekarang menjadi tanggung jawab Anda.");
+                    loadRequest();
+                } else {
+                    const errMsg = await response.text();
+                    alert("Gagal mengambil request: " + errMsg);
+                }
+            } catch (error) {
+                alert("Tidak dapat terhubung ke server.");
+            }
+        }
+    }
+
+    // E. BATALKAN PENOLONG (FUNGSI BARU UNTUK PEMILIK)
+    async function batalPilih(id) {
+        const idUserLogin = localStorage.getItem("idUser");
+        if(confirm("Yakin ingin membatalkan penolong ini? Status request akan kembali TERSEDIA.")) {
+            try {
+                // Sesuai API Backend: PUT /{id}/batal-pilih dengan header userId
+                const response = await fetch(`${API_BASE}/${id}/batal-pilih`, {
+                    method: 'PUT',
+                    headers: { 'userId': idUserLogin }
+                });
+
+                if (response.ok) {
+                    alert("Berhasil! Status barang kembali TERSEDIA.");
+                    loadRequest();
+                } else {
+                    const errMsg = await response.text();
+                    alert("Gagal membatalkan: " + errMsg);
+                }
+            } catch (error) {
+                alert("Tidak dapat terhubung ke server.");
+            }
         }
     }
 
@@ -569,34 +627,6 @@
                 console.error("Gagal menghapus data:", error);
                 alert("Tidak dapat terhubung ke server.");
             }
-        }
-    }
-
-    // D. Update Status: Terima Request (Untuk Penolong)
-    async function terimaRequest(id, pemilikId) {
-        const idUserLogin = localStorage.getItem("idUser");
-        if (!idUserLogin) {
-            alert("Anda harus login terlebih dahulu.");
-            return;
-        }
-
-        try {
-            // Tembak API baru buatan Arya
-            const response = await fetch(`${API_BASE}/${id}/terima`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ penolongId: idUserLogin })
-            });
-
-            if (response.ok) {
-                // Langsung arahkan ke chat pemilik request
-                window.location.href = `roomchat?id=${pemilikId}`; 
-            } else {
-                alert("Gagal menerima request! Mungkin sudah diambil orang lain.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Tidak dapat terhubung ke server.");
         }
     }
 
