@@ -255,17 +255,6 @@
                     <div id="dropdown-chat-options"
                         class="hidden absolute right-0 top-full mt-1 w-48 bg-white dark:bg-cardbg border border-gray-200 dark:border-darkborder rounded-2xl shadow-xl py-2 z-50 animate-fade-in">
 
-                        <!-- Lihat Profil -->
-                        <button id="btnViewProfile"
-                            class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z">
-                                </path>
-                            </svg>
-                            Lihat Profil
-                        </button>
-
                         <!-- Bersihkan Obrolan -->
                         <button id="btnClearChat"
                             class="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-darkbg/50 flex items-center gap-3 transition-colors">
@@ -625,13 +614,6 @@
                 console.error("Gagal memuat jumlah notifikasi belum dibaca:", error);
             }
         }
-
-        // KODE SESUDAHNYA
-        // 1. Profil: Mengarahkan ke profil spesifik lawan bicara berdasarkan ID percakapan
-        document.getElementById("btnViewProfile").addEventListener("click", () => {
-            if (!currentConversation) return;
-            window.location.href = `/profil-pengguna/${currentConversation}`; 
-        });
 
         // 2. Hapus Chat: Mengirim perintah DELETE ke server
         document.getElementById("btnClearChat").addEventListener("click", async () => {
