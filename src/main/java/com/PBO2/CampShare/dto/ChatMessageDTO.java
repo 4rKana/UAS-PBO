@@ -1,5 +1,6 @@
 package com.PBO2.CampShare.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat; // <-- TAMBAHKAN IMPORT INI
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,8 @@ public class ChatMessageDTO {
     private Integer conversationId;
     private String senderId;
     private String message;
+
+    // Tambahkan anotasi ini agar dikirim sebagai String ISO standar:
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 }
