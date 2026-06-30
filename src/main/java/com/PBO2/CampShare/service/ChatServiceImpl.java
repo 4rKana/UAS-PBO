@@ -247,7 +247,6 @@ public class ChatServiceImpl implements ChatService {
             status.setLastReadAt(LocalDateTime.now());
             conversationReadStatusRepository.save(status);
 
-            // Beritahu user ini bahwa jumlah pesan belum dibacanya sudah berubah
             long unreadCountTerbaru = messageRepository.countUnreadMessages(userId);
 
             messagingTemplate.convertAndSend(
@@ -255,13 +254,8 @@ public class ChatServiceImpl implements ChatService {
                     new UnreadCountEvent(unreadCountTerbaru)
             );
         } catch (Exception e) {
-            // JIKA DATABASE ERROR/CRASH, PRINT KE TERMINAL IDE AGAR KITA TAHU KENAPA:
             System.err.println("=== LOG WARNING: Gagal menandai pesan terbaca di DB ===");
             e.printStackTrace();
-            
-            // PENTING: Sengaja di-catch tanpa melempar Error 500,
-            // agar API di browser tetap mendapat status 200 OK.
-            // Dengan begitu, JavaScript tidak macet & WebSocket langsung tersambung otomatis!
         }
     }
 
