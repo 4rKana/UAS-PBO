@@ -1134,7 +1134,8 @@
                                         await fetch(`http://localhost:8080/api/pinjam/${idTrx}`, {
                                             method: 'PUT',
                                             headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ status: "BOOKED" }) 
+                                            // body: JSON.stringify({ status: "BOOKED" })
+                                            body: JSON.stringify({ status: "DISETUJUI" })
                                         });
                                     } catch (e) {
                                         console.log("Abaikan jika status sudah otomatis berubah dari backend");
