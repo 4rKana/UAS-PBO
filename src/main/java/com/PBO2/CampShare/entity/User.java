@@ -32,4 +32,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    // Tambahan deskripsi dengan tipe TEXT agar bisa menampung banyak karakter
+    @Column(columnDefinition = "TEXT")
+    private String deskripsi;
+    
 }

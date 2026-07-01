@@ -645,9 +645,22 @@
                     <div class="profile-major" id="user-email">Memuat email...</div>
                     <span class="profile-badge">Mahasiswa</span>
                     
-                    <div class="profile-bio">
-                        Halo! Selamat datang di profil CampusShare saya. Mari saling berbagi barang untuk kebutuhan perkuliahan.
-                    </div>
+                   <div class="mt-2">
+    <p id="profile-bio-text" class="text-sm text-gray-600 dark:text-gray-400">Memuat deskripsi...</p>
+    <textarea id="profile-bio-input" class="hidden mt-1 w-full p-2 text-sm border border-gray-300 dark:border-darkborder bg-gray-50 dark:bg-cardbg text-gray-900 dark:text-white rounded-lg focus:ring-primary focus:border-primary" rows="3" placeholder="Ceritakan sedikit tentang dirimu..."></textarea>
+    
+    <div class="mt-2 flex gap-2">
+        <button id="btn-edit-bio" class="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-darkborder dark:hover:bg-zinc-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-md transition-colors">
+            Ubah Deskripsi
+        </button>
+        <button id="btn-save-bio" class="hidden text-xs bg-primary hover:bg-blue-600 text-white px-3 py-1 rounded-md transition-colors">
+            Simpan
+        </button>
+        <button id="btn-cancel-bio" class="hidden text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-colors">
+            Batal
+        </button>
+    </div>
+</div>
                     <button class="btn-message" onclick="window.location.href='form-barang'">+ Tambah Barang</button>
                     <button class="btn-message" style="background: #2563eb; margin-left: 8px;" onclick="window.location.href='transaksi'">Transaksi</button>
                     <button class="btn-message" style="background: #dc2626; margin-left: 8px;" onclick="logout()">Keluar</button>
@@ -886,6 +899,79 @@
                     avatarEl.textContent = inisial;
                 }
             }
+            // ── LOGIC DESKRIPSI PROFIL DINAMIS ──
+        const userIdForBio = localStorage.getItem("idUser") // Ambil ID user yang login
+        const bioText = document.getElementById("profile-bio-text");
+        const bioInput = document.getElementById("profile-bio-input");
+        const btnEditBio = document.getElementById("btn-edit-bio");
+        const btnSaveBio = document.getElementById("btn-save-bio");
+        const btnCancelBio = document.getElementById("btn-cancel-bio");
+
+        // 1. Ambil deskripsi saat ini dari database ketika halaman dimuat
+        async function loadProfileBio() {
+            if (!userIdForBio) return;
+            try {
+                const response = await fetch(`http://localhost:8080/api/auth/user/${userIdForBio}`);
+                if (response.ok) {
+                    const user = await response.json();
+                    // Jika kolom deskripsi/bio di DB masih kosong, beri teks default
+                    bioText.textContent = user.deskripsi || "Belum ada deskripsi profil.";
+                    bioInput.value = user.deskripsi || "";
+                }
+            } catch (error) {
+                console.error("Gagal memuat deskripsi:", error);
+                bioText.textContent = "Gagal memuat deskripsi profil.";
+            }
+        }
+
+        // Jalankan fungsi load saat halaman dibuka
+        loadProfileBio();
+
+        // 2. Tombol Ubah diklik (Pindah ke mode edit)
+        btnEditBio.addEventListener("click", () => {
+            bioText.classList.add("hidden");
+            bioInput.classList.remove("hidden");
+            btnEditBio.classList.add("hidden");
+            btnSaveBio.classList.remove("hidden");
+            btnCancelBio.classList.remove("hidden");
+            bioInput.focus();
+        });
+
+        // 3. Tombol Batal diklik
+        btnCancelBio.addEventListener("click", () => {
+            bioText.classList.remove("hidden");
+            bioInput.classList.add("hidden");
+            btnEditBio.classList.remove("hidden");
+            btnSaveBio.classList.add("hidden");
+            btnCancelBio.classList.add("hidden");
+            bioInput.value = bioText.textContent === "Belum ada deskripsi profil." ? "" : bioText.textContent;
+        });
+
+        // 4. Tombol Simpan diklik (Kirim data baru ke backend)
+        btnSaveBio.addEventListener("click", async () => {
+            const newBio = bioInput.value.trim();
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/auth/user/${userIdForBio}/update-bio`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ deskripsi: newBio })
+                });
+
+                if (response.ok) {
+                    alert("Deskripsi profil berhasil diperbarui!");
+                    bioText.textContent = newBio || "Belum ada deskripsi profil.";
+                    
+                    // Kembalikan ke tampilan teks biasa
+                    btnCancelBio.click(); 
+                } else {
+                    alert("Gagal menyimpan deskripsi ke server.");
+                }
+            } catch (error) {
+                console.error("Error jaringan:", error);
+                alert("Terjadi kesalahan jaringan.");
+            }
+        });
     </script>
 
 </body>
