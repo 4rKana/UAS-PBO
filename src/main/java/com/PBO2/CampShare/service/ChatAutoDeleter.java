@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.PBO2.CampShare.entity.Conversation;
+import com.PBO2.CampShare.entity.Message;
 import com.PBO2.CampShare.entity.TransaksiBeli;
 import com.PBO2.CampShare.entity.TransaksiPinjam;
 import com.PBO2.CampShare.entity.enumeration.StatusTransaksiBeli;
@@ -50,6 +51,12 @@ public class ChatAutoDeleter {
             String u1 = conv.getUser1Id();
             String u2 = conv.getUser2Id();
             
+            LocalDateTime waktuAktivitas = conv.getCreatedAt();
+            List<Message> daftarPesan = messageRepository.findByConversationIdAndIsDeletedFalseOrderByCreatedAtAsc(conv.getId());
+            if (!daftarPesan.isEmpty()) {
+                waktuAktivitas = daftarPesan.get(daftarPesan.size() - 1).getCreatedAt();
+            }
+
             List<TransaksiPinjam> txPinjam = pinjamRepo.findTransaksiAntaraDuaUser(u1, u2);
             List<TransaksiBeli> txBeli = beliRepo.findTransaksiAntaraDuaUser(u1, u2);
             
@@ -57,7 +64,7 @@ public class ChatAutoDeleter {
             
             if (!adaTransaksi) {
                 // LocalDateTime batasTanpaTx = conv.getCreatedAt().plusDays(3); // buat 3 hari
-                LocalDateTime batasTanpaTx = conv.getCreatedAt().plusMinutes(2); // buat 2 menit
+                LocalDateTime batasTanpaTx = waktuAktivitas.plusMinutes(2); // buat 2 menit
                 
                 if (LocalDateTime.now().isAfter(batasTanpaTx)) {
                     int hidden = messageRepository.softDeleteByConversationId(conv.getId());
@@ -70,7 +77,7 @@ public class ChatAutoDeleter {
                     continue;
                 }
 
-                LocalDateTime waktuSelesaiTerakhir = cariWaktuSelesaiTerbaru(txPinjam, txBeli, conv.getCreatedAt());
+                LocalDateTime waktuSelesaiTerakhir = cariWaktuSelesaiTerbaru(txPinjam, txBeli, waktuAktivitas);
 
                 // LocalDateTime batasSelesai = waktuSelesaiTerakhir.plusDays(1); // buat 1 hari
                 LocalDateTime batasSelesai = waktuSelesaiTerakhir.plusMinutes(1); // buat 1 menit
