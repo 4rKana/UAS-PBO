@@ -121,8 +121,8 @@ public class ChatAutoDeleter {
     }
 
     private void eksekusiHardDelete() {
-        LocalDateTime destroyThreshold = LocalDateTime.now().minusDays(365); // buat 1 tahun
-        // LocalDateTime destroyThreshold = LocalDateTime.now().minusMinutes(3); // buat 3 menit
+        // LocalDateTime destroyThreshold = LocalDateTime.now().minusDays(365); // buat 1 tahun
+        LocalDateTime destroyThreshold = LocalDateTime.now().minusMinutes(3); // buat 3 menit
         
         int destroyedCount = messageRepository.hardDeleteMessagesOlderThan(destroyThreshold);
         if (destroyedCount > 0) logger.info("Hard Delete (m): Memusnahkan {} pesan permanen.", destroyedCount);

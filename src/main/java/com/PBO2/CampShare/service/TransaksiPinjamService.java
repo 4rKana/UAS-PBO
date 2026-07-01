@@ -34,29 +34,18 @@ public class TransaksiPinjamService {
                 .orElseThrow();
     }
 
-    public TransaksiPinjam updateStatus(String id, TransaksiPinjam transaksiBaru) {
-     TransaksiPinjam transaksi = getById(id);
+    public TransaksiPinjam updateStatus(
+            String id,
+            TransaksiPinjam transaksiBaru) {
 
-        if (transaksiBaru.getStatus() == com.PBO2.CampShare.entity.enumeration.StatusTransaksiPinjam.DISETUJUI) {
-            transaksi.setujuiPinjaman();
-        } else if (transaksiBaru.getStatus() == com.PBO2.CampShare.entity.enumeration.StatusTransaksiPinjam.SELESAI) {
-            transaksi.konfirmasiPengembalian();
-        } else {
-            transaksi.setStatus(transaksiBaru.getStatus());
-        }
+        TransaksiPinjam transaksi =
+                getById(id);
+
+        transaksi.setStatus(
+                transaksiBaru.getStatus());
+
         return repository.save(transaksi);
     }
-
-    // public TransaksiPinjam updateStatus(
-    //         String id,
-    //         TransaksiPinjam transaksiBaru) {
-
-    //     TransaksiPinjam transaksi = getById(id);
-
-    //     transaksi.setStatus(transaksiBaru.getStatus());
-
-    //     return repository.save(transaksi);
-    // }
 
     public void delete(String id) {
         repository.deleteById(id);
