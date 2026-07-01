@@ -682,7 +682,6 @@
             <!-- Tabs -->
             <div class="profile-tabs">
                 <span class="profile-tab active" data-tab="barang">Katalog Saya</span>
-                <span class="profile-tab" data-tab="ulasan">Ulasan</span>
             </div>
 
             <!-- Tab Content: Barang Aktif -->
@@ -694,11 +693,6 @@
                 <div class="product-grid" id="my-product-grid">
                     <!-- Akan diisi oleh JavaScript -->
                 </div>
-            </div>
-
-            <!-- Tab Content: Ulasan -->
-            <div class="tab-content" id="tab-ulasan">
-                <p class="text-gray-500 dark:text-gray-400 py-6 text-center">Belum ada ulasan yang diberikan untuk Anda.</p>
             </div>
 
         </div>
@@ -783,7 +777,6 @@
         const tabs = document.querySelectorAll('.profile-tab');
         const contents = {
             barang: document.getElementById('tab-barang'),
-            ulasan: document.getElementById('tab-ulasan')
         };
 
         tabs.forEach(tab => {
