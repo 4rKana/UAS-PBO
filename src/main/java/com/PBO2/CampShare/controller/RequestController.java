@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.PBO2.CampShare.dto.RequestResponse;
 import com.PBO2.CampShare.entity.RequestBarang;
 import com.PBO2.CampShare.entity.enumeration.StatusRequest;
 import com.PBO2.CampShare.service.RequestService;
@@ -31,7 +32,7 @@ public class RequestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RequestBarang>> getAll() {
+    public ResponseEntity<List<RequestResponse>> getAll() {
         return ResponseEntity.ok(requestService.getAllRequest());
     }
 

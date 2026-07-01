@@ -454,7 +454,7 @@
                 // TAMPILAN PENOLONG (Belum diambil)
                     tombolAksi = `
                         <div class="flex items-center gap-2">
-                            <a href="roomchat?targetUser=${item.userId}" class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-cardbg dark:text-gray-200 dark:border dark:border-darkborder text-[12.5px] font-semibold rounded-xl transition-colors">Tanya Pemilik</a>
+                            <a href="roomchat?targetUser=${item.username}" class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-cardbg dark:text-gray-200 dark:border dark:border-darkborder text-[12.5px] font-semibold rounded-xl transition-colors">Tanya Pemilik</a>
                             <button onclick="terimaRequest('${item.id}')" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-[12.5px] font-semibold rounded-xl shadow-sm transition-colors">Ambil Request</button>
                         </div>`;
                 } else if (item.statusRequest === 'TERPENUHI' && isPemilik) {
