@@ -354,24 +354,28 @@
 
             if (isOwnMessage) {
                 return `
-                    <div class="flex gap-3 max-w-lg ml-auto justify-end">
-                        <div class="text-right">
-                            <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+                    <div class="flex justify-end">
+                        <div class="max-w-[70%]">
+                            <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed break-words">
                                 ${msg.message}
                             </div>
-                            <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">${jam}</span>
+                            <div class="text-right text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+                                ${jam}
+                            </div>
                         </div>
                     </div>
                 `;
             }
 
             return `
-                <div class="flex gap-3 max-w-lg">
-                    <div>
-                        <div class="bg-white dark:bg-cardbg px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-100 dark:border-darkborder/50">
+                <div class="flex justify-end">
+                    <div class="max-w-[70%]">
+                        <div class="bg-primary text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed break-words">
                             ${msg.message}
                         </div>
-                        <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">${jam}</span>
+                        <div class="text-right text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+                            ${jam}
+                        </div>
                     </div>
                 </div>
             `;
