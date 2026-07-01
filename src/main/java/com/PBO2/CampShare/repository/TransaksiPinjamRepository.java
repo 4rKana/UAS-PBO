@@ -15,4 +15,6 @@ public interface TransaksiPinjamRepository extends JpaRepository<TransaksiPinjam
 
     @Query("SELECT t FROM TransaksiPinjam t WHERE (t.peminjam.idUser = :u1 AND t.barang.pemilik.idUser = :u2) OR (t.peminjam.idUser = :u2 AND t.barang.pemilik.idUser = :u1)")
     List<TransaksiPinjam> findTransaksiAntaraDuaUser(@org.springframework.data.repository.query.Param("u1") String u1, @org.springframework.data.repository.query.Param("u2") String u2);
+
+    boolean existsByBarang_Id(Long barangId);
 }

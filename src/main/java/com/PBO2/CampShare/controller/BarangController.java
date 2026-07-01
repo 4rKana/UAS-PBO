@@ -13,6 +13,9 @@ import java.util.List;
 // --- 1. TAMBAHAN IMPORT UNTUK CLOUDINARY ---
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+
+import jakarta.servlet.http.HttpSession;
+
 import java.util.Map;
 
 @RestController
@@ -95,9 +98,19 @@ public class BarangController {
 
     // Endpoint untuk menghapus barang
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> hapusBarang(@PathVariable Long id) {
-        barangService.deleteBarang(id);
-        return ResponseEntity.ok("Barang dengan ID " + id + " berhasil dihapus.");
+    public ResponseEntity<String> hapusBarang(
+            @PathVariable Long id,
+            HttpSession session) {
+
+        String userId = (String) session.getAttribute("userId");
+
+        if (userId == null) {
+            return ResponseEntity.status(401).body("Belum login");
+        }
+
+        barangService.deleteBarang(id, userId);
+
+        return ResponseEntity.ok("Barang berhasil dihapus");
     }
 
     // Endpoint untuk mengambil barang berdasarkan User ID Pemilik

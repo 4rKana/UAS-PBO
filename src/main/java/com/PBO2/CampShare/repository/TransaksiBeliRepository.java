@@ -17,4 +17,6 @@ public interface TransaksiBeliRepository extends JpaRepository<TransaksiBeli, St
 
     @Query("SELECT t FROM TransaksiBeli t WHERE (t.pembeli.idUser = :u1 AND t.barang.pemilik.idUser = :u2) OR (t.pembeli.idUser = :u2 AND t.barang.pemilik.idUser = :u1)")
     List<TransaksiBeli> findTransaksiAntaraDuaUser(@org.springframework.data.repository.query.Param("u1") String u1, @org.springframework.data.repository.query.Param("u2") String u2);
+
+    boolean existsByBarang_Id(Long barangId);
 }
