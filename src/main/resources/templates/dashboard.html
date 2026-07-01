@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
 <head>
-    <script th:src="@{/auth-guard.js}"></script>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <script th:src="@{/auth-guard.js}"></script>
     <title>CampusShare – Jelajah Katalog</title>
 
     <!-- Tailwind + konfigurasi -->
@@ -1509,6 +1513,17 @@ async function fetchDanTampilkanBarang() {
             // 3. Panggil API untuk memuat katalog barang (bawaan kamu sebelumnya)
             fetchDanTampilkanBarang();
         });
+         if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(reg) {
+                    console.log('Service Worker registered!', reg);
+                    })
+                    .catch(function(err) {
+                    console.log('Service Worker registration failed: ', err);
+                    });
+                });
+            }
     </script>
 
 </body>
