@@ -111,29 +111,6 @@
             transition: background 0.2s, color 0.2s;
         }
 
-        .profile-rating {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #1a1a2e;
-            transition: color 0.2s;
-        }
-
-        .profile-rating .stars {
-            color: #f59e0b;
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-
-        .profile-rating .reviews {
-            font-weight: 400;
-            color: #6b7280;
-            font-size: 14px;
-        }
-
         .profile-bio {
             margin-top: 14px;
             font-size: 14.5px;
@@ -501,12 +478,10 @@
         }
         html.dark .profile-name { color: #fff; }
         html.dark .profile-major,
-        html.dark .profile-rating .reviews,
         html.dark .stat-label,
         html.dark .profile-tab,
         html.dark .item-filter { color: #9ca3af; }
         html.dark .profile-badge { background: #3f3f46; color: #93c5fd; }
-        html.dark .profile-rating { color: #fff; }
         html.dark .profile-bio { color: #d1d5db; }
         html.dark .profile-stats { border-top-color: #3f3f46; }
         html.dark .stat-value { color: #fff; }
@@ -670,10 +645,6 @@
                     <div class="profile-major" id="user-email">Memuat email...</div>
                     <span class="profile-badge">Mahasiswa</span>
                     
-                    <div class="profile-rating">
-                        <span class="stars">★ ★ ★ ★ ★</span>
-                        <span class="reviews">(5.0 / 5)</span>
-                    </div>
                     <div class="profile-bio">
                         Halo! Selamat datang di profil CampusShare saya. Mari saling berbagi barang untuk kebutuhan perkuliahan.
                     </div>
