@@ -37,9 +37,9 @@ public class ChatAutoDeleter {
         this.beliRepo = beliRepo;
     }
 
-    @Scheduled(cron = "0 0 0 1 * ?", zone = "Asia/Jakarta") // setiap tanggal 1
+    // @Scheduled(cron = "0 0 0 1 * ?", zone = "Asia/Jakarta") // setiap tanggal 1
     // @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Jakarta") // buat tiap malem jam 00:00
-    // @Scheduled(fixedRate = 30000) // buat 30 detik
+    @Scheduled(fixedRate = 30000) // buat 30 detik
     
     @Transactional
     public void runCleanupCycle() {
