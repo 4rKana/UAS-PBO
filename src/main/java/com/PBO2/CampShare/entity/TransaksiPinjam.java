@@ -46,7 +46,14 @@ public class TransaksiPinjam {
 
     public void konfirmasiPengembalian() {
         this.status = StatusTransaksiPinjam.SELESAI;
+            if(this.barang != null) {
+                this.barang.setStatus(com.PBO2.CampShare.entity.enumeration.StatusBarang.available);
+            }
     }
+
+    // public void konfirmasiPengembalian() {
+    //     this.status = StatusTransaksiPinjam.SELESAI;
+    // }
 
     public String getIdTransaksi() {
         return idTransaksi;
@@ -94,5 +101,12 @@ public class TransaksiPinjam {
 
     public void setStatus(StatusTransaksiPinjam status) {
         this.status = status;
+    }
+
+    public void setujuiPinjaman() {
+        this.status = StatusTransaksiPinjam.DISETUJUI;
+            if(this.barang != null) {
+                this.barang.setStatus(com.PBO2.CampShare.entity.enumeration.StatusBarang.booked);
+            }
     }
 }
