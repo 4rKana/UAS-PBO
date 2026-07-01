@@ -5,6 +5,6 @@ public enum KategoriBarang {
     BUKU,
     ALAT_TULIS,
     PAKAIAN,
-    PERLENGKAPAN_KOS,
+    PERLENGKAPAN,
     LAINNYA
 }
