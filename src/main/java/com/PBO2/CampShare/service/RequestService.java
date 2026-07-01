@@ -6,22 +6,45 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.PBO2.CampShare.dto.RequestResponse;
 import com.PBO2.CampShare.entity.RequestBarang;
 import com.PBO2.CampShare.entity.enumeration.StatusRequest;
 import com.PBO2.CampShare.repository.RequestRepository;
+import com.PBO2.CampShare.repository.UserRepository;
+import com.PBO2.CampShare.entity.User;
 
 @Service
 public class RequestService {
 
     private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
     // CONSTRUCTOR INJECTION (Memenuhi DIP - Dependency Inversion Principle)
     // Sangat direkomendasikan untuk kemudahan Unit Testing & Immutability
-    public RequestService(RequestRepository requestRepository) {
+    public RequestService(RequestRepository requestRepository, UserRepository userRepository) {
         this.requestRepository = requestRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<RequestBarang> getAllRequest() {
-        return requestRepository.findAll();
+    public List<RequestResponse> getAllRequest() {
+        return requestRepository.findAll().stream().map(request -> {
+
+            User user = userRepository.findById(request.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+
+            RequestResponse dto = new RequestResponse();
+
+            dto.setId(request.getId());
+            dto.setNamaBarang(request.getNamaBarang());
+            dto.setDeskripsi(request.getDeskripsi());
+            dto.setAnggaran(request.getAnggaran());
+            dto.setUserId(request.getUserId());
+            dto.setAcceptedByUserId(request.getAcceptedByUserId());
+            dto.setStatusRequest(request.getStatusRequest());
+            dto.setUsername(user.getUsername());
+
+            return dto;
+
+        }).toList();
     }
 
     // --- TAMBAHKAN FUNGSI INI DI SINI ---
@@ -120,5 +143,12 @@ public class RequestService {
         }
         
         requestRepository.delete(requestBarang);
+    }
+
+    public String getUsernameByUserId(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+
+        return user.getUsername();
     }
 } 
