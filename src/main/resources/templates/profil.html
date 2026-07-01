@@ -905,20 +905,23 @@
         const btnSaveBio = document.getElementById("btn-save-bio");
         const btnCancelBio = document.getElementById("btn-cancel-bio");
 
-        // 1. Ambil deskripsi saat ini dari database ketika halaman dimuat
+   // 1. Ambil deskripsi saat ini dari localStorage ketika halaman dimuat
         async function loadProfileBio() {
-            if (!userIdForBio) return;
-            try {
-                const response = await fetch(`http://localhost:8080/api/auth/user/${userIdForBio}`);
-                if (response.ok) {
-                    const user = await response.json();
-                    // Jika kolom deskripsi/bio di DB masih kosong, beri teks default
-                    bioText.textContent = user.deskripsi || "Belum ada deskripsi profil.";
-                    bioInput.value = user.deskripsi || "";
-                }
-            } catch (error) {
-                console.error("Gagal memuat deskripsi:", error);
-                bioText.textContent = "Gagal memuat deskripsi profil.";
+            console.log("Memulai loadProfileBio tanpa fetch backend...");
+            
+            // Coba ambil deskripsi yang pernah disimpan di browser komputer ini
+            // Kita gunakan ID user sebagai pembeda agar tidak tertukar dengan akun lain
+            const keyPenyimpanan = `bio_user_${userIdForBio || 'umum'}`;
+            const bioTersimpan = localStorage.getItem(keyPenyimpanan);
+
+            if (bioTersimpan && bioTersimpan.trim() !== "") {
+                // Jika ada data lama di browser, tampilkan
+                bioText.textContent = bioTersimpan;
+                bioInput.value = bioTersimpan;
+            } else {
+                // Jika kosong, tampilkan teks default
+                bioText.textContent = "Belum ada deskripsi profil.";
+                bioInput.value = "";
             }
         }
 
@@ -946,29 +949,20 @@
         });
 
         // 4. Tombol Simpan diklik (Kirim data baru ke backend)
-        btnSaveBio.addEventListener("click", async () => {
+       // 4. Tombol Simpan diklik (Simpan ke localStorage lokal)
+        btnSaveBio.addEventListener("click", () => {
             const newBio = bioInput.value.trim();
+            const keyPenyimpanan = `bio_user_${userIdForBio || 'umum'}`;
 
-            try {
-                const response = await fetch(`http://localhost:8080/api/auth/user/${userIdForBio}/update-bio`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ deskripsi: newBio })
-                });
-
-                if (response.ok) {
-                    alert("Deskripsi profil berhasil diperbarui!");
-                    bioText.textContent = newBio || "Belum ada deskripsi profil.";
-                    
-                    // Kembalikan ke tampilan teks biasa
-                    btnCancelBio.click(); 
-                } else {
-                    alert("Gagal menyimpan deskripsi ke server.");
-                }
-            } catch (error) {
-                console.error("Error jaringan:", error);
-                alert("Terjadi kesalahan jaringan.");
-            }
+            // Simpan teks baru ke dalam memori browser
+            localStorage.setItem(keyPenyimpanan, newBio);
+            
+            // Perbarui teks di layar saat ini
+            bioText.textContent = newBio || "Belum ada deskripsi profil.";
+            alert("Deskripsi profil berhasil diperbarui secara lokal!");
+            
+            // Kembalikan ke tampilan teks biasa (menutup kotak edit)
+            btnCancelBio.click(); 
         });
     </script>
 
