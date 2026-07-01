@@ -376,14 +376,22 @@
         });
 
 // --- LOGIKA KONEKSI KE BACKEND SPRING BOOT (FETCH API) ---
+        let isUploading = false;
         const uploadForm = document.getElementById('form-upload-barang');
+
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Mencegah page reload bawaan form HTML
+
+            if (isUploading) {
+                return;
+            }
+            isUploading = true;
 
             // 1. Ambil idUser dari LocalStorage (Gunakan "idUser" sesuai data asli)
             const userId = localStorage.getItem("idUser");
 
             if (!userId) {
+                isUploading = false;
                 alert("Sesi Anda habis atau Anda belum login. Silakan login kembali!");
                 window.location.href = "login"; // Tetap tanpa .html
                 return;
@@ -406,12 +414,14 @@
                         body: formData // Mengirim file asli
                     });
 
-                    if (uploadResp.ok) {
-                        // Jika berhasil, timpa linkFoto dengan URL asli dari backend
-                        linkFoto = await uploadResp.text(); 
-                    } else {
-                        alert("Gagal mengupload foto, data barang akan disimpan dengan foto default.");
+                    if (!uploadResp.ok) {
+                        alert("Upload foto gagal");
+                        isUploading = false;
+                        return;
                     }
+
+                    linkFoto = await uploadResp.text(); 
+
                 } catch (err) {
                     console.error("Error saat upload foto:", err);
                 }
@@ -468,17 +478,20 @@
                 if (response.ok) {
                     alert('Barang berhasil dimasukkan ke katalog database!');
                     window.location.href = 'dashboard'; // Mengarahkan kembali tanpa .html
+                    return;
                 } else {
                     const errorMsg = await response.text();
                     alert('Gagal mengupload data barang: ' + errorMsg);
                     btnSubmit.innerHTML = teksAsli;
                     btnSubmit.disabled = false;
+                    isUploading = false;
                 }
             } catch (error) {
                 console.error('Error saat menghubungi backend:', error);
                 alert('Tidak dapat terhubung ke server backend Spring Boot. Pastikan server Java menyala!');
                 btnSubmit.innerHTML = teksAsli;
                 btnSubmit.disabled = false;
+                isUploading = false;
             }
         });
 

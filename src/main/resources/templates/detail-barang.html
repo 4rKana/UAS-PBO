@@ -1089,8 +1089,8 @@
                                     }
 
                                     alert("Barang berhasil di-booked untuk dipinjam! Silakan diskusikan lokasi COD di chat.");
-                                    const pesanOtomatis = encodeURIComponent(`Halo! Saya telah mem-booking sewa untuk barang "${barang.namaBarang}".\n\nID Transaksi: ${idTrx}\nTanggal: ${mulai} s/d ${kembali}\n\nSilakan gunakan ID Transaksi tersebut untuk mengkonfirmasi pesanan nanti ya!`);
-                                    window.location.href = `/roomchat?id=${barang.pemilik.idUser}&barang=${barang.id}&autoMsg=${pesanOtomatis}`;
+                                        const pesanOtomatis = encodeURIComponent(`Halo! Saya telah mem-booking barang "${barang.namaBarang}" untuk dibeli.\n\nID Transaksi: ${idTrx}\n\nSilakan gunakan ID Transaksi tersebut untuk mengkonfirmasi penjualan setelah COD selesai ya!`);
+                                        window.location.href = `/roomchat?targetUser=${barang.pemilik.username}&autoMsg=${pesanOtomatis}`;
 
                                 } else {
                                     alert("Gagal mengajukan pinjaman. Cek kembali ketersediaan barang.");
