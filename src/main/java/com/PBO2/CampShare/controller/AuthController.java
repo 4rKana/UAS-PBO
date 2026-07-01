@@ -1,7 +1,9 @@
 package com.PBO2.CampShare.controller;
 
+import com.PBO2.CampShare.dto.UpdateBioRequest;
 import com.PBO2.CampShare.entity.User;
 import com.PBO2.CampShare.service.UserService;
+import com.PBO2.CampShare.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +32,9 @@ public class AuthController {
 
     @Autowired
     private OtpService otpService; // <-- Tambahkan ini
+
+    @Autowired
+    private UserRepository userRepository;
 
     // --- API BARU UNTUK KIRIM EMAIL OTP ---
     @PostMapping("/request-otp")
@@ -108,5 +113,14 @@ public class AuthController {
         response.put("email", loggedInUser.getEmail());
 
         return ResponseEntity.ok(response);
+    }
+    @PutMapping("/user/{id}/update-bio")
+    public ResponseEntity<?> updateBio(@PathVariable String id, @RequestBody UpdateBioRequest request) {
+        // Perhatikan: Tipe data id diubah menjadi String menyesuaikan Entity milikmu
+        return userRepository.findById(id).map(user -> {
+            user.setDeskripsi(request.getDeskripsi());
+            userRepository.save(user); // Simpan perubahan ke database
+            return ResponseEntity.ok().body(Map.of("message", "Deskripsi berhasil diperbarui"));
+        }).orElse(ResponseEntity.notFound().build());
     }
 }
