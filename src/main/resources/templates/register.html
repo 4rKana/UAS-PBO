@@ -372,7 +372,7 @@
         <div class="field">
           <label class="field-label">Email</label>
           <div style="display: flex; gap: 10px;">
-            <input type="email" name="email" placeholder="namaemail@gmail.com" required autofocus style="flex: 1;" />
+            <input type="email" name="email" placeholder="NIM@student.uinsgd.ac.id" required autofocus style="flex: 1;" />
             <button type="button" onclick="requestOtp()" style="padding: 0 16px; background: var(--btn-primary); color: white; border: none; border-radius: 12px; font-size: 13px; font-weight: bold; cursor: pointer; transition: background .15s;">Minta OTP</button>
           </div>
         </div>
@@ -454,6 +454,12 @@
             alert("Harap isi alamat email terlebih dahulu!");
             return;
         }
+        const domainKampus = "@student.uinsgd.ac.id"; 
+      
+      if (!emailInput.toLowerCase().endsWith(domainKampus)) {
+        alert(`Pendaftaran ditolak!\nKamu wajib menggunakan email mahasiswa UIN yang berakhiran ${domainKampus}`);
+        return; // Menghentikan proses ke bawah (tidak akan memunculkan prompt OTP)
+      }
 
         alert("Memproses... Menunggu email terkirim. Mohon tunggu sebentar.");
         try {
@@ -477,7 +483,12 @@
       event.preventDefault();
 
       const emailInput = document.querySelector('input[name="email"]').value;
-
+      const domainKampus = "@student.uinsgd.ac.id"; 
+      
+      if (!emailInput.toLowerCase().endsWith(domainKampus)) {
+        alert(`Pendaftaran ditolak!\nKamu wajib menggunakan email mahasiswa UIN yang berakhiran ${domainKampus}`);
+        return; // Menghentikan proses ke bawah (tidak akan memunculkan prompt OTP)
+      }
       // Meminta user mengetik OTP dari email
       const inputOtp = prompt("Silakan periksa kotak masuk Gmail Anda.\nMasukkan 6-digit kode OTP di sini:");
       if (!inputOtp) return; // Batal jika user menekan Cancel
