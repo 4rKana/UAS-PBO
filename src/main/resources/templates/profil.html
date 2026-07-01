@@ -862,8 +862,13 @@
                         const nominalHarga = isJual ? barang.harga : barang.tarifPinjam;
                         const formatHarga = `Rp ${nominalHarga.toLocaleString('id-ID')}${isJual ? '' : '/hari'}`;
 
+                        // Pastikan mengambil ID yang benar (biasanya id atau idBarang dari backend)
+                        const idBarang = barang.idBarang || barang.id || '';
+
+                        // PERBAIKAN: Tambah onclick dan cursor-pointer di baris div paling atas
                         const cardHTML = `
-                            <div class="product-card dark:bg-cardbg dark:border-darkborder">
+                            <div onclick="window.location.href='detail-barang?id=${idBarang}'" 
+                                 class="product-card dark:bg-cardbg dark:border-darkborder cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
                                 <div class="product-thumb bg-gray-100 dark:bg-neutral-800">
                                     <img src="${barang.fotoUrl || 'https://via.placeholder.com/300?text=No+Image'}" 
                                          alt="${barang.namaBarang}" 
