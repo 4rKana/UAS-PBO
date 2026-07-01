@@ -2,8 +2,12 @@
 <html lang="id" data-theme="light">
 
 <head>
+  <link rel="manifest" href="/manifest.json">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#4CAF50">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>CampusShare – Masuk</title>
   <style>
     :root {
@@ -447,6 +451,17 @@
           alert(error.message);
         });
     });
+    if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(reg) {
+          console.log('Service Worker registered!', reg);
+        })
+        .catch(function(err) {
+          console.log('Service Worker registration failed: ', err);
+        });
+    });
+  }
   </script>
 </body>
 
